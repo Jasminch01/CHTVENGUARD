@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import Appbar from "@/components/shared/Appbar";
+import { ThemeProvider } from "next-themes";
 
 const solaimanLipi = localFont({
   src: [
@@ -26,8 +28,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${solaimanLipi.className}`}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${solaimanLipi.className} font-sans antialiased`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange={false}
+          storageKey="chtvenguard-theme"
+        >
+          <div className="min-h-screen bg-background text-foreground">
+            <Appbar />
+            <main className="pt-16">{children}</main>
+          </div>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
