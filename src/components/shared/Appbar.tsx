@@ -1,16 +1,10 @@
-// components/shared/Appbar.tsx
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Search, Sun, Moon, Menu, X, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import // NavigationMenu,
-// NavigationMenuItem,
-// NavigationMenuLink,
-// NavigationMenuList,
-"@/components/ui/navigation-menu";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
@@ -20,12 +14,36 @@ const Appbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [openSubDropdown, setOpenSubDropdown] = useState<string | null>(null);
+  const [openDesktopDropdown, setOpenDesktopDropdown] = useState<string | null>(
+    null
+  );
+  const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(
+    null
+  );
+  const [openMobileSubDropdown, setOpenMobileSubDropdown] = useState<
+    string | null
+  >(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Ensure component is mounted before rendering theme-dependent elements
   useEffect(() => {
     setMounted(true);
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOpenDesktopDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside as EventListener);
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside as EventListener
+      );
+    };
   }, []);
 
   const toggleDarkMode = () => {
@@ -42,9 +60,20 @@ const Appbar = () => {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Search query:", searchQuery);
-    // Handle search logic here
     setIsSearchOpen(false);
     setSearchQuery("");
+  };
+
+  const toggleDesktopDropdown = (menu: string) => {
+    setOpenDesktopDropdown(openDesktopDropdown === menu ? null : menu);
+  };
+
+  const toggleMobileDropdown = (menu: string) => {
+    setOpenMobileDropdown(openMobileDropdown === menu ? null : menu);
+  };
+
+  const toggleMobileSubDropdown = (menu: string) => {
+    setOpenMobileSubDropdown(openMobileSubDropdown === menu ? null : menu);
   };
 
   const menuItems = [
@@ -58,7 +87,7 @@ const Appbar = () => {
           route: "/cht",
           subItems: [
             { menu: "রাঙ্গামাটি", route: "/news/cht/rangamati" },
-            { menu: "খাগড়াছড়ি", route: "/news/cht/khagrachari" },
+            { menu: "খাগড়াছড়ি", route: "/news/cht/khagrachari" },
             { menu: "বান্দরবান", route: "/news/cht/bandarban" },
           ],
         },
@@ -76,18 +105,12 @@ const Appbar = () => {
     { menu: "মতামত", route: "/comment" },
   ];
 
-  // Don't render until mounted to prevent hydration mismatch
   if (!mounted) {
     return null;
   }
 
-  const toggleDropdown = (menu: string) => {
-    setOpenDropdown(openDropdown === menu ? null : menu);
-    if (openSubDropdown) setOpenSubDropdown(null);
-  };
-
   return (
-    <nav className="fixed top-0 left-0 right-0 z-10 border-b">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto px-4 lg:px-0">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
@@ -132,50 +155,56 @@ const Appbar = () => {
             <div className="hidden md:flex flex-1 ml-10">
               <div className="flex">
                 {menuItems.map((item, index) => (
-                  <div key={index} className="relative h-full">
+                  <div
+                    key={index}
+                    className="relative h-full"
+                    ref={dropdownRef}
+                  >
                     {item.dropdown ? (
                       <>
                         <button
-                          onClick={() => toggleDropdown(item.menu)}
-                          className="inline-flex items-center justify-center h-full px-4 text-lg font-medium focus:outline-none hover:bg-gray-50"
+                          onClick={() => toggleDesktopDropdown(item.menu)}
+                          className="inline-flex items-center justify-center h-full px-4 text-lg font-medium focus:outline-none hover:bg-gray-50 dark:hover:bg-gray-800"
                         >
                           {item.menu}
                           <ChevronDown
                             className={`ml-1 h-4 w-4 transition-transform ${
-                              openDropdown === item.menu ? "rotate-180" : ""
+                              openDesktopDropdown === item.menu
+                                ? "rotate-180"
+                                : ""
                             }`}
                           />
                         </button>
 
                         {/* Main dropdown container */}
-                        {openDropdown === item.menu && (
-                          <div className="absolute left-0 top-full w-56 bg-white shadow-lg z-10">
+                        {openDesktopDropdown === item.menu && (
+                          <div className="absolute left-0 top-full w-56 bg-white dark:bg-gray-800 shadow-lg z-10 rounded-md">
                             {item.dropdown.map((dropdownItem, idx) => (
                               <div key={idx} className="group">
                                 {/* Parent item */}
-                                <div className="px-4 py-3 hover:bg-gray-50 border-b border-gray-100">
+                                <div className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700">
                                   <div className="flex justify-between items-center">
                                     <Link
                                       href={dropdownItem.route}
-                                      className="text-lg font-medium text-gray-900"
+                                      className="text-lg font-medium text-gray-900 dark:text-gray-100"
                                     >
                                       {dropdownItem.menu}
                                     </Link>
                                     {dropdownItem.subItems && (
-                                      <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
+                                      <ChevronDown className="ml-2 h-4 w-4 text-gray-500 dark:text-gray-400" />
                                     )}
                                   </div>
                                 </div>
 
                                 {/* Child items (submenus) appear on hover of parent */}
                                 {dropdownItem.subItems && (
-                                  <div className="bg-gray-50 max-h-0 overflow-hidden group-hover:max-h-96 transition-all duration-300 ease-in-out">
+                                  <div className="bg-gray-50 dark:bg-gray-700 max-h-0 overflow-hidden group-hover:max-h-96 transition-all duration-300 ease-in-out">
                                     {dropdownItem.subItems.map(
                                       (subItem, subIdx) => (
                                         <Link
                                           key={subIdx}
                                           href={subItem.route}
-                                          className="block px-8 py-2 text-base text-gray-700 hover:bg-gray-100 hover:text-gray-900 border-b border-gray-200 last:border-b-0"
+                                          className="block px-8 py-2 text-base text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:text-gray-900 dark:hover:text-white border-b border-gray-200 dark:border-gray-600 last:border-b-0"
                                         >
                                           {subItem.menu}
                                         </Link>
@@ -191,7 +220,7 @@ const Appbar = () => {
                     ) : (
                       <Link
                         href={item.route}
-                        className="inline-flex items-center justify-center h-full px-4 text-lg font-medium hover:bg-gray-50"
+                        className="inline-flex items-center justify-center h-full px-4 text-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800"
                       >
                         {item.menu}
                       </Link>
@@ -205,7 +234,7 @@ const Appbar = () => {
           {/* Right Side Controls */}
           <div className="flex items-center space-x-2">
             {/* Search Toggle Button */}
-            <button onClick={toggleSearch} className={` hidden lg:block`}>
+            <button onClick={toggleSearch} className={`hidden lg:block`}>
               {isSearchOpen ? (
                 <X className="size-6" />
               ) : (
@@ -275,12 +304,12 @@ const Appbar = () => {
                               <Button
                                 variant="ghost"
                                 className="justify-between w-full h-auto py-3 text-base font-medium"
-                                onClick={() => toggleDropdown(item.menu)}
+                                onClick={() => toggleMobileDropdown(item.menu)}
                               >
                                 <span>{item.menu}</span>
                                 <ChevronDown
                                   className={`h-4 w-4 transition-transform ${
-                                    openDropdown === item.menu
+                                    openMobileDropdown === item.menu
                                       ? "rotate-180"
                                       : ""
                                   }`}
@@ -288,76 +317,80 @@ const Appbar = () => {
                               </Button>
 
                               {/* Dropdown content */}
-                              {openDropdown === item.menu && (
+                              {openMobileDropdown === item.menu && (
                                 <div className="ml-4 mt-2 space-y-1">
                                   {item.dropdown.map((dropdownItem, idx) => (
                                     <div key={idx}>
                                       {/* Parent dropdown item */}
-                                      <div>
-                                        <div className="flex items-center justify-between">
+                                      <div className="flex items-center justify-between">
+                                        <Button
+                                          variant="ghost"
+                                          className="justify-start flex-1 h-auto py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                                          onClick={() => {
+                                            if (!dropdownItem.subItems) {
+                                              setIsMobileMenuOpen(false);
+                                            }
+                                          }}
+                                          asChild={!dropdownItem.subItems}
+                                        >
+                                          {dropdownItem.subItems ? (
+                                            <span>{dropdownItem.menu}</span>
+                                          ) : (
+                                            <Link href={dropdownItem.route}>
+                                              {dropdownItem.menu}
+                                            </Link>
+                                          )}
+                                        </Button>
+
+                                        {/* Show dropdown icon only if item has subitems */}
+                                        {dropdownItem.subItems && (
                                           <Button
                                             variant="ghost"
-                                            className="justify-start flex-1 h-auto py-2 text-sm font-medium text-gray-700"
-                                            onClick={() =>
-                                              setIsMobileMenuOpen(false)
-                                            }
-                                            asChild
+                                            size="sm"
+                                            className="h-auto py-2 px-2 ml-2"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              toggleMobileSubDropdown(
+                                                `${item.menu}-${idx}`
+                                              );
+                                            }}
                                           >
-                                            <a href={dropdownItem.route}>
-                                              {dropdownItem.menu}
-                                            </a>
+                                            <ChevronDown
+                                              className={`h-3 w-3 transition-transform ${
+                                                openMobileSubDropdown ===
+                                                `${item.menu}-${idx}`
+                                                  ? "rotate-180"
+                                                  : ""
+                                              }`}
+                                            />
                                           </Button>
-
-                                          {/* Show dropdown icon only if item has subitems */}
-                                          {dropdownItem.subItems && (
-                                            <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              className="h-auto py-2 px-2 ml-2"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                toggleDropdown(
-                                                  `subitem-${item.menu}-${idx}`
-                                                );
-                                              }}
-                                            >
-                                              <ChevronDown
-                                                className={`h-3 w-3 transition-transform ${
-                                                  openDropdown ===
-                                                  `subitem-${item.menu}-${idx}`
-                                                    ? "rotate-180"
-                                                    : ""
-                                                }`}
-                                              />
-                                            </Button>
-                                          )}
-                                        </div>
-
-                                        {/* Subitems - show on click */}
-                                        {dropdownItem.subItems &&
-                                          openDropdown ===
-                                            `subitem-${item.menu}-${idx}` && (
-                                            <div className="ml-4 mt-1 space-y-1 animate-in slide-in-from-top-2 duration-200">
-                                              {dropdownItem.subItems.map(
-                                                (subItem, subIdx) => (
-                                                  <Button
-                                                    key={subIdx}
-                                                    variant="ghost"
-                                                    className="justify-start w-full h-auto py-2 text-sm text-gray-600 pl-4 hover:bg-gray-100"
-                                                    onClick={() =>
-                                                      setIsMobileMenuOpen(false)
-                                                    }
-                                                    asChild
-                                                  >
-                                                    <a href={subItem.route}>
-                                                      • {subItem.menu}
-                                                    </a>
-                                                  </Button>
-                                                )
-                                              )}
-                                            </div>
-                                          )}
+                                        )}
                                       </div>
+
+                                      {/* Subitems */}
+                                      {dropdownItem.subItems &&
+                                        openMobileSubDropdown ===
+                                          `${item.menu}-${idx}` && (
+                                          <div className="ml-4 mt-1 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                                            {dropdownItem.subItems.map(
+                                              (subItem, subIdx) => (
+                                                <Button
+                                                  key={subIdx}
+                                                  variant="ghost"
+                                                  className="justify-start w-full h-auto py-2 text-sm text-gray-600 dark:text-gray-400 pl-4 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                  onClick={() =>
+                                                    setIsMobileMenuOpen(false)
+                                                  }
+                                                  asChild
+                                                >
+                                                  <Link href={subItem.route}>
+                                                    • {subItem.menu}
+                                                  </Link>
+                                                </Button>
+                                              )
+                                            )}
+                                          </div>
+                                        )}
                                     </div>
                                   ))}
                                 </div>
@@ -371,7 +404,7 @@ const Appbar = () => {
                               onClick={() => setIsMobileMenuOpen(false)}
                               asChild
                             >
-                              <a href={item.route}>{item.menu}</a>
+                              <Link href={item.route}>{item.menu}</Link>
                             </Button>
                           )}
                         </div>
