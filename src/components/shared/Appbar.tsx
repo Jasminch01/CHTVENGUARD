@@ -1,17 +1,16 @@
 // components/shared/Appbar.tsx
 "use client";
 import React, { useState, useEffect } from "react";
-import { Search, Sun, Moon, Menu, X } from "lucide-react";
+import { Search, Sun, Moon, Menu, X, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from "@/components/ui/navigation-menu";
+import // NavigationMenu,
+// NavigationMenuItem,
+// NavigationMenuLink,
+// NavigationMenuList,
+"@/components/ui/navigation-menu";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
@@ -21,6 +20,8 @@ const Appbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [openSubDropdown, setOpenSubDropdown] = useState<string | null>(null);
 
   // Ensure component is mounted before rendering theme-dependent elements
   useEffect(() => {
@@ -46,12 +47,44 @@ const Appbar = () => {
     setSearchQuery("");
   };
 
-  const menuItems = ["প্রচ্ছদ", "সংবাদ", "সংবাদ বিজ্ঞপ্তি", "মতামত"];
+  const menuItems = [
+    { menu: "প্রচ্ছদ", route: "/cover" },
+    {
+      menu: "সংবাদ",
+      route: "/news",
+      dropdown: [
+        {
+          menu: "পার্বত্য চট্টগ্রাম",
+          route: "/cht",
+          subItems: [
+            { menu: "রাঙ্গামাটি", route: "/news/cht/rangamati" },
+            { menu: "খাগড়াছড়ি", route: "/news/cht/khagrachari" },
+            { menu: "বান্দরবান", route: "/news/cht/bandarban" },
+          ],
+        },
+        {
+          menu: "আন্তর্জাতিক",
+          route: "/news/international",
+        },
+        {
+          menu: "দেশ",
+          route: "/news/national",
+        },
+      ],
+    },
+    { menu: "সংবাদ বিজ্ঞপ্তি", route: "/সংবাদ বিজ্ঞপ্তি" },
+    { menu: "মতামত", route: "/comment" },
+  ];
 
   // Don't render until mounted to prevent hydration mismatch
   if (!mounted) {
     return null;
   }
+
+  const toggleDropdown = (menu: string) => {
+    setOpenDropdown(openDropdown === menu ? null : menu);
+    if (openSubDropdown) setOpenSubDropdown(null);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-10 border-b">
@@ -96,41 +129,89 @@ const Appbar = () => {
 
           {/* Desktop Menu Items (when search is closed) */}
           {!isSearchOpen && (
-            <div className="hidden md:flex flex-1">
-              <NavigationMenu className="ml-10">
-                <NavigationMenuList className="space-x-1">
-                  {menuItems.map((item, index) => (
-                    <NavigationMenuItem key={index}>
-                      <NavigationMenuLink
-                        href="#"
-                        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-lg font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent/50"
+            <div className="hidden md:flex flex-1 ml-10">
+              <div className="flex">
+                {menuItems.map((item, index) => (
+                  <div key={index} className="relative h-full">
+                    {item.dropdown ? (
+                      <>
+                        <button
+                          onClick={() => toggleDropdown(item.menu)}
+                          className="inline-flex items-center justify-center h-full px-4 text-lg font-medium focus:outline-none hover:bg-gray-50"
+                        >
+                          {item.menu}
+                          <ChevronDown
+                            className={`ml-1 h-4 w-4 transition-transform ${
+                              openDropdown === item.menu ? "rotate-180" : ""
+                            }`}
+                          />
+                        </button>
+
+                        {/* Main dropdown container */}
+                        {openDropdown === item.menu && (
+                          <div className="absolute left-0 top-full w-56 bg-white shadow-lg z-10">
+                            {item.dropdown.map((dropdownItem, idx) => (
+                              <div key={idx} className="group">
+                                {/* Parent item */}
+                                <div className="px-4 py-3 hover:bg-gray-50 border-b border-gray-100">
+                                  <div className="flex justify-between items-center">
+                                    <Link
+                                      href={dropdownItem.route}
+                                      className="text-lg font-medium text-gray-900"
+                                    >
+                                      {dropdownItem.menu}
+                                    </Link>
+                                    {dropdownItem.subItems && (
+                                      <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Child items (submenus) appear on hover of parent */}
+                                {dropdownItem.subItems && (
+                                  <div className="bg-gray-50 max-h-0 overflow-hidden group-hover:max-h-96 transition-all duration-300 ease-in-out">
+                                    {dropdownItem.subItems.map(
+                                      (subItem, subIdx) => (
+                                        <Link
+                                          key={subIdx}
+                                          href={subItem.route}
+                                          className="block px-8 py-2 text-base text-gray-700 hover:bg-gray-100 hover:text-gray-900 border-b border-gray-200 last:border-b-0"
+                                        >
+                                          {subItem.menu}
+                                        </Link>
+                                      )
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <Link
+                        href={item.route}
+                        className="inline-flex items-center justify-center h-full px-4 text-lg font-medium hover:bg-gray-50"
                       >
-                        {item}
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
-                  ))}
-                </NavigationMenuList>
-              </NavigationMenu>
+                        {item.menu}
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
           {/* Right Side Controls */}
           <div className="flex items-center space-x-2">
             {/* Search Toggle Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleSearch}
-              className={` hidden lg:block
-                ${isSearchOpen ? "bg-primary text-primary-foreground" : ""}
-             `}
-            >
+            <button onClick={toggleSearch} className={` hidden lg:block`}>
               {isSearchOpen ? (
                 <X className="size-6" />
               ) : (
                 <Search className="size-6" />
               )}
-            </Button>
+            </button>
 
             {/* Dark/Light Mode Toggle */}
             <Button
@@ -163,7 +244,10 @@ const Appbar = () => {
                 <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                   <div className="flex flex-col space-y-4 mt-12">
                     {/* Mobile Search */}
-                    <form onSubmit={handleSearchSubmit} className="relative px-3">
+                    <form
+                      onSubmit={handleSearchSubmit}
+                      className="relative px-3"
+                    >
                       <Input
                         type="text"
                         value={searchQuery}
@@ -184,15 +268,113 @@ const Appbar = () => {
                     {/* Mobile Menu Items */}
                     <nav className="flex flex-col space-y-2">
                       {menuItems.map((item, index) => (
-                        <Button
-                          key={index}
-                          variant="ghost"
-                          className="justify-start h-auto py-3 text-base font-medium"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          asChild
-                        >
-                          <a href="#">{item}</a>
-                        </Button>
+                        <div key={index}>
+                          {item.dropdown ? (
+                            <div>
+                              {/* Main dropdown button */}
+                              <Button
+                                variant="ghost"
+                                className="justify-between w-full h-auto py-3 text-base font-medium"
+                                onClick={() => toggleDropdown(item.menu)}
+                              >
+                                <span>{item.menu}</span>
+                                <ChevronDown
+                                  className={`h-4 w-4 transition-transform ${
+                                    openDropdown === item.menu
+                                      ? "rotate-180"
+                                      : ""
+                                  }`}
+                                />
+                              </Button>
+
+                              {/* Dropdown content */}
+                              {openDropdown === item.menu && (
+                                <div className="ml-4 mt-2 space-y-1">
+                                  {item.dropdown.map((dropdownItem, idx) => (
+                                    <div key={idx}>
+                                      {/* Parent dropdown item */}
+                                      <div>
+                                        <div className="flex items-center justify-between">
+                                          <Button
+                                            variant="ghost"
+                                            className="justify-start flex-1 h-auto py-2 text-sm font-medium text-gray-700"
+                                            onClick={() =>
+                                              setIsMobileMenuOpen(false)
+                                            }
+                                            asChild
+                                          >
+                                            <a href={dropdownItem.route}>
+                                              {dropdownItem.menu}
+                                            </a>
+                                          </Button>
+
+                                          {/* Show dropdown icon only if item has subitems */}
+                                          {dropdownItem.subItems && (
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-auto py-2 px-2 ml-2"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleDropdown(
+                                                  `subitem-${item.menu}-${idx}`
+                                                );
+                                              }}
+                                            >
+                                              <ChevronDown
+                                                className={`h-3 w-3 transition-transform ${
+                                                  openDropdown ===
+                                                  `subitem-${item.menu}-${idx}`
+                                                    ? "rotate-180"
+                                                    : ""
+                                                }`}
+                                              />
+                                            </Button>
+                                          )}
+                                        </div>
+
+                                        {/* Subitems - show on click */}
+                                        {dropdownItem.subItems &&
+                                          openDropdown ===
+                                            `subitem-${item.menu}-${idx}` && (
+                                            <div className="ml-4 mt-1 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                                              {dropdownItem.subItems.map(
+                                                (subItem, subIdx) => (
+                                                  <Button
+                                                    key={subIdx}
+                                                    variant="ghost"
+                                                    className="justify-start w-full h-auto py-2 text-sm text-gray-600 pl-4 hover:bg-gray-100"
+                                                    onClick={() =>
+                                                      setIsMobileMenuOpen(false)
+                                                    }
+                                                    asChild
+                                                  >
+                                                    <a href={subItem.route}>
+                                                      • {subItem.menu}
+                                                    </a>
+                                                  </Button>
+                                                )
+                                              )}
+                                            </div>
+                                          )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            /* Regular menu item */
+                            <Button
+                              variant="ghost"
+                              className="justify-start w-full h-auto py-3 text-base font-medium"
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              asChild
+                            >
+                              <a href={item.route}>{item.menu}</a>
+                            </Button>
+                          )}
+                        </div>
                       ))}
                     </nav>
                   </div>
