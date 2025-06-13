@@ -1,120 +1,6 @@
+import { NewsCardsProps } from "@/app/type";
 import Image from "next/image";
-import React, { SetStateAction, useState } from "react";
-
-interface NewsItem {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  publishedAt: string;
-  image: string;
-  category: string;
-  tags?: string[];
-}
-
-interface NewsCardsProps {
-  news: NewsItem[];
-}
-
-const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
-  const [activeTab, setActiveTab] = useState<"popular" | "latest" | "trending">(
-    "popular"
-  );
-
-  const tabs = [
-    { key: "popular", label: "জনপ্রিয়" },
-    { key: "latest", label: "সর্বশেষ" },
-    { key: "trending", label: "ট্রেন্ডিং" },
-  ];
-
-  const getTabNews = () => {
-    switch (activeTab) {
-      case "popular":
-        return news.slice(0, 8);
-      case "latest":
-        return news.slice(2, 10);
-      case "trending":
-        return news.slice(4, 12);
-      default:
-        return news.slice(0, 8);
-    }
-  };
-
-  return (
-    <div className="sticky top-4 bg-white">
-      {/* Advertisement Space */}
-      <div className="bg-gray-100 border border-gray-300 p-4 mb-6 text-center">
-        <div className="text-gray-500 text-sm">বিজ্ঞাপন</div>
-        <div className="h-32 bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center mt-2 rounded">
-          <span className="text-gray-400">বিজ্ঞাপন</span>
-        </div>
-      </div>
-
-      {/* Tab Navigation */}
-      <div className="bg-white border border-gray-300 mb-6">
-        <div className="flex border-b border-gray-200">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() =>
-                setActiveTab(
-                  tab.key as SetStateAction<"popular" | "latest" | "trending">
-                )
-              }
-              className={`flex-1 py-3 px-4 text-sm font-semibold transition-colors ${
-                activeTab === tab.key
-                  ? "bg-red-600 text-white"
-                  : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Tab Content */}
-        <div className="p-4">
-          <div className="space-y-4">
-            {getTabNews().map((item, index) => (
-              <div
-                key={item.id}
-                className="flex space-x-3 pb-4 border-b border-gray-100 last:border-b-0"
-              >
-                <div className="flex-shrink-0">
-                  <span className="inline-flex items-center justify-center w-6 h-6 bg-red-600 text-white text-xs font-bold rounded">
-                    {index + 1}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-semibold text-gray-900 leading-tight line-clamp-2 mb-1 hover:text-red-600 cursor-pointer transition-colors">
-                    {item.title}
-                  </h4>
-                  <div className="flex items-center text-xs text-gray-500 space-x-2">
-                    <span>{item.category}</span>
-                    <span>•</span>
-                    <span>
-                      {new Date(item.publishedAt).toLocaleDateString("bn-BD")}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Weather Widget */}
-      {/* <div className="bg-blue-50 border border-blue-200 p-4 mb-6 rounded-lg">
-        <h3 className="text-lg font-bold text-blue-800 mb-3">আবহাওয়া</h3>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-blue-900">৩২°C</div>
-          <div className="text-sm text-blue-700">চট্টগ্রাম</div>
-          <div className="text-xs text-blue-600 mt-1">আংশিক মেঘলা</div>
-        </div>
-      </div> */}
-    </div>
-  );
-};
+import RightSidebar from "./RightSiderbar";
 
 const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
   if (!news || news.length === 0) {
@@ -146,21 +32,21 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
         <div className="flex-1">
           {/* Main Featured News Section */}
           <div className="mb-8">
-            <div className="flex flex-row-reverse h-[400px] gap-5">
-              <div className="flex-1">
+            <div className="flex lg:flex-row-reverse flex-col xl:h-[300px] gap-5 group">
+              <div className="flex-1 relative overflow-hidden">
                 <Image
                   src={"/news1.jpeg"}
                   width={500}
                   height={500}
                   alt={news[0]?.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover  scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                 />
               </div>
               <div className="flex-1">
-                <h1 className="text-xl lg:text-3xl font-bold text-gray-900 leading-tight mb-4">
+                <h1 className="text-xl lg:text-3xl font-bold leading-tight mb-4 group-hover:text-blue-500">
                   {news[0]?.title}
                 </h1>
-                <p className="text-gray-700 text-base leading-relaxed mb-4">
+                <p className="hidden lg:block text-base leading-relaxed mb-4">
                   {truncateContent(news[0]?.content || "", 100)}
                 </p>
               </div>
@@ -168,29 +54,29 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
           </div>
 
           {/* Two Cards Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 pb-8 border-b border-gray-300">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 pb-8">
             {news.slice(1, 3).map((item, index) => (
               <div
                 key={item.id}
-                className={`flex flex-row-reverse h-48 ${
-                  index === 0 ? "border-r" : "border-l"
+                className={`flex flex-row-reverse gap-5 group h-48 ${
+                  index === 0 ? "md:border-r md:border-gray-300 md:pr-6" : ""
                 }`}
               >
-                <div className="flex-1">
+                <div className="flex-1 relative overflow-hidden">
                   <Image
                     src={"/news1.jpeg"}
                     width={400}
                     height={250}
                     alt={item.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                   />
                 </div>
-                <div className="flex-1 p-4 flex flex-col justify-between">
+                <div className="flex-1 flex flex-col justify-between">
                   <div>
-                    <h2 className="text-lg font-bold text-gray-900 leading-tight mb-3 line-clamp-2">
+                    <h2 className="text-lg font-bold leading-tight mb-3 group-hover:text-blue-500">
                       {item.title}
                     </h2>
-                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
+                    <p className="text-gray-600 text-sm leading-relaxed text-justify">
                       {truncateContent(item.content, 120)}
                     </p>
                   </div>
@@ -198,29 +84,28 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
               </div>
             ))}
           </div>
-
           {/* Three Cards Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 pb-8 border-b border-gray-300">
-            {news.slice(3).map((item, index, array) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8 py-8 border-b border-t border-gray-300">
+            {news.slice(3).map((item, index) => (
               <div
                 key={item.id}
-                className={`flex items-start flex-row-reverse gap-3 ${
-                  index > 0 && index < array.length - 1
-                    ? "md:border-l md:border-r md:border-gray-200 md:px-6"
-                    : ""
-                }`}
+                className={`
+        flex items-start flex-row-reverse group gap-3 relative
+        ${index % 3 !== 2 ? "md:border-r md:border-gray-200" : ""}
+        ${index % 3 === 1 ? "md:px-6" : index % 3 === 0 ? "md:pr-6" : ""}
+      `}
               >
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 relative overflow-hidden">
                   <Image
                     src={"/news1.jpeg"}
                     width={500}
                     height={100}
                     alt={item.title}
-                    className="w-24 h-24 md:w-32 md:h-32 object-cover"
+                    className="w-24 h-24 md:w-32 md:h-32 object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h2 className="text-lg font-semibold text-gray-800">
+                  <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-500">
                     {item.title}
                   </h2>
                 </div>

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import NewsCards from "./NewsCard";
+import NewsCards from "./NewsCards";
 
 interface NewsItem {
   id: string;
