@@ -11,14 +11,14 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
     );
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("bn-BD", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+  // const formatDate = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   return date.toLocaleDateString("bn-BD", {
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //   });
+  // };
 
   const truncateContent = (content: string, maxLength: number) => {
     if (content.length <= maxLength) return content;
@@ -112,68 +112,6 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
               </div>
             ))}
           </div>
-
-          {/* Regular News Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {news.slice(6, 12).map((item) => (
-              <div key={item.id} className="">
-                <div className="p-4">
-                  <div className="mb-2">
-                    <span className="bg-purple-600 text-white px-2 py-1 text-xs font-semibold rounded">
-                      {item.category}
-                    </span>
-                  </div>
-                  <h3 className="text-base font-bold text-gray-900 leading-tight mb-3 line-clamp-3">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-3 line-clamp-3">
-                    {truncateContent(item.content, 120)}
-                  </p>
-                  <div className="flex items-center text-xs text-gray-500 space-x-2">
-                    <span className="font-medium truncate">{item.author}</span>
-                    <span>•</span>
-                    <span>{formatDate(item.publishedAt)}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Additional News Section */}
-          {news.length > 12 && (
-            <div className="mt-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-red-600 pb-2">
-                আরও সংবাদ
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {news.slice(12).map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex space-x-4 p-4 border border-gray-300 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex-1">
-                      <div className="mb-2">
-                        <span className="bg-orange-600 text-white px-2 py-1 text-xs font-semibold rounded">
-                          {item.category}
-                        </span>
-                      </div>
-                      <h4 className="text-base font-semibold text-gray-900 leading-tight mb-2 line-clamp-2">
-                        {item.title}
-                      </h4>
-                      <p className="text-gray-600 text-sm line-clamp-2 mb-2">
-                        {truncateContent(item.content, 100)}
-                      </p>
-                      <div className="flex items-center text-xs text-gray-500 space-x-2">
-                        <span className="font-medium">{item.author}</span>
-                        <span>•</span>
-                        <span>{formatDate(item.publishedAt)}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Right Sidebar */}

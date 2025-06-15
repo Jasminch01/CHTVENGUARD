@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Appbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -14,6 +15,7 @@ const Appbar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
   const [openDesktopDropdown, setOpenDesktopDropdown] = useState<string | null>(
     null
   );
@@ -23,28 +25,31 @@ const Appbar = () => {
   const [openMobileSubDropdown, setOpenMobileSubDropdown] = useState<
     string | null
   >(null);
+  const [hoveredDesktopItem, setHoveredDesktopItem] = useState<string | null>(
+    null
+  );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
+  }, []);
 
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
         setOpenDesktopDropdown(null);
+        setHoveredDesktopItem(null);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside as EventListener);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside as EventListener
-      );
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [dropdownRef]);
 
   const toggleDarkMode = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -76,8 +81,15 @@ const Appbar = () => {
     setOpenMobileSubDropdown(openMobileSubDropdown === menu ? null : menu);
   };
 
+  const handleNavigation = (route: string) => {
+    router.push(route);
+    setOpenDesktopDropdown(null);
+    setHoveredDesktopItem(null);
+    setIsMobileMenuOpen(false);
+  };
+
   const menuItems = [
-    { menu: "প্রচ্ছদ", route: "/cover" },
+    { menu: "প্রচ্ছদ", route: "/" },
     {
       menu: "সংবাদ",
       route: "/news",
@@ -101,7 +113,7 @@ const Appbar = () => {
         },
       ],
     },
-    { menu: "সংবাদ বিজ্ঞপ্তি", route: "/সংবাদ বিজ্ঞপ্তি" },
+    { menu: "সংবাদ বিজ্ঞপ্তি", route: "/press-release" },
     { menu: "মতামত", route: "/comment" },
   ];
 
@@ -158,7 +170,7 @@ const Appbar = () => {
                   <div
                     key={index}
                     className="relative h-full"
-                    ref={dropdownRef}
+                    ref={index === 0 ? dropdownRef : null} // Only attach ref to first item
                   >
                     {item.dropdown ? (
                       <>
@@ -178,40 +190,65 @@ const Appbar = () => {
 
                         {/* Main dropdown container */}
                         {openDesktopDropdown === item.menu && (
-                          <div className="absolute left-0 top-full w-56 bg-white dark:bg-gray-800 shadow-lg z-10 rounded-md">
+                          <div
+                            className="absolute left-0 top-full w-56 bg-white dark:bg-gray-800 shadow-lg z-10 rounded-md"
+                            ref={dropdownRef}
+                          >
                             {item.dropdown.map((dropdownItem, idx) => (
-                              <div key={idx} className="group">
+                              <div
+                                key={idx}
+                                className="relative"
+                                onMouseEnter={() =>
+                                  setHoveredDesktopItem(`${item.menu}-${idx}`)
+                                }
+                                onMouseLeave={() => setHoveredDesktopItem(null)}
+                              >
                                 {/* Parent item */}
                                 <div className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700">
                                   <div className="flex justify-between items-center">
-                                    <Link
-                                      href={dropdownItem.route}
-                                      className="text-lg font-medium text-gray-900 dark:text-gray-100"
-                                    >
-                                      {dropdownItem.menu}
+                                    <Link href={dropdownItem.route}>
+                                      <button
+                                        onClick={() =>
+                                          !dropdownItem.subItems &&
+                                          handleNavigation(dropdownItem.route)
+                                        }
+                                        className="text-lg font-medium text-gray-900 dark:text-gray-100 w-full text-left"
+                                      >
+                                        {dropdownItem.menu}
+                                      </button>
                                     </Link>
                                     {dropdownItem.subItems && (
                                       <ChevronDown className="ml-2 h-4 w-4 text-gray-500 dark:text-gray-400" />
                                     )}
                                   </div>
-                                </div>
 
-                                {/* Child items (submenus) appear on hover of parent */}
-                                {dropdownItem.subItems && (
-                                  <div className="bg-gray-50 dark:bg-gray-700 max-h-0 overflow-hidden group-hover:max-h-96 transition-all duration-300 ease-in-out">
-                                    {dropdownItem.subItems.map(
-                                      (subItem, subIdx) => (
-                                        <Link
-                                          key={subIdx}
-                                          href={subItem.route}
-                                          className="block px-8 py-2 text-base text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:text-gray-900 dark:hover:text-white border-b border-gray-200 dark:border-gray-600 last:border-b-0"
-                                        >
-                                          {subItem.menu}
-                                        </Link>
-                                      )
+                                  {/* Child items (submenus) appear on hover of parent */}
+                                  {dropdownItem.subItems &&
+                                    hoveredDesktopItem ===
+                                      `${item.menu}-${idx}` && (
+                                      <div className="bg-gray-50 dark:bg-gray-700 mt-2 rounded">
+                                        {dropdownItem.subItems.map(
+                                          (subItem, subIdx) => (
+                                            <Link
+                                              key={subIdx}
+                                              href={subItem.route}
+                                            >
+                                              <button
+                                                className="block w-full text-left px-4 py-2 text-base text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:text-gray-900 dark:hover:text-white border-b border-gray-200 dark:border-gray-600 last:border-b-0 first:rounded-t last:rounded-b cursor-pointer"
+                                                onClick={() =>
+                                                  handleNavigation(
+                                                    subItem.route
+                                                  )
+                                                }
+                                              >
+                                                {subItem.menu}
+                                              </button>
+                                            </Link>
+                                          )
+                                        )}
+                                      </div>
                                     )}
-                                  </div>
-                                )}
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -328,18 +365,13 @@ const Appbar = () => {
                                           className="justify-start flex-1 h-auto py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
                                           onClick={() => {
                                             if (!dropdownItem.subItems) {
-                                              setIsMobileMenuOpen(false);
+                                              handleNavigation(
+                                                dropdownItem.route
+                                              );
                                             }
                                           }}
-                                          asChild={!dropdownItem.subItems}
                                         >
-                                          {dropdownItem.subItems ? (
-                                            <span>{dropdownItem.menu}</span>
-                                          ) : (
-                                            <Link href={dropdownItem.route}>
-                                              {dropdownItem.menu}
-                                            </Link>
-                                          )}
+                                          {dropdownItem.menu}
                                         </Button>
 
                                         {/* Show dropdown icon only if item has subitems */}
@@ -379,13 +411,12 @@ const Appbar = () => {
                                                   variant="ghost"
                                                   className="justify-start w-full h-auto py-2 text-sm text-gray-600 dark:text-gray-400 pl-4 hover:bg-gray-100 dark:hover:bg-gray-700"
                                                   onClick={() =>
-                                                    setIsMobileMenuOpen(false)
+                                                    handleNavigation(
+                                                      subItem.route
+                                                    )
                                                   }
-                                                  asChild
                                                 >
-                                                  <Link href={subItem.route}>
-                                                    • {subItem.menu}
-                                                  </Link>
+                                                  • {subItem.menu}
                                                 </Button>
                                               )
                                             )}
@@ -401,10 +432,9 @@ const Appbar = () => {
                             <Button
                               variant="ghost"
                               className="justify-start w-full h-auto py-3 text-base font-medium"
-                              onClick={() => setIsMobileMenuOpen(false)}
-                              asChild
+                              onClick={() => handleNavigation(item.route)}
                             >
-                              <Link href={item.route}>{item.menu}</Link>
+                              {item.menu}
                             </Button>
                           )}
                         </div>
