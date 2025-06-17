@@ -26,7 +26,7 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
   };
 
   return (
-    <div className="sticky top-4 bg-white">
+    <div className="sticky top-4 ">
       {/* Advertisement Space */}
       <div className="bg-gray-100 border border-gray-300 p-4 mb-6 text-center">
         <div className="text-gray-500 text-sm">বিজ্ঞাপন</div>
@@ -36,7 +36,7 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="bg-white border border-gray-300 mb-6">
+      <div className=" border-gray-300 mb-6">
         <div className="flex border-b border-gray-200">
           {tabs.map((tab) => (
             <button
@@ -71,7 +71,7 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-semibold text-gray-900 leading-tight line-clamp-2 mb-1 hover:text-red-600 cursor-pointer transition-colors">
+                  <h4 className="text-sm font-semibold leading-tight line-clamp-2 mb-1 hover:text-red-600 cursor-pointer transition-colors">
                     {item.title}
                   </h4>
                   <div className="flex items-center text-xs text-gray-500 space-x-2">

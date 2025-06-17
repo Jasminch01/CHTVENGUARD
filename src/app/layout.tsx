@@ -32,7 +32,7 @@ export default function RootLayout({
       <body className={`${solaimanLipi.className} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange={false}
           storageKey="chtvenguard-theme"
