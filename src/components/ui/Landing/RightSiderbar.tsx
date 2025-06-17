@@ -26,14 +26,7 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
   };
 
   return (
-    <div className="sticky top-4 ">
-      {/* Advertisement Space */}
-      <div className="bg-gray-100 border border-gray-300 p-4 mb-6 text-center">
-        <div className="text-gray-500 text-sm">বিজ্ঞাপন</div>
-        <div className="h-32 bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center mt-2 rounded">
-          <span className="text-gray-400">বিজ্ঞাপন</span>
-        </div>
-      </div>
+    <div className="sticky top-20 ">
 
       {/* Tab Navigation */}
       <div className=" border-gray-300 mb-6">
