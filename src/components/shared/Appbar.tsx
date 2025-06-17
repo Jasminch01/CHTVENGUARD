@@ -164,19 +164,19 @@ const Appbar = () => {
 
           {/* Desktop Menu Items (when search is closed) */}
           {!isSearchOpen && (
-            <div className="hidden md:flex flex-1 ml-10">
-              <div className="flex">
+            <div className="hidden md:flex flex-1 ml-10 h-full">
+              <div className="flex h-full">
                 {menuItems.map((item, index) => (
                   <div
                     key={index}
                     className="relative h-full"
-                    ref={index === 0 ? dropdownRef : null} // Only attach ref to first item
+                    ref={index === 0 ? dropdownRef : null}
                   >
                     {item.dropdown ? (
-                      <>
+                      <div className="h-full">
                         <button
                           onClick={() => toggleDesktopDropdown(item.menu)}
-                          className="inline-flex items-center justify-center h-full px-4 text-lg font-medium focus:outline-none hover:bg-gray-50 dark:hover:bg-gray-800"
+                          className="inline-flex items-center justify-center h-full px-4 text-lg font-medium focus:outline-none hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200"
                         >
                           {item.menu}
                           <ChevronDown
@@ -253,11 +253,11 @@ const Appbar = () => {
                             ))}
                           </div>
                         )}
-                      </>
+                      </div>
                     ) : (
                       <Link
                         href={item.route}
-                        className="inline-flex items-center justify-center h-full px-4 text-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800"
+                        className="inline-flex items-center justify-center h-full px-4 text-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200"
                       >
                         {item.menu}
                       </Link>
