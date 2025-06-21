@@ -57,7 +57,9 @@ const RangamatiNews = () => {
   return (
     <div className="mt-[4rem] border-r">
       <div className="max-w-7xl mx-auto px-4 lg:px-0 pb-5">
-        <h1 className="text-2xl font-bold mb-6">রাঙ্গামাটি</h1>
+        <div className="mb-2 border-l-4 border-red-500 pl-3">
+          <h1 className="text-2xl font-bold">রাঙ্গামাটি</h1>
+        </div>
 
         <div className="flex flex-col lg:flex-row">
           {/* Main Content */}
@@ -92,7 +94,7 @@ const RangamatiNews = () => {
                             {newsItem.title}
                           </h2>
                           <div className="flex justify-between items-center text-gray-500">
-                            <span>{newsItem.content}</span>
+                            <span className="line-clamp-3">{newsItem.content}</span>
                           </div>
                         </div>
                       </div>
@@ -105,14 +107,14 @@ const RangamatiNews = () => {
                     <div className="text-center py-8">Not found</div>
                   ) : (
                     <div className="space-y-4">
-                      {rangamatiNews.slice(1, 4).map((newsItem, index) => (
+                      {rangamatiNews.slice(1, 5).map((newsItem, index) => (
                         <Link
                           href={`news/rangamati/${newsItem.id}`}
                           key={newsItem.id}
                         >
                           <div
                             className={`flex flex-col lg:flex-row-reverse gap-5 group ${
-                              index < rangamatiNews.slice(4).length - 1
+                              index < rangamatiNews.slice(1, 5).length - 1
                                 ? "border-b pb-3 mb-3 border-gray-200"
                                 : ""
                             }`}
@@ -124,7 +126,7 @@ const RangamatiNews = () => {
                                   width={500}
                                   height={500}
                                   alt={newsItem.title}
-                                  className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                                  className="w-full h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                                 />
                               </div>
                             )}

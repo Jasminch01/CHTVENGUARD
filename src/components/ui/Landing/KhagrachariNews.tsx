@@ -57,7 +57,9 @@ const KhagrachariNews = () => {
   return (
     <div className="mt-[4rem] border-r">
       <div className="max-w-7xl mx-auto px-4 lg:px-0 pb-5">
-        <h1 className="text-2xl font-bold mb-6">খাগড়াছড়ি</h1>
+        <div className="mb-2 border-l-4 border-red-500 pl-3">
+          <h1 className="text-2xl font-bold">খাগড়াছড়ি</h1>
+        </div>
 
         <div className="flex flex-col lg:flex-row">
           {/* Main Content */}
@@ -68,14 +70,14 @@ const KhagrachariNews = () => {
             {rangamatiNews.length === 0 ? (
               <div className="text-center py-8">Not found</div>
             ) : (
-              <div className="flex gap-5 border-t border-b pt-10 pb-5 border-gray-200">
-                <div className="flex-2 border-r border-gray-200 pr-4">
+              <div className="flex flex-col gap-5 border-t border-b pt-10 pb-5 border-gray-200">
+                <div className=" border-gray-200">
                   {rangamatiNews.slice(0, 1).map((newsItem) => (
                     <Link
                       key={newsItem.id}
                       href={`/news/rangamati/${newsItem.id}`}
                     >
-                      <div className="flex flex-col gap-5 mb-8 group">
+                      <div className="flex flex-col gap-5 group border-b pb-10">
                         {newsItem.image && (
                           <div className="flex-1 relative overflow-hidden">
                             <Image
@@ -100,20 +102,20 @@ const KhagrachariNews = () => {
                   ))}
                 </div>
 
-                <div className="flex-1">
+                <div className="">
                   {rangamatiNews.length === 0 ? (
                     <div className="text-center py-8">Not found</div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-4 grid grid-cols-1 lg:grid-cols-3 gap-5">
                       {rangamatiNews.slice(1, 4).map((newsItem, index) => (
                         <Link
                           href={`news/rangamati/${newsItem.id}`}
                           key={newsItem.id}
                         >
                           <div
-                            className={`flex flex-col lg:flex-row-reverse gap-5 group ${
-                              index < rangamatiNews.slice(4).length - 1
-                                ? "border-b pb-3 mb-3 border-gray-200"
+                            className={`flex flex-col gap-5 group ${
+                              index < 2
+                                ? "lg:border-r lg:border-gray-200 lg:pr-5"
                                 : ""
                             }`}
                           >

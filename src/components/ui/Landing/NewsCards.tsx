@@ -3,7 +3,6 @@ import Image from "next/image";
 import RightSidebar from "./RightSiderbar";
 import RangamatiNews from "./RangamatiNews";
 import KhagrachariNews from "./KhagrachariNews";
-import BandarbanNews from "./BandarbanNews";
 
 const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
   if (!news || news.length === 0) {
@@ -125,9 +124,8 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
               })}
             </div>
           </div>
-         <RangamatiNews/>
-         <KhagrachariNews/>
-         <BandarbanNews/>
+          <RangamatiNews />
+          <KhagrachariNews />
         </div>
 
         {/* Right Sidebar */}
