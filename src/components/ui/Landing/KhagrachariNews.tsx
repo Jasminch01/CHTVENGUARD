@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
-const BandarbanNews = () => {
+const KhagrachariNews = () => {
   const [rangamatiNews, setRangamatiNews] = useState<NewsItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,7 +57,7 @@ const BandarbanNews = () => {
   return (
     <div className="mt-[4rem] border-r">
       <div className="max-w-7xl mx-auto px-4 lg:px-0 pb-5">
-        <h1 className="text-2xl font-bold mb-6">বান্দরবান</h1>
+        <h1 className="text-2xl font-bold mb-6">খাগড়াছড়ি</h1>
 
         <div className="flex flex-col lg:flex-row">
           {/* Main Content */}
@@ -148,4 +148,4 @@ const BandarbanNews = () => {
   );
 };
 
-export default BandarbanNews;
+export default KhagrachariNews;

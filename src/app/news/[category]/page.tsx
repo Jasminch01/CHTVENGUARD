@@ -2,13 +2,16 @@
 import { NewsItem } from "@/app/type";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-const RangamatiNewspage = () => {
-  const [rangamatiNews, setRangamatiNews] = useState<NewsItem[]>([]);
+const CategoryNewspage = () => {
+  const [categoryNews, setCategoryNews] = useState<NewsItem[]>([]);
   const [allNews, setAllNews] = useState<NewsItem[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { category } = useParams();
+  const categoryName = category?.toString();
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -20,9 +23,9 @@ const RangamatiNewspage = () => {
         const data: NewsItem[] = await response.json();
         // Filter news for Rangamati category
         const filteredNews = data.filter(
-          (item) => item.category.toLowerCase() === "রাঙ্গামাটি"
+          (item) => item.category.toLowerCase() === categoryName
         );
-        setRangamatiNews(filteredNews);
+        setCategoryNews(filteredNews);
         setAllNews(data); // Store all news for the sidebar
       } catch (err) {
         setError(
@@ -34,7 +37,7 @@ const RangamatiNewspage = () => {
     };
 
     fetchNews();
-  }, []);
+  }, [categoryName]);
 
   if (error) {
     return (
@@ -60,7 +63,7 @@ const RangamatiNewspage = () => {
     <div className="mt-[7rem] border-t border-gray-100 mb-5">
       <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
         <div className="border-b mb-10">
-          <h1 className="text-2xl font-bold mb-6">রাঙ্গামাটি</h1>
+          <h1 className="text-2xl font-bold mb-6">{categoryName}</h1>
         </div>
 
         <div className="flex flex-col lg:flex-row">
@@ -69,16 +72,16 @@ const RangamatiNewspage = () => {
             {/* Horizontal divider for mobile */}
             <div className="lg:hidden w-full border-b border-gray-200 my-6"></div>
 
-            {rangamatiNews.length === 0 ? (
+            {categoryNews.length === 0 ? (
               <div className="text-center py-8">Not found</div>
             ) : (
               <div className="border-b">
-                {rangamatiNews.slice(0, 1).map((newsItem) => (
-                  <Link key={newsItem.id} href={`/news/rangamati/${newsItem.id}`}>
-                    <div
-
-                      className="flex flex-col lg:flex-row-reverse gap-5 mb-8 group"
-                    >
+                {categoryNews.slice(0, 1).map((newsItem) => (
+                  <Link
+                    key={newsItem.id}
+                    href={`/news/${newsItem.category}/${newsItem.id}`}
+                  >
+                    <div className="flex flex-col lg:flex-row-reverse gap-5 mb-8 group">
                       {newsItem.image && (
                         <div className="flex-1 relative overflow-hidden">
                           <Image
@@ -95,7 +98,7 @@ const RangamatiNewspage = () => {
                           {newsItem.title}
                         </h2>
                         <div className="flex justify-between items-center text-gray-500">
-                          <span>{newsItem.content}</span>
+                          <p className="line-clamp-4">{newsItem.content}</p>
                         </div>
                       </div>
                     </div>
@@ -105,13 +108,13 @@ const RangamatiNewspage = () => {
             )}
 
             <div className="mt-5">
-              {rangamatiNews.length === 0 ? (
+              {categoryNews.length === 0 ? (
                 <div className="text-center py-8">Not found</div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {rangamatiNews.slice(1).map((newsItem, index) => (
+                  {categoryNews.slice(1).map((newsItem, index) => (
                     <Link
-                      href={`news/rangamati/${newsItem.id}`}
+                      href={`/news/${newsItem.category}/${newsItem.id}`}
                       key={newsItem.id}
                     >
                       <div
@@ -198,4 +201,4 @@ const RangamatiNewspage = () => {
   );
 };
 
-export default RangamatiNewspage;
+export default CategoryNewspage;

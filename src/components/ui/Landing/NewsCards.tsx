@@ -2,6 +2,8 @@ import { NewsCardsProps } from "@/app/type";
 import Image from "next/image";
 import RightSidebar from "./RightSiderbar";
 import RangamatiNews from "./RangamatiNews";
+import KhagrachariNews from "./KhagrachariNews";
+import BandarbanNews from "./BandarbanNews";
 
 const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
   if (!news || news.length === 0) {
@@ -81,7 +83,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
             </div>
             {/* Three Cards Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 py-3 border-b border-t border-gray-300 dark:border-gray-700">
-              {news.slice(3).map((item, index) => {
+              {news.slice(0, 6).map((item, index) => {
                 const rowNumber = Math.floor(index / 3) + 1; // Calculate row number (1, 2, 3, etc.)
                 const isFirstRow = rowNumber === 1;
                 const isSecondRow = rowNumber === 2;
@@ -124,6 +126,8 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
             </div>
           </div>
          <RangamatiNews/>
+         <KhagrachariNews/>
+         <BandarbanNews/>
         </div>
 
         {/* Right Sidebar */}

@@ -9,7 +9,6 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
   const tabs = [
     { key: "popular", label: "জনপ্রিয়" },
     { key: "latest", label: "সর্বশেষ" },
-    { key: "trending", label: "ট্রেন্ডিং" },
   ];
 
   const getTabNews = () => {
@@ -67,13 +66,6 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
                   <h4 className="text-sm font-semibold leading-tight line-clamp-2 mb-1 hover:text-red-600 cursor-pointer transition-colors">
                     {item.title}
                   </h4>
-                  <div className="flex items-center text-xs text-gray-500 space-x-2">
-                    <span>{item.category}</span>
-                    <span>•</span>
-                    <span>
-                      {new Date(item.publishedAt).toLocaleDateString("bn-BD")}
-                    </span>
-                  </div>
                 </div>
               </div>
             ))}

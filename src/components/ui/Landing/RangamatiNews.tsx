@@ -19,7 +19,7 @@ const RangamatiNews = () => {
         const data: NewsItem[] = await response.json();
         // Filter news for Rangamati category
         const filteredNews = data.filter(
-          (item) => item.category.toLowerCase() === "রাঙ্গামাটি"
+          (item) => item.category.toLowerCase() === "rangamati"
         );
         setRangamatiNews(filteredNews);
       } catch (err) {
@@ -105,7 +105,7 @@ const RangamatiNews = () => {
                     <div className="text-center py-8">Not found</div>
                   ) : (
                     <div className="space-y-4">
-                      {rangamatiNews.slice(4).map((newsItem, index) => (
+                      {rangamatiNews.slice(1, 4).map((newsItem, index) => (
                         <Link
                           href={`news/rangamati/${newsItem.id}`}
                           key={newsItem.id}

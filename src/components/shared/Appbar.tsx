@@ -114,7 +114,7 @@ const Appbar = () => {
       ],
     },
     { menu: "সংবাদ বিজ্ঞপ্তি", route: "/press-release" },
-    { menu: "মতামত", route: "/comment" },
+    { menu: "মতামত", route: "/opinion" },
   ];
 
   if (!mounted) {
