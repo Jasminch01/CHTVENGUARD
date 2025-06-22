@@ -1,5 +1,6 @@
 "use client";
 import { NewsItem } from "@/app/type";
+import { getCategoryNameInBangla } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -12,7 +13,6 @@ const ChtCategoryNewspage = () => {
   const [loading, setLoading] = useState(true);
   const { category } = useParams();
   const categoryName = category?.toString();
-
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -64,7 +64,9 @@ const ChtCategoryNewspage = () => {
     <div className="mt-[7rem] border-t border-gray-100 mb-5">
       <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
         <div className="border-b mb-10">
-          <h1 className="text-2xl font-bold mb-6">{categoryName}</h1>
+          <h1 className="text-2xl font-bold mb-6">
+            {getCategoryNameInBangla(categoryName as string)}
+          </h1>
         </div>
 
         <div className="flex flex-col lg:flex-row">
