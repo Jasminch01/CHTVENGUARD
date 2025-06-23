@@ -55,9 +55,9 @@ const RangamatiNews = () => {
   }
 
   return (
-    <div className="mt-[4rem] border-r">
-      <div className="max-w-7xl mx-auto px-4 lg:px-0 pb-5">
-        <div className="mb-2 border-l-4 border-red-500 pl-3">
+    <div className="mt-[4rem] lg:border-r">
+      <div className="max-w-7xl mx-auto lg:px-0 pb-5">
+        <div className="md:mb-2 border-l-4 border-red-500 pl-3">
           <h1 className="text-2xl font-bold">রাঙ্গামাটি</h1>
         </div>
 
@@ -70,8 +70,8 @@ const RangamatiNews = () => {
             {rangamatiNews.length === 0 ? (
               <div className="text-center py-8">Not found</div>
             ) : (
-              <div className="flex gap-5 border-t border-b pt-10 pb-5 border-gray-200">
-                <div className="flex-2 border-r border-gray-200 pr-4">
+              <div className="flex flex-col lg:flex-row gap-5 md:border-t border-b md:pt-10 pb-5 border-gray-200">
+                <div className="lg:flex-2 lg:border-r border-gray-200 lg:pr-4">
                   {rangamatiNews.slice(0, 1).map((newsItem) => (
                     <Link
                       key={newsItem.id}
@@ -102,7 +102,7 @@ const RangamatiNews = () => {
                   ))}
                 </div>
 
-                <div className="flex-1">
+                <div className="lg:flex-1">
                   {rangamatiNews.length === 0 ? (
                     <div className="text-center py-8">Not found</div>
                   ) : (
@@ -113,7 +113,7 @@ const RangamatiNews = () => {
                           key={newsItem.id}
                         >
                           <div
-                            className={`flex flex-col lg:flex-row-reverse gap-5 group ${
+                            className={`flex flex-row-reverse gap-5 group ${
                               index < rangamatiNews.slice(1, 5).length - 1
                                 ? "border-b pb-3 mb-3 border-gray-200"
                                 : ""
@@ -126,7 +126,7 @@ const RangamatiNews = () => {
                                   width={500}
                                   height={500}
                                   alt={newsItem.title}
-                                  className="w-full h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                                  className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                                 />
                               </div>
                             )}

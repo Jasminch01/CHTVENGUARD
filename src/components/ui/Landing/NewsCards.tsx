@@ -26,7 +26,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
       <div className="flex">
         {/* Left Main Content */}
         <div className="flex-1">
-          <div className="border-r pr-3">
+          <div className="lg:border-r lg:pr-3">
             {/* Main Featured News Section */}
             <div className="mb-3">
               <Link href={`/news/${news[0].category}/${news[0].id}`}>
@@ -37,7 +37,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                       width={500}
                       height={500}
                       alt={news[0]?.title}
-                      className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                      className="w-full lg:h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                     />
                   </div>
                   <div className="flex-1">
@@ -45,7 +45,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                       {news[0]?.title}
                     </h1>
                     <p className="hidden lg:block text-base leading-relaxed mb-4 dark:text-gray-300">
-                      {truncateContent(news[0]?.content || "", 100)}
+                      {truncateContent(news[0]?.content || "", 150)}
                     </p>
                   </div>
                 </div>
@@ -57,9 +57,9 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
               {news.slice(1, 3).map((item, index) => (
                 <Link key={item.id} href={`/news/${item.category}/${item.id}`}>
                   <div
-                    className={`flex flex-row-reverse gap-5 group h-48 ${
+                    className={`flex flex-row-reverse gap-5 group  ${
                       index === 0
-                        ? "md:border-r md:border-gray-300 md:pr-6 dark:md:border-gray-700"
+                        ? "md:border-r md:border-b-0 md:border-gray-300 md:pr-6 border-b dark:md:border-gray-700"
                         : ""
                     }`}
                   >
@@ -69,7 +69,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                         width={400}
                         height={250}
                         alt={item.title}
-                        className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                        className="w-full lg:h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                       />
                     </div>
                     <div className="flex-1 flex flex-col justify-between">
@@ -77,8 +77,8 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                         <h2 className="text-lg font-bold leading-tight mb-3 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100">
                           {item.title}
                         </h2>
-                        <p className="text-gray-600 dark:text-gray-400 line-clamp-2 leading-relaxed text-justify">
-                          {truncateContent(item.content, 120)}
+                        <p className="text-gray-600 hidden lg:block dark:text-gray-400 line-clamp-2 leading-relaxed text-justify">
+                          {truncateContent(item.content, 50)}
                         </p>
                       </div>
                     </div>
@@ -100,7 +100,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                     href={`/news/${item.category}/${item.id}`}
                   >
                     <div
-                      className={`flex flex-col lg:flex-row-reverse gap-5 mb-1 ${
+                      className={`flex  h-full flex-row-reverse gap-5 mb-1 ${
                         index % 2 === 0 ? "lg:pr-1" : "lg:pl-1"
                       } relative group ${
                         // Bottom border only for first row
@@ -114,13 +114,13 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                           : ""
                       }`}
                     >
-                      <div className="flex-shrink-0 relative overflow-hidden">
+                      <div className="flex-1 relative overflow-hidden">
                         <Image
                           src={"/news1.jpeg"}
                           width={500}
                           height={100}
                           alt={item.title}
-                          className="w-24 h-24 md:w-32 md:h-32 object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                          className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                         />
                       </div>
                       <div className="flex-1 min-w-0">

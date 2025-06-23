@@ -14,26 +14,24 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="py-10 border-t-green-600 border-t-2">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
-        <div className="py-10 flex justify-between items-center">
+        <div className="py-10 flex flex-col md:flex-row justify-between items-center">
           {/* Logo and Editor Info */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
-            <div className="flex items-center mb-4 lg:mb-0">
-              <div className="">
-                <Image
-                  src={`/brand.png`}
-                  width={300}
-                  height={30}
-                  alt="brand-logo"
-                />
-              </div>
+          <div className="mb-6 md:mb-0">
+            <div className="flex justify-center md:justify-start">
+              <Image
+                src={`/brand.png`}
+                width={300}
+                height={30}
+                alt="brand-logo"
+              />
             </div>
           </div>
 
           {/* Navigation Links */}
-          <div className="">
-            <nav className="flex flex-wrap gap-4 md:gap-6">
+          <div className="w-full md:w-auto">
+            <nav className="flex flex-wrap justify-center md:justify-end gap-4 md:gap-6">
               {navigationLinks.map((link, index) => (
                 <a
                   key={index}
