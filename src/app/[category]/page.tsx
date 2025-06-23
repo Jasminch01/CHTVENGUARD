@@ -52,7 +52,7 @@ const CategoryNewspage = () => {
 
   if (loading === null) {
     return (
-      <div className="mt-[7rem] border-t border-gray-100 mb-5">
+      <div className="mt-[7rem] border-t mb-5">
         <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
           <div className="text-center py-8">Loading news...</div>
         </div>
@@ -61,7 +61,7 @@ const CategoryNewspage = () => {
   }
 
   return (
-    <div className="mt-[7rem] border-t border-gray-100 mb-5">
+    <div className="mt-[7rem] border-t mb-5">
       <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
         <div className="border-b mb-10">
           <h1 className="text-2xl font-bold mb-6">
@@ -71,9 +71,9 @@ const CategoryNewspage = () => {
 
         <div className="flex flex-col lg:flex-row">
           {/* Main Content */}
-          <div className="lg:w-2/3 lg:pr-5 lg:border-r border-gray-200 relative">
+          <div className="lg:w-2/3 lg:pr-5 lg:border-r relative">
             {/* Horizontal divider for mobile */}
-            <div className="lg:hidden w-full border-b border-gray-200 my-6"></div>
+            <div className="lg:hidden w-full border-b my-6"></div>
 
             {categoryNews.length === 0 ? (
               <div className="text-center py-8">Not found</div>
@@ -123,9 +123,9 @@ const CategoryNewspage = () => {
                       <div
                         className={`flex flex-col lg:flex-row-reverse gap-5 mb-1 ${
                           index % 2 === 0 ? "lg:pr-1" : "lg:pl-1"
-                        } relative group after:content-[''] after:absolute after:-bottom-3 after:left-0 after:w-full after:h-px after:bg-gray-200 ${
+                        } relative group after:content-[''] after:absolute after:-bottom-3 after:left-0 after:w-full after:h-px after:bg-gray-200 dark:after:bg-gray-700 ${
                           index % 2 === 0
-                            ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-200"
+                            ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-200 dark:before:bg-gray-700 "
                             : ""
                         }`}
                       >
@@ -157,7 +157,7 @@ const CategoryNewspage = () => {
           <div className="lg:w-1/3 lg:pl-5">
             {/* Latest News Section */}
             <div className="rounded-lg">
-              <h2 className="text-xl font-bold mb-4 pb-2 border-b border-gray-200">
+              <h2 className="text-xl font-bold mb-4 pb-2 border-b">
                 সর্বশেষ
               </h2>
               <div className="space-y-3">
@@ -168,32 +168,31 @@ const CategoryNewspage = () => {
                   )
                   .slice(0, 5)
                   .map((news) => (
-                    <div
-                      key={news.id}
-                      className="pb-4 border-b border-gray-100 group last:border-b-0 w-full"
-                    >
-                      <div className="flex gap-4 w-full">
-                        <div className="flex-1 min-w-0">
-                          {" "}
-                          {/* Added min-w-0 to prevent text overflow */}
-                          <h3 className="font-medium text-lg group-hover:text-blue-500">
-                            {news.title}
-                          </h3>{" "}
-                          {/* Added line-clamp for consistent height */}
-                        </div>
-                        <div className="flex-shrink-0 overflow-hidden">
-                          {" "}
-                          {/* Changed to flex-shrink-0 and added rounded */}
-                          <Image
-                            src={`/news1.jpeg`}
-                            width={124}
-                            height={83}
-                            alt={news.title}
-                            className="w-[124px] h-[83px] object-cover transition-transform duration-400 ease-out group-hover:scale-105"
-                          />
+                    <Link href={`/${news.category}/${news.id}`} key={news.id}>
+                      <div className="pb-4 border-b group last:border-b-0 w-full">
+                        <div className="flex gap-4 w-full">
+                          <div className="flex-1 min-w-0">
+                            {" "}
+                            {/* Added min-w-0 to prevent text overflow */}
+                            <h3 className="font-medium text-lg group-hover:text-blue-500">
+                              {news.title}
+                            </h3>{" "}
+                            {/* Added line-clamp for consistent height */}
+                          </div>
+                          <div className="flex-shrink-0 overflow-hidden">
+                            {" "}
+                            {/* Changed to flex-shrink-0 and added rounded */}
+                            <Image
+                              src={`/news1.jpeg`}
+                              width={124}
+                              height={83}
+                              alt={news.title}
+                              className="w-[124px] h-[83px] object-cover transition-transform duration-400 ease-out group-hover:scale-105"
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
               </div>
             </div>

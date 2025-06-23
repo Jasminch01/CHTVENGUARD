@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
                 <a
                   key={index}
                   href={link.href}
-                  className="text-sm text-gray-600 hover:text-blue-600 transition-colors duration-200"
+                  className="text-lg  hover:text-white text-gray-500 transition-colors duration-200"
                 >
                   {link.name}
                 </a>
@@ -46,7 +46,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
       {/* Bottom Border */}
-      <div className="border-t border-gray-200 pt-10 flex items-center justify-center">
+      <div className="border-t pt-10 flex items-center justify-center">
         <div className="text-center text-sm text-gray-500">
           © 2025 chtvenguard. All rights reserved.
         </div>

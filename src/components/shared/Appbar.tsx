@@ -212,7 +212,7 @@ const Appbar = () => {
                                           !dropdownItem.subItems &&
                                           handleNavigation(dropdownItem.route)
                                         }
-                                        className="text-lg font-medium text-gray-900 dark:text-gray-100 w-full text-left"
+                                        className="text-lg font-medium text-gray-900 dark:text-gray-100 w-full text-left cursor-pointer"
                                       >
                                         {dropdownItem.menu}
                                       </button>

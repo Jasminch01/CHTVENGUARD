@@ -46,7 +46,7 @@ const RangamatiNews = () => {
 
   if (loading) {
     return (
-      <div className="mt-[7rem] border-t border-gray-100 mb-5">
+      <div className="mt-[7rem] border-t mb-5">
         <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
           <div className="text-center py-8">Loading news...</div>
         </div>
@@ -65,13 +65,13 @@ const RangamatiNews = () => {
           {/* Main Content */}
           <div className="lg:pr-3 relative">
             {/* Horizontal divider for mobile */}
-            <div className="lg:hidden w-full border-b border-gray-200 my-6"></div>
+            <div className="lg:hidden w-full border-b 0 my-6"></div>
 
             {rangamatiNews.length === 0 ? (
               <div className="text-center py-8">Not found</div>
             ) : (
-              <div className="flex flex-col lg:flex-row gap-5 md:border-t border-b md:pt-10 pb-5 border-gray-200">
-                <div className="lg:flex-2 lg:border-r border-gray-200 lg:pr-4">
+              <div className="flex flex-col lg:flex-row gap-5 md:border-t border-b md:pt-10 pb-5">
+                <div className="lg:flex-2 lg:border-r lg:pr-4">
                   {rangamatiNews.slice(0, 1).map((newsItem) => (
                     <Link
                       key={newsItem.id}
@@ -94,7 +94,9 @@ const RangamatiNews = () => {
                             {newsItem.title}
                           </h2>
                           <div className="flex justify-between items-center text-gray-500">
-                            <span className="line-clamp-3">{newsItem.content}</span>
+                            <span className="line-clamp-3">
+                              {newsItem.content}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -115,7 +117,7 @@ const RangamatiNews = () => {
                           <div
                             className={`flex flex-row-reverse gap-5 group ${
                               index < rangamatiNews.slice(1, 5).length - 1
-                                ? "border-b pb-3 mb-3 border-gray-200"
+                                ? "border-b pb-3 mb-3"
                                 : ""
                             }`}
                           >

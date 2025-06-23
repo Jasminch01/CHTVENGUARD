@@ -105,12 +105,12 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                       } relative group ${
                         // Bottom border only for first row
                         isFirstRow
-                          ? "after:content-[''] after:absolute after:-bottom-3 after:left-0 after:w-full after:h-px after:bg-gray-200"
+                          ? "after:content-[''] after:absolute after:-bottom-3 after:left-0 after:w-full after:h-px after:bg-gray-400 dark:after:bg-gray-700 "
                           : ""
                       } ${
                         // Right border for first row (except last card) and second row (except last card)
                         (isFirstRow || isSecondRow) && !isLastInRow
-                          ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-200"
+                          ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-400 dark:before:bg-gray-700"
                           : ""
                       }`}
                     >

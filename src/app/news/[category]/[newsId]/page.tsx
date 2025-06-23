@@ -97,11 +97,11 @@ const NewsDetailsContentpage = () => {
   const contentParagraphs = formatContentIntoParagraphs(newsItem.content);
 
   return (
-    <div className="mt-[7rem] border-t border-gray-100 mb-5">
+    <div className="my-[7rem] border-t">
       <div className="max-w-7xl mx-auto mt-3 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Content - Takes 3 columns */}
-          <div className="lg:col-span-3 border-r border-gray-200 pr-6">
+          <div className="lg:col-span-3 border-r pr-6">
             <div className="border-b pb-5">
               <span className="border-b pb-1">
                 {getCategoryNameInBangla(newsItem.category)}
@@ -150,13 +150,13 @@ const NewsDetailsContentpage = () => {
             </div>
 
             {/* Latest News Section at Bottom */}
-            <div className="">
+            <div className="pb-10">
               <div className="border-l-4 pl-3 border-l-green-600">
-                <h3 className="text-2xl font-bold text-gray-800">
+                <h3 className="text-2xl font-bold">
                   সর্বশেষ খবর
                 </h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-b border-gray-200 py-8 mt-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-b py-8 mt-3">
                 {latestNews.length > 0 ? (
                   latestNews.slice(0, 3).map((news, index) => (
                     <div key={news.id} className="relative">
@@ -177,7 +177,7 @@ const NewsDetailsContentpage = () => {
                             </div>
                           )}
                           <div className="flex-1">
-                            <h4 className="text-xl mt-3 font-medium text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 mb-2">
+                            <h4 className="text-xl mt-3 font-medium line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 mb-2">
                               {news.title}
                             </h4>
                           </div>
@@ -185,7 +185,7 @@ const NewsDetailsContentpage = () => {
                       </Link>
                       {/* Right Border for cards (every 3rd card won't have border) */}
                       {(index + 1) % 3 !== 0 && (
-                        <div className="hidden md:block absolute top-0 right-0 h-full w-px bg-gray-200 transform translate-x-3"></div>
+                        <div className="hidden md:block absolute top-0 right-0 h-full w-px transform translate-x-3"></div>
                       )}
                     </div>
                   ))
@@ -202,7 +202,7 @@ const NewsDetailsContentpage = () => {
           <div className="lg:col-span-1 mt-20">
             <div className="sticky top-[5rem]">
               <div className="">
-                <h3 className="text-2xl font-bold mb-4 text-gray-800 border-b pb-2">
+                <h3 className="text-2xl font-bold mb-4 border-b pb-2">
                   আরও পড়ুন
                 </h3>
 
@@ -216,7 +216,7 @@ const NewsDetailsContentpage = () => {
                       >
                         <div className="pb-4">
                           <div className="flex-1">
-                            <h4 className="text-xl border-b pb-2 font-medium text-gray-900 line-clamp-3 group-hover:text-blue-600 transition-colors duration-300">
+                            <h4 className="text-xl border-b pb-2 font-medium line-clamp-3 group-hover:text-blue-600 transition-colors duration-300">
                               {news.title}
                             </h4>
                           </div>

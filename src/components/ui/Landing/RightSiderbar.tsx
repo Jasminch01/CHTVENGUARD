@@ -40,7 +40,7 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
               }
               className={`flex-1 py-3 px-4 text-sm font-semibold transition-colors ${
                 activeTab === tab.key
-                  ? "bg-red-600 text-white"
+                  ? "bg-red-700 text-white"
                   : "bg-gray-50 text-gray-700 hover:bg-gray-100"
               }`}
             >
@@ -50,20 +50,20 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
         </div>
 
         {/* Tab Content */}
-        <div className="p-4">
+        <div className="py-4">
           <div className="space-y-4">
             {getTabNews().map((item, index) => (
               <div
                 key={item.id}
-                className="flex space-x-3 pb-4 border-b border-gray-100 last:border-b-0"
+                className="flex space-x-3 pb-4 border-b last:border-b-0 group"
               >
                 <div className="flex-shrink-0">
-                  <span className="inline-flex items-center justify-center w-6 h-6 bg-red-600 text-white text-xs font-bold rounded">
+                  <span className="inline-flex items-center justify-center w-6 h-6 bg-red-700 text-white text-xs font-bold rounded">
                     {index + 1}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-semibold leading-tight line-clamp-2 mb-1 hover:text-red-600 cursor-pointer transition-colors">
+                  <h4 className="text-sm font-semibold leading-tight line-clamp-2 mb-1 group-hover:text-blue-500 cursor-pointer transition-colors">
                     {item.title}
                   </h4>
                 </div>

@@ -46,7 +46,7 @@ const KhagrachariNews = () => {
 
   if (loading) {
     return (
-      <div className="mt-[7rem] border-t border-gray-100 mb-5">
+      <div className="mt-[7rem] border-t dark:border-gray-700 border-gray-200 mb-5">
         <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
           <div className="text-center py-8">Loading news...</div>
         </div>
@@ -70,7 +70,7 @@ const KhagrachariNews = () => {
             {rangamatiNews.length === 0 ? (
               <div className="text-center py-8">Not found</div>
             ) : (
-              <div className="flex flex-col gap-5 border-t border-b pt-10 pb-5 border-gray-200">
+              <div className="flex flex-col gap-5 border-t border-b pt-10 pb-5">
                 <div className=" border-gray-200">
                   {rangamatiNews.slice(0, 1).map((newsItem) => (
                     <Link
@@ -115,7 +115,7 @@ const KhagrachariNews = () => {
                           <div
                             className={`flex flex-col gap-5 group ${
                               index < 2
-                                ? "lg:border-r lg:border-gray-200 lg:pr-5"
+                                ? "lg:border-r lg:pr-5"
                                 : ""
                             }`}
                           >
