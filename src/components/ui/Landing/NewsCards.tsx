@@ -23,7 +23,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
   return (
     <div className="w-full">
       <BreakingNews news={news} />
-      <div className="flex gap-6">
+      <div className="flex">
         {/* Left Main Content */}
         <div className="flex-1">
           <div className="border-r pr-3">
@@ -139,7 +139,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
         </div>
 
         {/* Right Sidebar */}
-        <div className="w-80 hidden lg:block">
+        <div className="w-80 hidden pl-3 lg:block">
           <RightSidebar news={news} />
         </div>
       </div>

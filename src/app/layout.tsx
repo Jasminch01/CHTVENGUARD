@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Appbar from "@/components/shared/Appbar";
 import { ThemeProvider } from "next-themes";
+import Footer from "@/components/shared/Footer";
 
 const solaimanLipi = localFont({
   src: [
@@ -40,6 +41,7 @@ export default function RootLayout({
           <div className="min-h-screen bg-background text-foreground">
             <Appbar />
             <main className="pt-16">{children}</main>
+            <Footer/>
           </div>
         </ThemeProvider>
       </body>
