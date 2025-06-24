@@ -35,7 +35,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                 <div className="flex lg:flex-row-reverse flex-col xl:h-[300px] gap-5 group border-b pb-3">
                   <div className="flex-1 relative overflow-hidden">
                     <Image
-                      src={"/news1.jpeg"}
+                      src={`/${news[0].image}`}
                       width={500}
                       height={500}
                       alt={news[0]?.title}
@@ -67,7 +67,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                   >
                     <div className="flex-1 relative overflow-hidden">
                       <Image
-                        src={"/news1.jpeg"}
+                        src={item.image ? `/${item.image}` : "/news1.jpeg"}
                         width={400}
                         height={250}
                         alt={item.title}
@@ -118,7 +118,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                     >
                       <div className="flex-1 relative overflow-hidden">
                         <Image
-                          src={"/news1.jpeg"}
+                          src={item.image ? `/${item.image}` : "/news1.jpeg"}
                           width={500}
                           height={100}
                           alt={item.title}
@@ -145,8 +145,8 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
           <RightSidebar news={news} />
         </div>
       </div>
-      <BandarbanNews/>
-      <InternationalNews/>
+      <BandarbanNews />
+      <InternationalNews />
     </div>
   );
 };

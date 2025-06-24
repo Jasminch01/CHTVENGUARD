@@ -88,7 +88,7 @@ const CategoryNewspage = () => {
                       {newsItem.image && (
                         <div className="flex-1 relative overflow-hidden">
                           <Image
-                            src={`/news1.jpeg`}
+                            src={newsItem.image ? `/${newsItem.image}` : "/news1.jpeg"}
                             width={500}
                             height={500}
                             alt={newsItem.title}
@@ -132,7 +132,11 @@ const CategoryNewspage = () => {
                         {newsItem.image && (
                           <div className="flex-1 overflow-hidden">
                             <Image
-                              src={`/news1.jpeg`}
+                              src={
+                                newsItem.image
+                                  ? `/${newsItem.image}`
+                                  : "/news1.jpeg"
+                              }
                               width={500}
                               height={500}
                               alt={newsItem.title}
@@ -157,9 +161,7 @@ const CategoryNewspage = () => {
           <div className="lg:w-1/3 lg:pl-5">
             {/* Latest News Section */}
             <div className="rounded-lg">
-              <h2 className="text-xl font-bold mb-4 pb-2 border-b">
-                সর্বশেষ
-              </h2>
+              <h2 className="text-xl font-bold mb-4 pb-2 border-b">সর্বশেষ</h2>
               <div className="space-y-3">
                 {allNews
                   .sort(

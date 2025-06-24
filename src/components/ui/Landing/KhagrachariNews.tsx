@@ -80,7 +80,11 @@ const KhagrachariNews = () => {
                         {newsItem.image && (
                           <div className="flex-1 relative overflow-hidden">
                             <Image
-                              src={`/news1.jpeg`}
+                              src={
+                                newsItem.image
+                                  ? `/${newsItem.image}`
+                                  : "/news1.jpeg"
+                              }
                               width={500}
                               height={500}
                               alt={newsItem.title}
@@ -121,7 +125,11 @@ const KhagrachariNews = () => {
                             {newsItem.image && (
                               <div className="flex-1 overflow-hidden">
                                 <Image
-                                  src={`/news1.jpeg`}
+                                  src={
+                                    newsItem.image
+                                      ? `/${newsItem.image}`
+                                      : "/news1.jpeg"
+                                  }
                                   width={500}
                                   height={500}
                                   alt={newsItem.title}

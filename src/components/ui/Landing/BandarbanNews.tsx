@@ -82,7 +82,11 @@ const BandarbanNews = () => {
                       {rangamatiNews[0].image && (
                         <div className="flex-1 relative overflow-hidden">
                           <Image
-                            src={`/news1.jpeg`}
+                            src={
+                              rangamatiNews[0].image
+                                ? `/${rangamatiNews[0].image}`
+                                : "/news1.jpeg"
+                            }
                             width={500}
                             height={500}
                             alt={rangamatiNews[0].title}
@@ -137,7 +141,11 @@ const BandarbanNews = () => {
                         {newsItem.image && (
                           <div className="flex-1 overflow-hidden">
                             <Image
-                              src={`/news1.jpeg`}
+                              src={
+                                newsItem.image
+                                  ? `/${newsItem.image}`
+                                  : "/news1.jpeg"
+                              }
                               width={300}
                               height={300}
                               alt={newsItem.title}

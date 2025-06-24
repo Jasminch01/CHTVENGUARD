@@ -96,7 +96,7 @@ const Appbar = () => {
       dropdown: [
         {
           menu: "পার্বত্য চট্টগ্রাম",
-          route: "/cht",
+          route: "/news/cht",
           subItems: [
             { menu: "রাঙ্গামাটি", route: "/news/cht/rangamati" },
             { menu: "খাগড়াছড়ি", route: "/news/cht/khagrachari" },

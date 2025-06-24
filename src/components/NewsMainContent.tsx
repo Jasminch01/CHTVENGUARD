@@ -67,7 +67,7 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
       {newsItem.image && (
         <div className="mb-6">
           <Image
-            src={`/news1.jpeg`}
+            src={newsItem.image ? `/${newsItem.image}` : "/news1.jpeg"}
             width={800}
             height={500}
             alt={newsItem.title}
@@ -102,7 +102,11 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
                     {news.image && (
                       <div className="flex-shrink-0">
                         <Image
-                          src="/news1.jpeg"
+                          src={
+                            newsItem.image
+                              ? `/${newsItem.image}`
+                              : "/news1.jpeg"
+                          }
                           width={500}
                           height={500}
                           alt={news.title}
