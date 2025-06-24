@@ -40,7 +40,7 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
               }
               className={`flex-1 py-3 px-4 lg:text-xl text-lg font-semibold transition-colors ${
                 activeTab === tab.key
-                  ? "bg-red-700 "
+                  ? "bg-red-700 text-white dark:text-gray-200"
                   : "bg-gray-50 text-gray-700 hover:bg-gray-100"
               }`}
             >
