@@ -25,6 +25,7 @@ const Footer: React.FC = () => {
                 width={300}
                 height={30}
                 alt="brand-logo"
+                className="w-[200px] lg:w-full"
               />
             </div>
           </div>
@@ -36,7 +37,7 @@ const Footer: React.FC = () => {
                 <a
                   key={index}
                   href={link.href}
-                  className="text-lg  hover:text-white text-gray-500 transition-colors duration-200"
+                  className="lg:text-lg text-sm hover:text-white text-gray-500 transition-colors duration-200"
                 >
                   {link.name}
                 </a>

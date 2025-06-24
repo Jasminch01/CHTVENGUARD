@@ -18,6 +18,7 @@ export const getCategoryNameInBangla = (category: string) => {
     national: "জাতীয়",
     pressrelease: "সংবাদ বিজ্ঞপ্তি", // Note: removed dash from key
     opinion: "মতামত",
+    cht : "পার্বত্য চট্টগ্রাম"
   };
 
   return categoryMap[normalizedCategory] || category;

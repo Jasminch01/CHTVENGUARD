@@ -61,9 +61,9 @@ const ChtCategoryNewspage = () => {
   }
 
   return (
-    <div className="mt-[7rem] border-t mb-5">
+    <div className="lg:mt-[7rem] border-t mb-5">
       <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
-        <div className="border-b mb-10">
+        <div className="border-b lg:mb-10">
           <h1 className="text-2xl font-bold mb-6">
             {getCategoryNameInBangla(categoryName as string)}
           </h1>
@@ -73,7 +73,7 @@ const ChtCategoryNewspage = () => {
           {/* Main Content */}
           <div className="lg:w-2/3 lg:pr-5 lg:border-r relative">
             {/* Horizontal divider for mobile */}
-            <div className="lg:hidden w-full border-b my-6"></div>
+            <div className="lg:hidden w-full lg:border-b lg:my-6"></div>
 
             {categoryNews.length === 0 ? (
               <div className="text-center py-8">Not found</div>
@@ -121,11 +121,11 @@ const ChtCategoryNewspage = () => {
                       key={newsItem.id}
                     >
                       <div
-                        className={`flex flex-col lg:flex-row-reverse gap-5 mb-1 ${
+                        className={`flex flex-row-reverse gap-5 w-full mb-1 ${
                           index % 2 === 0 ? "lg:pr-1" : "lg:pl-1"
                         } relative group after:content-[''] after:absolute after:-bottom-3 after:left-0 after:w-full after:h-px after:bg-gray-200 dark:after:bg-gray-700 ${
                           index % 2 === 0
-                            ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-200 dark:before:bg-gray-700"
+                            ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-200 dark:lg:before:bg-gray-700"
                             : ""
                         }`}
                       >
@@ -154,7 +154,7 @@ const ChtCategoryNewspage = () => {
           </div>
 
           {/* Right Sidebar */}
-          <div className="lg:w-1/3 lg:pl-5">
+          <div className="lg:w-1/3 lg:pl-5 mt-20 lg:mt-0">
             {/* Latest News Section */}
             <div className="rounded-lg">
               <h2 className="text-xl font-bold mb-4 pb-2 border-b">

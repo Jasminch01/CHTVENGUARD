@@ -357,72 +357,74 @@ const Appbar = () => {
                               {openMobileDropdown === item.menu && (
                                 <div className="ml-4 mt-2 space-y-1">
                                   {item.dropdown.map((dropdownItem, idx) => (
-                                    <div key={idx}>
-                                      {/* Parent dropdown item */}
-                                      <div className="flex items-center justify-between">
-                                        <Button
-                                          variant="ghost"
-                                          className="justify-start flex-1 h-auto py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
-                                          onClick={() => {
-                                            if (!dropdownItem.subItems) {
-                                              handleNavigation(
-                                                dropdownItem.route
-                                              );
-                                            }
-                                          }}
-                                        >
-                                          {dropdownItem.menu}
-                                        </Button>
-
-                                        {/* Show dropdown icon only if item has subitems */}
-                                        {dropdownItem.subItems && (
+                                    <Link key={idx} href={dropdownItem.route}>
+                                      <div >
+                                        {/* Parent dropdown item */}
+                                        <div className="flex items-center justify-between">
                                           <Button
                                             variant="ghost"
-                                            size="sm"
-                                            className="h-auto py-2 px-2 ml-2"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              toggleMobileSubDropdown(
-                                                `${item.menu}-${idx}`
-                                              );
+                                            className="justify-start flex-1 h-auto py-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+                                            onClick={() => {
+                                              if (!dropdownItem.subItems) {
+                                                handleNavigation(
+                                                  dropdownItem.route
+                                                );
+                                              }
                                             }}
                                           >
-                                            <ChevronDown
-                                              className={`h-3 w-3 transition-transform ${
-                                                openMobileSubDropdown ===
-                                                `${item.menu}-${idx}`
-                                                  ? "rotate-180"
-                                                  : ""
-                                              }`}
-                                            />
+                                            {dropdownItem.menu}
                                           </Button>
-                                        )}
-                                      </div>
 
-                                      {/* Subitems */}
-                                      {dropdownItem.subItems &&
-                                        openMobileSubDropdown ===
-                                          `${item.menu}-${idx}` && (
-                                          <div className="ml-4 mt-1 space-y-1 animate-in slide-in-from-top-2 duration-200">
-                                            {dropdownItem.subItems.map(
-                                              (subItem, subIdx) => (
-                                                <Button
-                                                  key={subIdx}
-                                                  variant="ghost"
-                                                  className="justify-start w-full h-auto py-2 text-sm text-gray-600 dark:text-gray-400 pl-4 hover:bg-gray-100 dark:hover:bg-gray-700"
-                                                  onClick={() =>
-                                                    handleNavigation(
-                                                      subItem.route
-                                                    )
-                                                  }
-                                                >
-                                                  • {subItem.menu}
-                                                </Button>
-                                              )
-                                            )}
-                                          </div>
-                                        )}
-                                    </div>
+                                          {/* Show dropdown icon only if item has subitems */}
+                                          {dropdownItem.subItems && (
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-auto py-2 px-2 ml-2"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                toggleMobileSubDropdown(
+                                                  `${item.menu}-${idx}`
+                                                );
+                                              }}
+                                            >
+                                              <ChevronDown
+                                                className={`h-3 w-3 transition-transform ${
+                                                  openMobileSubDropdown ===
+                                                  `${item.menu}-${idx}`
+                                                    ? "rotate-180"
+                                                    : ""
+                                                }`}
+                                              />
+                                            </Button>
+                                          )}
+                                        </div>
+
+                                        {/* Subitems */}
+                                        {dropdownItem.subItems &&
+                                          openMobileSubDropdown ===
+                                            `${item.menu}-${idx}` && (
+                                            <div className="ml-4 mt-1 space-y-1 animate-in slide-in-from-top-2 duration-200">
+                                              {dropdownItem.subItems.map(
+                                                (subItem, subIdx) => (
+                                                  <Button
+                                                    key={subIdx}
+                                                    variant="ghost"
+                                                    className="justify-start w-full h-auto py-2 text-sm text-gray-600 dark:text-gray-400 pl-4 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                    onClick={() =>
+                                                      handleNavigation(
+                                                        subItem.route
+                                                      )
+                                                    }
+                                                  >
+                                                    • {subItem.menu}
+                                                  </Button>
+                                                )
+                                              )}
+                                            </div>
+                                          )}
+                                      </div>
+                                    </Link>
                                   ))}
                                 </div>
                               )}

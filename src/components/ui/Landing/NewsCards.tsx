@@ -9,7 +9,7 @@ import Link from "next/link";
 const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
   if (!news || news.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+      <div className="text-center flex h-screen justify-center items-center py-8 text-gray-500 dark:text-gray-400">
         No news articles available
       </div>
     );
@@ -87,7 +87,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
               ))}
             </div>
             {/* Three Cards Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 py-3 border-b border-t border-gray-300 dark:border-gray-700">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 py-3 lg:border-b border-t border-gray-300 dark:border-gray-700">
               {news.slice(0, 6).map((item, index) => {
                 const rowNumber = Math.floor(index / 3) + 1; // Calculate row number (1, 2, 3, etc.)
                 const isFirstRow = rowNumber === 1;
@@ -100,17 +100,17 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                     href={`/news/${item.category}/${item.id}`}
                   >
                     <div
-                      className={`flex  h-full flex-row-reverse gap-5 mb-1 ${
+                      className={`flex  h-full flex-row-reverse gap-5 border-b pb-2 lg:pb-0 mb-1 ${
                         index % 2 === 0 ? "lg:pr-1" : "lg:pl-1"
                       } relative group ${
                         // Bottom border only for first row
                         isFirstRow
-                          ? "after:content-[''] after:absolute after:-bottom-3 after:left-0 after:w-full after:h-px after:bg-gray-400 dark:after:bg-gray-700 "
+                          ? "after:content-[''] after:absolute after:-bottom-3 after:left-0 after:w-full after:h-px lg:after:bg-gray-400 lg:dark:after:bg-gray-700 "
                           : ""
                       } ${
                         // Right border for first row (except last card) and second row (except last card)
                         (isFirstRow || isSecondRow) && !isLastInRow
-                          ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-400 dark:before:bg-gray-700"
+                          ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-400 dark:lg:before:bg-gray-700"
                           : ""
                       }`}
                     >

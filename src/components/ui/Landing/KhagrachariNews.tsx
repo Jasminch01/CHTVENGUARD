@@ -55,8 +55,8 @@ const KhagrachariNews = () => {
   }
 
   return (
-    <div className="mt-[4rem] border-r">
-      <div className="max-w-7xl mx-auto px-4 lg:px-0 pb-5">
+    <div className="mt-[4rem] lg:border-r">
+      <div className="max-w-7xl mx-auto lg:px-0 pb-5">
         <div className="mb-2 border-l-4 border-red-500 pl-3">
           <h1 className="text-2xl font-bold">খাগড়াছড়ি</h1>
         </div>
@@ -65,7 +65,6 @@ const KhagrachariNews = () => {
           {/* Main Content */}
           <div className="lg:pr-3 relative">
             {/* Horizontal divider for mobile */}
-            <div className="lg:hidden w-full border-b border-gray-200 my-6"></div>
 
             {rangamatiNews.length === 0 ? (
               <div className="text-center py-8">Not found</div>
@@ -113,9 +112,9 @@ const KhagrachariNews = () => {
                           key={newsItem.id}
                         >
                           <div
-                            className={`flex flex-col gap-5 group ${
+                            className={`flex lg:flex-col flex-row-reverse gap-5 group ${
                               index < 2
-                                ? "lg:border-r lg:pr-5"
+                                ? "lg:border-r lg:border-b-0 border-b lg:pr-5"
                                 : ""
                             }`}
                           >
@@ -126,7 +125,7 @@ const KhagrachariNews = () => {
                                   width={500}
                                   height={500}
                                   alt={newsItem.title}
-                                  className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                                  className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                                 />
                               </div>
                             )}

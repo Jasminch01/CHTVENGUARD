@@ -77,7 +77,7 @@ const RangamatiNews = () => {
                       key={newsItem.id}
                       href={`/news/rangamati/${newsItem.id}`}
                     >
-                      <div className="flex flex-col gap-5 mb-8 group">
+                      <div className="flex flex-col gap-5 mb-8 group border-b lg:border-b-0 pb-10 lg:pb-0">
                         {newsItem.image && (
                           <div className="flex-1 relative overflow-hidden">
                             <Image
