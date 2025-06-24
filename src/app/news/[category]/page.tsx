@@ -42,7 +42,7 @@ const CategoryNewspage = () => {
  
   if (error) {
     return (
-      <div className="mt-[7rem] border-t border-gray-100 mb-5">
+      <div className="lg:mt-[7rem] border-t mb-5">
         <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
           <div className="text-center py-8 text-red-500">Error: {error}</div>
         </div>
@@ -52,7 +52,7 @@ const CategoryNewspage = () => {
 
   if (loading === null) {
     return (
-      <div className="mt-[7rem] border-t border-gray-100 mb-5">
+      <div className="lg:mt-[7rem] border-t mb-5">
         <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
           <div className="text-center py-8">Loading news...</div>
         </div>
@@ -61,10 +61,10 @@ const CategoryNewspage = () => {
   }
 
   return (
-    <div className="mt-[7rem] border-t border-gray-100 mb-5">
+    <div className="lg:mt-[7rem] border-t mb-5">
       <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
-        <div className="border-b mb-10">
-          <h1 className="text-2xl font-bold mb-6">
+        <div className="lg:border-b lg:mb-10">
+          <h1 className="text-2xl font-bold lg:mb-6">
             {getCategoryNameInBangla(categoryName as string)}
           </h1>
         </div>
@@ -121,11 +121,11 @@ const CategoryNewspage = () => {
                       key={newsItem.id}
                     >
                       <div
-                        className={`flex flex-col lg:flex-row-reverse gap-5 mb-1 ${
+                        className={`flex flex-row-reverse gap-5 mb-1 ${
                           index % 2 === 0 ? "lg:pr-1" : "lg:pl-1"
                         } relative group after:content-[''] after:absolute after:-bottom-3 after:left-0 after:w-full after:h-px after:bg-gray-200 dark:after:bg-gray-700 ${
                           index % 2 === 0
-                            ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-200 dark:before:bg-gray-700"
+                            ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-200 dark:lg:before:bg-gray-700"
                             : ""
                         }`}
                       >

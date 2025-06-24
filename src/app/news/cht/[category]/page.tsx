@@ -42,7 +42,7 @@ const ChtCategoryNewspage = () => {
 
   if (error) {
     return (
-      <div className="mt-[7rem] border-t border-gray-100 mb-5">
+      <div className="lg:mt-[7rem] border-t mb-5">
         <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
           <div className="text-center py-8 text-red-500">Error: {error}</div>
         </div>

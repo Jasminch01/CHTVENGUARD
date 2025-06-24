@@ -33,7 +33,7 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
   const contentParagraphs = formatContentIntoParagraphs(newsItem.content);
 
   return (
-    <div className="lg:col-span-3 border-r pr-6">
+    <div className="lg:col-span-3 lg:border-r md:pr-6">
       {/* News Header */}
       <div className="border-b pb-5">
         <span className="border-b pb-1">

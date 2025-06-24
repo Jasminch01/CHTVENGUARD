@@ -28,8 +28,8 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
     <div className="sticky top-20 ">
 
       {/* Tab Navigation */}
-      <div className=" border-gray-300 mb-6">
-        <div className="flex border-b border-gray-200">
+      <div className="mb-6">
+        <div className="flex border-b">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -38,9 +38,9 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
                   tab.key as SetStateAction<"popular" | "latest" | "trending">
                 )
               }
-              className={`flex-1 py-3 px-4 text-sm font-semibold transition-colors ${
+              className={`flex-1 py-3 px-4 lg:text-xl text-lg font-semibold transition-colors ${
                 activeTab === tab.key
-                  ? "bg-red-700 text-white"
+                  ? "bg-red-700 "
                   : "bg-gray-50 text-gray-700 hover:bg-gray-100"
               }`}
             >
@@ -58,12 +58,12 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
                 className="flex space-x-3 pb-4 border-b last:border-b-0 group"
               >
                 <div className="flex-shrink-0">
-                  <span className="inline-flex items-center justify-center w-6 h-6 bg-red-700 text-white text-xs font-bold rounded">
+                  <span className="inline-flex items-center text-white justify-center w-6 h-6 bg-red-700 text-xs font-bold">
                     {index + 1}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-semibold leading-tight line-clamp-2 mb-1 group-hover:text-blue-500 cursor-pointer transition-colors">
+                  <h4 className="text-lg font-semibold leading-tight line-clamp-2 mb-1 group-hover:text-blue-500 cursor-pointer transition-colors">
                     {item.title}
                   </h4>
                 </div>
@@ -72,16 +72,6 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
           </div>
         </div>
       </div>
-
-      {/* Weather Widget */}
-      {/* <div className="bg-blue-50 border border-blue-200 p-4 mb-6 rounded-lg">
-        <h3 className="text-lg font-bold text-blue-800 mb-3">আবহাওয়া</h3>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-blue-900">৩২°C</div>
-          <div className="text-sm text-blue-700">চট্টগ্রাম</div>
-          <div className="text-xs text-blue-600 mt-1">আংশিক মেঘলা</div>
-        </div>
-      </div> */}
     </div>
   );
 };

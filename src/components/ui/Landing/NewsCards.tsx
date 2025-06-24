@@ -5,6 +5,8 @@ import RangamatiNews from "./RangamatiNews";
 import KhagrachariNews from "./KhagrachariNews";
 import BreakingNews from "./BreakingNews";
 import Link from "next/link";
+import BandarbanNews from "./BandarbanNews";
+import InternationalNews from "./InternationalNews";
 
 const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
   if (!news || news.length === 0) {
@@ -74,7 +76,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                     </div>
                     <div className="flex-1 flex flex-col justify-between">
                       <div>
-                        <h2 className="text-lg font-bold leading-tight mb-3 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100">
+                        <h2 className="text-xl font-bold leading-tight mb-3 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100">
                           {item.title}
                         </h2>
                         <p className="text-gray-600 hidden lg:block dark:text-gray-400 line-clamp-2 leading-relaxed text-justify">
@@ -100,7 +102,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                     href={`/news/${item.category}/${item.id}`}
                   >
                     <div
-                      className={`flex  h-full flex-row-reverse gap-5 border-b pb-2 lg:pb-0 mb-1 ${
+                      className={`flex  h-full flex-row-reverse gap-5 border-b lg:border-b-0 pb-2 lg:pb-0 mb-1 ${
                         index % 2 === 0 ? "lg:pr-1" : "lg:pl-1"
                       } relative group ${
                         // Bottom border only for first row
@@ -124,7 +126,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100">
+                        <h2 className="text-xl font-semibold text-gray-800 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100">
                           {item.title}
                         </h2>
                       </div>
@@ -143,6 +145,8 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
           <RightSidebar news={news} />
         </div>
       </div>
+      <BandarbanNews/>
+      <InternationalNews/>
     </div>
   );
 };

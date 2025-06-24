@@ -7,16 +7,16 @@ const BreakingNews: React.FC<NewsCardsProps> = ({ news }) => {
   return (
     <div className="relative  bg-red-800 text-white shadow-lg overflow-hidden mb-10">
       {/* Breaking News Label */}
-      <div className="absolute left-0 top-0 bottom-0 bg-red-900 px-6 flex items-center z-10 shadow-xl border-r-2 border-red-500">
+      <div className="absolute left-0 top-0 bottom-0 bg-red-900 lg:px-6 px-3 flex items-center z-10 shadow-xl border-r-2 border-red-500">
         <div className="">
-          <span className="font-bold text-xl uppercase tracking-wider whitespace-nowrap select-none">
+          <span className="font-bold lg:text-xl text-sm uppercase lg:tracking-wider whitespace-nowrap select-none">
             🚨 ব্রেকিং নিউজ
           </span>
         </div>
       </div>
 
       {/* Marquee Content */}
-      <div className="pl-44 py-4 overflow-hidden">
+      <div className="lg:pl-44 py-4 overflow-hidden">
         <Marquee
           speed={30}
           gradient={false}
@@ -33,7 +33,7 @@ const BreakingNews: React.FC<NewsCardsProps> = ({ news }) => {
                   className="group flex items-center cursor-pointer"
                 >
                   <div className="flex focus:outline-none border-0 outline-0">
-                    <p className="text-xl font-bold text-white hover:text-yellow-200 transition-colors duration-200">
+                    <p className="lg:text-xl text-sm font-bold text-white hover:text-yellow-200 transition-colors duration-200">
                       {item.title}
                     </p>
                   </div>

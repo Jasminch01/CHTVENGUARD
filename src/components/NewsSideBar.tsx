@@ -10,8 +10,8 @@ interface NewsSidebarProps {
 
 const NewsSidebar: React.FC<NewsSidebarProps> = ({ relatedNews, category }) => {
   return (
-    <div className="lg:col-span-1 mt-20">
-      <div className="sticky top-[5rem]">
+    <div className="lg:col-span-1 lg:mt-20">
+      <div className="lg:sticky lg:top-[5rem]">
         <div className="">
           <h3 className="text-2xl font-bold mb-4 border-b pb-2">আরও পড়ুন</h3>
 
