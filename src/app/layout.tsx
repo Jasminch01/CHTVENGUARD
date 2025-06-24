@@ -30,6 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <link rel="shortcut icon" href="/favicon.png" type="image/x-icon" />
       <body className={`${solaimanLipi.className} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
