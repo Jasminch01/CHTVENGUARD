@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="py-10 border-t-green-600 border-t-2">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 lg:px-0">
         {/* Main Footer Content */}
         <div className="py-10 flex flex-col md:flex-row justify-between items-center">
           {/* Logo and Editor Info */}
@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
                 width={300}
                 height={30}
                 alt="brand-logo"
-                className="w-[200px] lg:w-full"
+                className="w-[190px] md:w-[215px] lg:w-[230px] xl:w-[240px]"
               />
             </div>
           </div>
