@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { NewsItem } from "@/app/type";
 import { getCategoryNameInBangla } from "@/lib/utils";
+import { IoMdTime } from "react-icons/io";
 
 interface NewsMainContentProps {
   newsItem: NewsItem;
@@ -46,20 +47,23 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
       <div className="text-gray-500 my-3">
         <div className="flex flex-col space-y-1">
           <p className="font-medium">{newsItem.author}</p>
-          <p className="text-sm">
-            {new Date(newsItem.publishedAt).toLocaleDateString("bn-BD", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              weekday: "long",
-            })}{" "}
-            -{" "}
-            {new Date(newsItem.publishedAt).toLocaleTimeString("bn-BD", {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            })}
-          </p>
+          <div className="flex items-center gap-2">
+            <IoMdTime/>
+            <p className="text-sm">
+              {new Date(newsItem.publishedAt).toLocaleDateString("bn-BD", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                weekday: "long",
+              })}{" "}
+              -{" "}
+              {new Date(newsItem.publishedAt).toLocaleTimeString("bn-BD", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -118,6 +122,20 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
                       <h4 className="text-xl mt-3 font-medium line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 mb-2">
                         {news.title}
                       </h4>
+                      <div className="flex items-center gap-1">
+                        <IoMdTime />
+                        <p className="text-xs text-gray-500">
+                          {new Date(news.publishedAt).toLocaleDateString(
+                            "bn-BD",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              weekday: "long",
+                            }
+                          )}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </Link>

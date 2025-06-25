@@ -7,6 +7,7 @@ import BreakingNews from "./BreakingNews";
 import Link from "next/link";
 import BandarbanNews from "./BandarbanNews";
 import InternationalNews from "./InternationalNews";
+import { IoMdTime } from "react-icons/io";
 
 const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
   if (!news || news.length === 0) {
@@ -49,6 +50,20 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                     <p className="hidden lg:block text-base leading-relaxed mb-4 dark:text-gray-300">
                       {truncateContent(news[0]?.content || "", 150)}
                     </p>
+                    <div className="flex items-center gap-1">
+                      <IoMdTime />
+                      <p className="text-sm text-gray-500">
+                        {new Date(news[0].publishedAt).toLocaleDateString(
+                          "bn-BD",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            weekday: "long",
+                          }
+                        )}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -82,6 +97,20 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                         <p className="text-gray-600 hidden lg:block dark:text-gray-400 line-clamp-2 leading-relaxed text-justify">
                           {truncateContent(item.content, 50)}
                         </p>
+                        <div className="flex items-center gap-1">
+                          <IoMdTime />
+                          <p className="text-sm text-gray-500 mt-2">
+                            {new Date(item.publishedAt).toLocaleDateString(
+                              "bn-BD",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                weekday: "long",
+                              }
+                            )}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -129,6 +158,20 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                         <h2 className="text-xl font-semibold text-gray-800 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100">
                           {item.title}
                         </h2>
+                        <div className="flex items-center gap-1">
+                          <IoMdTime />
+                          <p className="text-xs text-gray-500">
+                            {new Date(item.publishedAt).toLocaleDateString(
+                              "bn-BD",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                weekday: "long",
+                              }
+                            )}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </Link>

@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { NewsItem } from "@/app/type";
 import { getCategoryNameInBangla } from "@/lib/utils";
+import { IoMdTime } from "react-icons/io";
 
 interface NewsSidebarProps {
   relatedNews: NewsItem[];
@@ -24,10 +25,24 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ relatedNews, category }) => {
                   className="block group"
                 >
                   <div className="pb-4">
-                    <div className="flex-1">
-                      <h4 className="text-xl border-b pb-2 font-medium line-clamp-3 group-hover:text-blue-600 transition-colors duration-300">
+                    <div className="flex-1 pb-2 border-b">
+                      <h4 className="text-xl  font-medium line-clamp-3 group-hover:text-blue-600 transition-colors duration-300">
                         {news.title}
                       </h4>
+                      <div className="flex items-center gap-1">
+                        <IoMdTime />
+                        <p className="text-xs text-gray-500">
+                          {new Date(news.publishedAt).toLocaleDateString(
+                            "bn-BD",
+                            {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                              weekday: "long",
+                            }
+                          )}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -43,9 +58,9 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ relatedNews, category }) => {
             <div className="mt-6 pt-4">
               <Link
                 href={`/news/${category}`}
-                className="inline-block w-full text-center bg-green-700 text-white py-2 px-4 hover:bg-green-800 transition-colors duration-300 text-sm font-medium"
+                className="inline-block w-full text-center bg-green-700 text-white py-2 px-4 hover:bg-green-800 transition-colors duration-300 text-lg font-medium"
               >
-                আরও {getCategoryNameInBangla(category)} খবর
+                আরও {getCategoryNameInBangla(category)}
               </Link>
             </div>
           )}

@@ -3,6 +3,7 @@ import { NewsItem } from "@/app/type";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { IoMdTime } from "react-icons/io";
 
 const RangamatiNews = () => {
   const [rangamatiNews, setRangamatiNews] = useState<NewsItem[]>([]);
@@ -98,9 +99,20 @@ const RangamatiNews = () => {
                             {newsItem.title}
                           </h2>
                           <div className="flex justify-between items-center text-gray-500">
-                            <span className="line-clamp-3">
-                              {newsItem.content}
-                            </span>
+                            <p className="line-clamp-3">{newsItem.content}</p>
+                          </div>
+                          <div className="flex items-center gap-1 mt-2">
+                            <IoMdTime />
+                            <p className="text-sm text-gray-500">
+                              {new Date(
+                                newsItem.publishedAt
+                              ).toLocaleDateString("bn-BD", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                weekday: "long",
+                              })}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -144,6 +156,19 @@ const RangamatiNews = () => {
                               <h2 className="text-xl font-semibold mb-2 group-hover:text-blue-500">
                                 {newsItem.title}
                               </h2>
+                              <div className="flex items-center gap-1">
+                                <IoMdTime />
+                                <p className="text-sm text-gray-500 text-wrap">
+                                  {new Date(
+                                    newsItem.publishedAt
+                                  ).toLocaleDateString("bn-BD", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    weekday: "long",
+                                  })}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </Link>

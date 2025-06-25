@@ -1,4 +1,5 @@
 import { NewsItem } from "@/app/type";
+import Link from "next/link";
 import { SetStateAction, useState } from "react";
 
 const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
@@ -26,7 +27,6 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
 
   return (
     <div className="sticky top-20 ">
-
       {/* Tab Navigation */}
       <div className="mb-6">
         <div className="flex border-b">
@@ -62,11 +62,13 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
                     {index + 1}
                   </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-lg font-semibold leading-tight line-clamp-2 mb-1 group-hover:text-blue-500 cursor-pointer transition-colors">
-                    {item.title}
-                  </h4>
-                </div>
+                <Link href={`${item.category}/${item.id}`}>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-lg font-semibold leading-tight line-clamp-2 mb-1 group-hover:text-blue-500 cursor-pointer transition-colors">
+                      {item.title}
+                    </h4>
+                  </div>
+                </Link>
               </div>
             ))}
           </div>

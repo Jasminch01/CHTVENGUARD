@@ -3,6 +3,7 @@ import { NewsItem } from "@/app/type";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { IoMdTime } from "react-icons/io";
 
 const InternationalNews = () => {
   const [rangamatiNews, setRangamatiNews] = useState<NewsItem[]>([]);
@@ -102,6 +103,19 @@ const InternationalNews = () => {
                               {newsItem.content}
                             </span>
                           </div>
+                          <div className="flex items-center gap-1 mt-2">
+                            <IoMdTime />
+                            <p className="text-sm text-gray-500">
+                              {new Date(
+                                newsItem.publishedAt
+                              ).toLocaleDateString("bn-BD", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                weekday: "long",
+                              })}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </Link>
@@ -144,6 +158,19 @@ const InternationalNews = () => {
                               <h2 className="text-xl font-semibold mb-2 group-hover:text-blue-500">
                                 {newsItem.title}
                               </h2>
+                              <div className="flex items-center gap-1">
+                                <IoMdTime />
+                                <p className="text-sm text-gray-500">
+                                  {new Date(
+                                    newsItem.publishedAt
+                                  ).toLocaleDateString("bn-BD", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    weekday: "long",
+                                  })}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         </Link>

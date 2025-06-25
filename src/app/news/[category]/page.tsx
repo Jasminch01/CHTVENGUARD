@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { IoMdTime } from "react-icons/io";
 
 const CategoryNewspage = () => {
   const [categoryNews, setCategoryNews] = useState<NewsItem[]>([]);
@@ -103,6 +104,20 @@ const CategoryNewspage = () => {
                         <div className="flex justify-between items-center text-gray-500">
                           <p className="line-clamp-4">{newsItem.content}</p>
                         </div>
+                        <div className="flex items-center gap-1 mt-2">
+                          <IoMdTime />
+                          <p className="text-sm text-gray-500">
+                            {new Date(newsItem.publishedAt).toLocaleDateString(
+                              "bn-BD",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                weekday: "long",
+                              }
+                            )}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </Link>
@@ -148,6 +163,19 @@ const CategoryNewspage = () => {
                           <h2 className="text-xl font-semibold mb-2 group-hover:text-blue-500">
                             {newsItem.title}
                           </h2>
+                          <div className="flex items-center gap-1">
+                            <IoMdTime />
+                            <p className="text-xs text-gray-500">
+                              {new Date(
+                                newsItem.publishedAt
+                              ).toLocaleDateString("bn-BD", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                weekday: "long",
+                              })}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </Link>
@@ -181,6 +209,20 @@ const CategoryNewspage = () => {
                           <h3 className="font-medium text-lg group-hover:text-blue-500">
                             {news.title}
                           </h3>{" "}
+                          <div className="flex items-center gap-1">
+                            <IoMdTime />
+                            <p className="text-xs text-gray-500">
+                              {new Date(news.publishedAt).toLocaleDateString(
+                                "bn-BD",
+                                {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                  weekday: "long",
+                                }
+                              )}
+                            </p>
+                          </div>
                           {/* Added line-clamp for consistent height */}
                         </div>
                         <div className="flex-shrink-0 overflow-hidden">
