@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="py-10 border-t-green-600 border-t-2">
+    <footer className="py-10 border-t-green-600 border-t-3">
       <div className="max-w-7xl mx-auto px-4 lg:px-0">
         {/* Main Footer Content */}
         <div className="py-10 flex flex-col md:flex-row justify-between items-center">
