@@ -49,7 +49,7 @@ const Footer: React.FC = () => {
       {/* Bottom Border */}
       <div className="border-t pt-10 flex items-center justify-center">
         <div className="text-center text-sm text-gray-500">
-          © 2025 chtvenguard. All rights reserved.
+          © 2025 chtvanguard. All rights reserved.
         </div>
       </div>
     </footer>
