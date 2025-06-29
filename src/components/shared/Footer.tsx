@@ -14,6 +14,7 @@ const Footer: React.FC = () => {
         <div className="py-10 flex flex-col md:flex-row justify-between items-center">
           {/* Logo and Editor Info */}
           <div className="mb-6 md:mb-0">
+            <link href="/">
             <div className="flex justify-center md:justify-start">
               <Image
                 src={`/brand.png`}
@@ -23,6 +24,7 @@ const Footer: React.FC = () => {
                 className="w-[190px] md:w-[215px] lg:w-[230px] xl:w-[240px]"
               />
             </div>
+              </link>
           </div>
 
           {/* Navigation Links */}
