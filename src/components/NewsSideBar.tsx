@@ -13,7 +13,7 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ relatedNews, category }) => {
   return (
     <div className="lg:col-span-1 lg:mt-20">
       <div className="lg:sticky lg:top-[5rem]">
-        <div className="">
+        <div className="pb-10">
           <h3 className="text-2xl font-bold mb-4 border-b pb-2">আরও পড়ুন</h3>
 
           <div className="space-y-4">

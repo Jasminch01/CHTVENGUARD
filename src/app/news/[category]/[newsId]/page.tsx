@@ -77,7 +77,7 @@ const NewsDetailsContentpage = () => {
   }
 
   return (
-    <div className="my-[7rem] border-t">
+    <div className="">
       <div className="max-w-7xl mx-auto mt-3 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <NewsMainContent newsItem={newsItem} latestNews={latestNews} />
