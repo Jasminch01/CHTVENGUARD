@@ -1,18 +1,9 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-// Types
-interface NewsItem {
-  id: string;
-  title: string;
-  content: string;
-  image: string;
-  category: string;
-  createdAt?: string;
-  author?: string;
-}
+import { IoMdTime } from "react-icons/io";
+import { NewsItem } from "@/app/type";
 
 interface CategorySection {
   title: string;
@@ -161,6 +152,20 @@ const ChtNewspage = () => {
                   <p className="hidden lg:block text-base leading-relaxed mb-4 dark:text-gray-300">
                     {truncateContent(section.news[0]?.content || "", 150)}
                   </p>
+                  <div className="flex items-center gap-1">
+                    <IoMdTime />
+                    <p className="text-xs text-gray-500">
+                      {new Date(section.news[0].publishedAt).toLocaleDateString(
+                        "bn-BD",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          weekday: "long",
+                        }
+                      )}
+                    </p>
+                  </div>
                 </div>
               </div>
             </Link>
@@ -170,7 +175,10 @@ const ChtNewspage = () => {
           {section.news.length > 2 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-3 mb-6">
               {section.news.slice(1, 3).map((item, index) => (
-                <Link key={item.id} href={`/news/cht/${item.category}/${item.id}`}>
+                <Link
+                  key={item.id}
+                  href={`/news/cht/${item.category}/${item.id}`}
+                >
                   <div
                     className={`flex flex-row-reverse gap-5 group ${
                       index === 0
@@ -195,6 +203,20 @@ const ChtNewspage = () => {
                         <p className="text-gray-600 hidden lg:block dark:text-gray-400 line-clamp-2 leading-relaxed text-justify">
                           {truncateContent(item.content, 50)}
                         </p>
+                        <div className="flex items-center gap-1">
+                          <IoMdTime />
+                          <p className="text-xs text-gray-500">
+                            {new Date(item.publishedAt).toLocaleDateString(
+                              "bn-BD",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                weekday: "long",
+                              }
+                            )}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -243,6 +265,20 @@ const ChtNewspage = () => {
                         <h4 className="text-xl font-semibold text-gray-800 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100">
                           {item.title}
                         </h4>
+                        <div className="flex items-center gap-1">
+                          <IoMdTime />
+                          <p className="text-xs text-gray-500">
+                            {new Date(item.publishedAt).toLocaleDateString(
+                              "bn-BD",
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                weekday: "long",
+                              }
+                            )}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </Link>
