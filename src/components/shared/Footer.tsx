@@ -5,11 +5,6 @@ const Footer: React.FC = () => {
   const navigationLinks = [
     { name: "গোপনীয়তার নীতি", href: "#" },
     { name: "ব্যবহারের শর্তাবলি", href: "#" },
-    { name: "যোগাযোগ", href: "#" },
-    { name: "আমাদের সম্পর্কে", href: "#" },
-    { name: "আমরা", href: "#" },
-    { name: "আর্কাইভ", href: "#" },
-    { name: "বিজ্ঞাপন", href: "#" },
   ];
 
   return (
@@ -19,6 +14,7 @@ const Footer: React.FC = () => {
         <div className="py-10 flex flex-col md:flex-row justify-between items-center">
           {/* Logo and Editor Info */}
           <div className="mb-6 md:mb-0">
+            <link href="/">
             <div className="flex justify-center md:justify-start">
               <Image
                 src={`/brand.png`}
@@ -28,6 +24,7 @@ const Footer: React.FC = () => {
                 className="w-[190px] md:w-[215px] lg:w-[230px] xl:w-[240px]"
               />
             </div>
+              </link>
           </div>
 
           {/* Navigation Links */}
@@ -37,7 +34,7 @@ const Footer: React.FC = () => {
                 <a
                   key={index}
                   href={link.href}
-                  className="lg:text-lg text-sm hover:text-white text-gray-500 transition-colors duration-200"
+                  className="lg:text-lg text-sm dark:hover:text-white text-gray-500 transition-colors duration-200"
                 >
                   {link.name}
                 </a>
