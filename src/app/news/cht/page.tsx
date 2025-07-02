@@ -86,8 +86,8 @@ const ChtNewspage = () => {
   if (loading) {
     return (
       <div className="w-full">
-        <div className="flex justify-center items-center py-16">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500">loading news...</div>
+        <div className="flex justify-center items-center py-16 h-screen">
+          <p className="">loading news...</p>
         </div>
       </div>
     );
@@ -266,7 +266,7 @@ const ChtNewspage = () => {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto mt-8">
+    <div className="w-full px-4 lg:px-0 max-w-7xl mx-auto mt-8">
       {/* Category Sections */}
       {categorySections.map((section) => (
         <div key={section.category}>{renderCategorySection(section)}</div>
