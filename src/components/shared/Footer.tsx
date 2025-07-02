@@ -1,15 +1,11 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const Footer: React.FC = () => {
   const navigationLinks = [
-    { name: "গোপনীয়তার নীতি", href: "#" },
-    { name: "ব্যবহারের শর্তাবলি", href: "#" },
-    { name: "যোগাযোগ", href: "#" },
-    { name: "আমাদের সম্পর্কে", href: "#" },
-    { name: "আমরা", href: "#" },
-    { name: "আর্কাইভ", href: "#" },
-    { name: "বিজ্ঞাপন", href: "#" },
+    { name: "গোপনীয়তার নীতি", href: "/privacy" },
+    { name: "ব্যবহারের শর্তাবলি", href: "/terms-of-use" },
   ];
 
   return (
@@ -19,15 +15,17 @@ const Footer: React.FC = () => {
         <div className="py-10 flex flex-col md:flex-row justify-between items-center">
           {/* Logo and Editor Info */}
           <div className="mb-6 md:mb-0">
-            <div className="flex justify-center md:justify-start">
-              <Image
-                src={`/brand.png`}
-                width={300}
-                height={30}
-                alt="brand-logo"
-                className="w-[190px] md:w-[215px] lg:w-[230px] xl:w-[240px]"
-              />
-            </div>
+            <Link href={"/"}>
+              <div className="flex justify-center md:justify-start">
+                <Image
+                  src={`/brand.png`}
+                  width={300}
+                  height={30}
+                  alt="brand-logo"
+                  className="w-[190px] md:w-[215px] lg:w-[230px] xl:w-[240px]"
+                />
+              </div>
+            </Link>
           </div>
 
           {/* Navigation Links */}
@@ -37,7 +35,7 @@ const Footer: React.FC = () => {
                 <a
                   key={index}
                   href={link.href}
-                  className="lg:text-lg text-sm hover:text-white text-gray-500 transition-colors duration-200"
+                  className="lg:text-lg text-sm dark:hover:text-white text-gray-500 transition-colors duration-200"
                 >
                   {link.name}
                 </a>
@@ -49,7 +47,7 @@ const Footer: React.FC = () => {
       {/* Bottom Border */}
       <div className="border-t pt-10 flex items-center justify-center">
         <div className="text-center text-sm text-gray-500">
-          © 2025 chtvanguard. All rights reserved.
+          © {new Date().getFullYear()} chtvanguard. All rights reserved.
         </div>
       </div>
     </footer>
