@@ -66,13 +66,13 @@ const NewsDetailsContentpage = () => {
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto p-4 text-red-500">Error: {error}</div>
+      <div className="max-w-4xl mx-auto p-4 text-red-500 flex justify-center items-center">Error: {error}</div>
     );
   }
 
   if (!newsItem) {
     return (
-      <div className="max-w-4xl mx-auto p-4 h-screen">News item not found.</div>
+      <div className="max-w-4xl mx-auto p-4 h-screen flex justify-center items-center">News item not found.</div>
     );
   }
 

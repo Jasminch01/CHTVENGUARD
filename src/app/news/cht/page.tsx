@@ -87,7 +87,7 @@ const ChtNewspage = () => {
     return (
       <div className="w-full">
         <div className="flex justify-center items-center py-16">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500">loading news...</div>
         </div>
       </div>
     );
@@ -120,7 +120,7 @@ const ChtNewspage = () => {
           <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 border-b pb-2">
             {section.title}
           </h2>
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+          <div className="text-center flex justify-center items-center h-screen py-8 text-gray-500 dark:text-gray-400">
             No news articles available for {section.title}
           </div>
         </div>
@@ -266,7 +266,7 @@ const ChtNewspage = () => {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 lg:mt-[7rem]">
+    <div className="w-full max-w-7xl mx-auto mt-8">
       {/* Category Sections */}
       {categorySections.map((section) => (
         <div key={section.category}>{renderCategorySection(section)}</div>
@@ -274,9 +274,8 @@ const ChtNewspage = () => {
 
       {/* No data state */}
       {categorySections.every((section) => section.news.length === 0) && (
-        <div className="text-center py-16 text-gray-500 dark:text-gray-400">
+        <div className="text-center py-16 text-gray-500 dark:text-gray-400 flex justify-center items-center h-screen">
           <p className="text-xl mb-4">কোন সংবাদ পাওয়া যায়নি</p>
-          <p>দয়া করে কিছুক্ষণ পর আবার চেষ্টা করুন</p>
         </div>
       )}
     </div>

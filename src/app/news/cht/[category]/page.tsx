@@ -142,7 +142,7 @@ const ChtCategoryNewspage = () => {
 
   if (error) {
     return (
-      <div className="lg:mt-[7rem] border-t mb-5">
+      <div className="border-t mb-5">
         <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
           <div className="text-center py-8 text-red-500">Error: {error}</div>
         </div>
@@ -152,7 +152,7 @@ const ChtCategoryNewspage = () => {
 
   if (loading) {
     return (
-      <div className="mt-[7rem] border-t  mb-5">
+      <div className="border-t  mb-5">
         <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
           <div className="text-center py-8">Loading news...</div>
         </div>
@@ -161,7 +161,7 @@ const ChtCategoryNewspage = () => {
   }
 
   return (
-    <div className="lg:mt-[7rem] border-t mb-5">
+    <div className="border-t mb-5">
       <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
         <div className="border-b lg:mb-10">
           <h1 className="text-2xl font-bold mb-6">

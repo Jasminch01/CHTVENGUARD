@@ -11,7 +11,6 @@ const CategoryNewspage = () => {
   const [categoryNews, setCategoryNews] = useState<NewsItem[]>([]);
   const [allNews, setAllNews] = useState<NewsItem[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
   const [displayCount, setDisplayCount] = useState(9); // 1 featured + 8 grid items
 
   const { category } = useParams();
@@ -36,7 +35,7 @@ const CategoryNewspage = () => {
           err instanceof Error ? err.message : "An unknown error occurred"
         );
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -142,26 +141,17 @@ const CategoryNewspage = () => {
 
   if (error) {
     return (
-      <div className="lg:mt-[7rem] border-t mb-5">
-        <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
+      <div className="border-t mb-5">
+        <div className="max-w-7xl mx-auto flex justify-center items-center h-screen px-4 lg:px-0 py-8">
           <div className="text-center py-8 text-red-500">Error: {error}</div>
         </div>
       </div>
     );
   }
 
-  if (loading) {
-    return (
-      <div className="mt-[7rem] border-t mb-5">
-        <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
-          <div className="text-center py-8">Loading news...</div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="lg:mt-[7rem] border-t mb-5">
+    <div className="border-t mb-5">
       <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
         <div className="border-b lg:mb-10">
           <h1 className="text-2xl font-bold mb-6">
@@ -176,7 +166,7 @@ const CategoryNewspage = () => {
             <div className="lg:hidden w-full lg:border-b lg:my-6"></div>
 
             {categoryNews.length === 0 ? (
-              <div className="text-center py-8">Not found</div>
+              <div className="text-center flex justify-center items-center h-screen">Not found</div>
             ) : (
               <>
                 {/* Featured News (First Item) */}
