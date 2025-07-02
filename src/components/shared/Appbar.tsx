@@ -358,7 +358,7 @@ const Appbar = () => {
                                 <div className="ml-4 mt-2 space-y-1">
                                   {item.dropdown.map((dropdownItem, idx) => (
                                     <Link key={idx} href={dropdownItem.route}>
-                                      <div >
+                                      <div>
                                         {/* Parent dropdown item */}
                                         <div className="flex items-center justify-between">
                                           <Button
@@ -452,5 +452,4 @@ const Appbar = () => {
     </nav>
   );
 };
-//upated
 export default Appbar;
