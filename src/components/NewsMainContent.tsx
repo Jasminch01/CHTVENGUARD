@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { NewsItem } from "@/app/type";
 import { getCategoryNameInBangla } from "@/lib/utils";
-import { IoMdTime } from "react-icons/io";
+import { IoMdTime, IoMdShare, IoMdCopy } from "react-icons/io";
+import { FaFacebookF, FaWhatsapp} from "react-icons/fa";
 
 interface NewsMainContentProps {
   newsItem: NewsItem;
@@ -14,6 +15,8 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
   newsItem,
   latestNews,
 }) => {
+  const [copied, setCopied] = useState(false);
+
   // Function to split content into paragraphs of 4 lines each
   const formatContentIntoParagraphs = (content: string) => {
     const sentences = content
@@ -33,6 +36,48 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
 
   const contentParagraphs = formatContentIntoParagraphs(newsItem.content);
 
+  // Get current URL for sharing
+  const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+  const encodedUrl = encodeURIComponent(currentUrl);
+  const encodedTitle = encodeURIComponent(newsItem.title);
+
+  // Social sharing functions
+  const shareOnFacebook = () => {
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+    window.open(facebookUrl, "_blank", "width=600,height=400");
+  };
+
+  const shareOnWhatsApp = () => {
+    const whatsappUrl = `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`;
+    window.open(whatsappUrl, "_blank");
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(currentUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: newsItem.title,
+          url: currentUrl,
+        });
+      } catch (err) {
+        console.error("Error sharing: ", err);
+      }
+    } else {
+      // Fallback to copy
+      copyToClipboard();
+    }
+  };
+
   return (
     <div className="lg:col-span-3 lg:border-r md:pr-6">
       {/* News Header */}
@@ -43,26 +88,69 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
         <h1 className="text-3xl font-bold mt-3">{newsItem.title}</h1>
       </div>
 
-      {/* Author and Date */}
+      {/* Author, Date and Share Icons */}
       <div className="text-gray-500 my-3">
-        <div className="flex flex-col space-y-1">
-          <p className="font-medium">{newsItem.author}</p>
-          <div className="flex items-center gap-2">
-            <IoMdTime/>
-            <p className="text-sm">
-              {new Date(newsItem.publishedAt).toLocaleDateString("bn-BD", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                weekday: "long",
-              })}{" "}
-              -{" "}
-              {new Date(newsItem.publishedAt).toLocaleTimeString("bn-BD", {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              })}
-            </p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-3 md:space-y-0">
+          <div className="flex flex-col space-y-1">
+            <p className="font-medium">{newsItem.author}</p>
+            <div className="flex items-center gap-2">
+              <IoMdTime />
+              <p className="text-sm">
+                {new Date(newsItem.publishedAt).toLocaleDateString("bn-BD", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  weekday: "long",
+                })}{" "}
+                -{" "}
+                {new Date(newsItem.publishedAt).toLocaleTimeString("bn-BD", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
+              </p>
+            </div>
+          </div>
+
+          {/* Share Icons */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={shareOnFacebook}
+                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer"
+                title="Facebook এ শেয়ার করুন"
+              >
+                <FaFacebookF size={14} />
+              </button>
+
+              <button
+                onClick={shareOnWhatsApp}
+                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer"
+                title="WhatsApp এ শেয়ার করুন"
+              >
+                <FaWhatsapp size={14} />
+              </button>
+
+              <button
+                onClick={handleNativeShare}
+                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer"
+                title="শেয়ার করুন"
+              >
+                <IoMdShare size={14} />
+              </button>
+
+              <button
+                onClick={copyToClipboard}
+                className={`p-2 rounded bg-gray-300 text-gray-900 cursor-pointer`}
+                title="লিংক কপি করুন"
+              >
+                {copied ? (
+                  <p className="text-sm">Copyed</p>
+                ) : (
+                  <IoMdCopy size={14} />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
