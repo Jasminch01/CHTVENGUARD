@@ -1,5 +1,7 @@
 "use client";
 import { NewsItem } from "@/app/type";
+import { getNewsByCategory} from "@/sanity/sanityQueries";
+import { NewsItems } from "@/sanity/sanityTypes";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -7,6 +9,7 @@ import { IoMdTime } from "react-icons/io";
 
 const BandarbanNews = () => {
   const [rangamatiNews, setRangamatiNews] = useState<NewsItem[]>([]);
+  const [news, setNews] = useState<NewsItems[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -34,6 +37,20 @@ const BandarbanNews = () => {
 
     fetchNews();
   }, []);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const res = await getNewsByCategory("bandarban");
+        setNews(res);
+      } catch (error) {
+        console.error("Error fetching videos:", error);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+  console.log("news is", news);
 
   if (error) {
     return (
