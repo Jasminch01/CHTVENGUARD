@@ -45,6 +45,8 @@ const BandarbanNews = () => {
         setNews(res);
       } catch (error) {
         console.error("Error fetching videos:", error);
+      }finally {
+        setLoading(false)
       }
     };
 
