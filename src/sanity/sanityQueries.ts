@@ -218,3 +218,60 @@ export async function searchNews(searchTerm: string): Promise<NewsItems[]> {
   `;
   return await client.fetch(query, { searchTerm: `*${searchTerm}*` });
 }
+
+export async function getNewsItemsAllCategories(): Promise<NewsItems[]> {
+  const query = `
+    *[_type == "newsItem" && defined(category)] {
+      _id,
+      title,
+      author,
+      publishedAt,
+      featuredImage {
+        asset-> {
+          _ref,
+          _type,
+          url
+        },
+        alt,
+        hotspot
+      },
+      content[] {
+        _type,
+        _key,
+        _type == "textBlock" => {
+          text
+        },
+        _type == "imageBlock" => {
+          image {
+            asset-> {
+              _ref,
+              _type,
+              url
+            },
+            alt,
+            hotspot
+          },
+          alt,
+          caption
+        }
+      },
+      category,
+      tags
+    } | order(publishedAt desc)
+  `;
+  
+  const allNews = await client.fetch(query);
+  
+  // Get one latest news item per category
+  const seenCategories = new Set<string>();
+  const result: NewsItems[] = [];
+  
+  for (const newsItem of allNews) {
+    if (!seenCategories.has(newsItem.category)) {
+      seenCategories.add(newsItem.category);
+      result.push(newsItem);
+    }
+  }
+  
+  return result;
+}

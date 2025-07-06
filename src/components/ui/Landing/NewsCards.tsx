@@ -1,4 +1,3 @@
-import { NewsCardsProps } from "@/app/type";
 import Image from "next/image";
 import RightSidebar from "./RightSiderbar";
 import RangamatiNews from "./RangamatiNews";
@@ -8,6 +7,8 @@ import Link from "next/link";
 import BandarbanNews from "./BandarbanNews";
 import InternationalNews from "./InternationalNews";
 import { IoMdTime } from "react-icons/io";
+import { NewsCardsProps, ContentBlock } from "@/sanity/sanityTypes";
+import NationalNews from "./NationalNews";
 
 const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
   if (!news || news.length === 0) {
@@ -17,6 +18,14 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
       </div>
     );
   }
+
+  // Function to extract text content from content blocks
+  const extractTextFromContent = (content: ContentBlock[]): string => {
+    return content
+      .filter((block) => block._type === "textBlock")
+      .map((block) => block.text)
+      .join(" ");
+  };
 
   const truncateContent = (content: string, maxLength: number) => {
     if (content.length <= maxLength) return content;
@@ -32,14 +41,14 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
           <div className="lg:border-r lg:pr-3">
             {/* Main Featured News Section */}
             <div className="mb-3">
-              <Link href={`/news/${news[0].category}/${news[0].id}`}>
+              <Link href={`/news/${news[0].category}/${news[0]._id}`}>
                 <div className="flex lg:flex-row-reverse flex-col xl:h-[300px] gap-5 group border-b pb-3">
                   <div className="flex-1 relative overflow-hidden">
                     <Image
-                      src={`/${news[0].image}`}
+                      src={news[0].featuredImage?.asset?.url || "/news1.jpeg"}
                       width={500}
                       height={500}
-                      alt={news[0]?.title}
+                      alt={news[0].featuredImage?.alt || news[0]?.title}
                       className="w-full lg:h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                     />
                   </div>
@@ -48,7 +57,10 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                       {news[0]?.title}
                     </h1>
                     <p className="hidden lg:block text-base leading-relaxed mb-4 dark:text-gray-300">
-                      {truncateContent(news[0]?.content || "", 150)}
+                      {truncateContent(
+                        extractTextFromContent(news[0]?.content || []),
+                        150
+                      )}
                     </p>
                     <div className="flex items-center gap-1">
                       <IoMdTime />
@@ -72,7 +84,10 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
             {/* Two Cards Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-3">
               {news.slice(1, 3).map((item, index) => (
-                <Link key={item.id} href={`/news/${item.category}/${item.id}`}>
+                <Link
+                  key={item._id}
+                  href={`/news/${item.category}/${item._id}`}
+                >
                   <div
                     className={`flex flex-row-reverse gap-5 group  ${
                       index === 0
@@ -82,10 +97,10 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                   >
                     <div className="flex-1 relative overflow-hidden">
                       <Image
-                        src={item.image ? `/${item.image}` : "/news1.jpeg"}
+                        src={item.featuredImage?.asset?.url || "/news1.jpeg"}
                         width={400}
                         height={250}
-                        alt={item.title}
+                        alt={item.featuredImage?.alt || item.title}
                         className="w-full lg:h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                       />
                     </div>
@@ -95,7 +110,10 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                           {item.title}
                         </h2>
                         <p className="text-gray-600 hidden lg:block dark:text-gray-400 line-clamp-2 leading-relaxed text-justify">
-                          {truncateContent(item.content, 50)}
+                          {truncateContent(
+                            extractTextFromContent(item.content || []),
+                            50
+                          )}
                         </p>
                         <div className="flex items-center gap-1">
                           <IoMdTime />
@@ -127,8 +145,8 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
 
                 return (
                   <Link
-                    key={item.id}
-                    href={`/news/${item.category}/${item.id}`}
+                    key={item._id}
+                    href={`/news/${item.category}/${item._id}`}
                   >
                     <div
                       className={`flex  h-full flex-row-reverse gap-5 border-b lg:border-b-0 pb-2 lg:pb-0 mb-1 ${
@@ -147,10 +165,10 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                     >
                       <div className="flex-1 relative overflow-hidden">
                         <Image
-                          src={item.image ? `/${item.image}` : "/news1.jpeg"}
+                          src={item.featuredImage?.asset?.url || "/news1.jpeg"}
                           width={500}
                           height={100}
-                          alt={item.title}
+                          alt={item.featuredImage?.alt || item.title}
                           className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                         />
                       </div>
@@ -190,6 +208,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
       </div>
       <BandarbanNews />
       <InternationalNews />
+      <NationalNews />
     </div>
   );
 };

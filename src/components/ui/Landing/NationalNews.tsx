@@ -6,16 +6,16 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { IoMdTime } from "react-icons/io";
 
-const InternationalNews = () => {
-  const [internationalNews, setinternationalNews] = useState<NewsItems[]>([]);
+const NationalNews = () => {
+  const [nationalNews, setNationalNews] = useState<NewsItems[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await getNewsByCategory("international");
-        setinternationalNews(res);
+        const res = await getNewsByCategory("national");
+        setNationalNews(res);
       } catch (error) {
         console.error("Error fetching news:", error);
         setError(error instanceof Error ? error.message : "An error occurred");
@@ -59,7 +59,7 @@ const InternationalNews = () => {
     <div className="mt-[4rem]">
       <div className="max-w-7xl mx-auto lg:px-0 pb-5">
         <div className="md:mb-2 border-l-4 border-red-500 pl-3">
-          <h1 className="text-2xl font-bold">আন্তর্জাতিক</h1>
+          <h1 className="text-2xl font-bold">জাতীয়</h1>
         </div>
 
         <div className="flex flex-col lg:flex-row">
@@ -70,29 +70,27 @@ const InternationalNews = () => {
               {/* Horizontal divider for mobile */}
               <div className="lg:hidden w-full border-b my-6"></div>
 
-              {internationalNews.length === 0 ? (
+              {nationalNews.length === 0 ? (
                 <div className="text-center py-8">Not found</div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-3 gap-4 border-t border-b pt-10 pb-5">
                   {/* Main featured article - spans 3 rows on desktop */}
-                  {internationalNews[0] && (
+                  {nationalNews[0] && (
                     <Link
-                      href={`/news/bandarban/${internationalNews[0]._id}`}
-                      key={internationalNews[0]._id}
+                      href={`/news/bandarban/${nationalNews[0]._id}`}
+                      key={nationalNews[0]._id}
                       className="md:row-span-3"
                     >
                       <div className="flex flex-col gap-4 h-full group border-r pr-4">
-                        {internationalNews[0]?.featuredImage && (
+                        {nationalNews[0]?.featuredImage && (
                           <div className="flex-1 relative overflow-hidden">
                             <Image
-                              src={
-                                internationalNews[0]?.featuredImage.asset.url
-                              }
+                              src={nationalNews[0]?.featuredImage.asset.url}
                               width={500}
                               height={500}
                               alt={
-                                internationalNews[0].featuredImage?.alt ||
-                                internationalNews[0].title
+                                nationalNews[0].featuredImage?.alt ||
+                                nationalNews[0].title
                               }
                               className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                             />
@@ -100,17 +98,17 @@ const InternationalNews = () => {
                         )}
                         <div className="flex-shrink-0">
                           <h2 className="text-xl lg:text-2xl font-bold leading-tight group-hover:text-blue-500 mb-2">
-                            {internationalNews[0]?.title}
+                            {nationalNews[0]?.title}
                           </h2>
                           <p className="text-gray-600 line-clamp-3">
-                            {getTextContent(internationalNews[0]?.content)}
+                            {getTextContent(nationalNews[0]?.content)}
                           </p>
                           <div className="flex items-center gap-1 mt-2">
                             <IoMdTime />
                             <p className="text-sm text-gray-500">
-                              {internationalNews[0]?.publishedAt &&
+                              {nationalNews[0]?.publishedAt &&
                                 new Date(
-                                  internationalNews[0].publishedAt
+                                  nationalNews[0].publishedAt
                                 ).toLocaleDateString("bn-BD", {
                                   year: "numeric",
                                   month: "long",
@@ -125,7 +123,7 @@ const InternationalNews = () => {
                   )}
 
                   {/* Secondary articles - 6 smaller cards */}
-                  {internationalNews.slice(1, 7).map((newsItem, index) => {
+                  {nationalNews.slice(1, 7).map((newsItem, index) => {
                     const rowNumber = Math.floor(index / 3) + 1;
                     const isFirstRow = rowNumber === 1;
                     const isSecondRow = rowNumber === 2;
@@ -200,4 +198,4 @@ const InternationalNews = () => {
   );
 };
 
-export default InternationalNews;
+export default NationalNews;

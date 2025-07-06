@@ -1,8 +1,8 @@
-import { NewsItem } from "@/app/type";
+import { NewsCardsProps } from "@/sanity/sanityTypes";
 import Link from "next/link";
 import { SetStateAction, useState } from "react";
 
-const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
+const RightSidebar: React.FC<NewsCardsProps> = ({ news }) => {
   const [activeTab, setActiveTab] = useState<"popular" | "latest" | "trending">(
     "popular"
   );
@@ -54,15 +54,15 @@ const RightSidebar: React.FC<{ news: NewsItem[] }> = ({ news }) => {
           <div className="space-y-4">
             {getTabNews().map((item, index) => (
               <div
-                key={item.id}
+                key={item._id}
                 className="flex space-x-3 pb-4 border-b last:border-b-0 group"
               >
                 <div className="flex-shrink-0">
                   <span className="inline-flex items-center text-white justify-center w-6 h-6 bg-red-700 text-xs font-bold">
-                    {index + 1}
+                    {(index + 1).toLocaleString("bn")}
                   </span>
                 </div>
-                <Link href={`${item.category}/${item.id}`}>
+                <Link href={`${item.category}/${item._id}`}>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-lg font-semibold leading-tight line-clamp-2 mb-1 group-hover:text-blue-500 cursor-pointer transition-colors">
                       {item.title}

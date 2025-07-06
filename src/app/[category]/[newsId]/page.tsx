@@ -1,78 +1,109 @@
 "use client";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { NewsItem } from "@/app/type";
 import NewsMainContent from "@/components/NewsMainContent";
 import NewsSidebar from "@/components/NewsSideBar";
+import { NewsItems } from "@/sanity/sanityTypes";
+import {
+  getNewsItem,
+  getRecentNews,
+  getRelatedNews,
+} from "@/sanity/sanityQueries";
 
 const NewsDetailsContentpage = () => {
   const { newsId } = useParams();
-  const [newsItem, setNewsItem] = useState<NewsItem | null>(null);
-  const [relatedNews, setRelatedNews] = useState<NewsItem[]>([]);
-  const [latestNews, setLatestNews] = useState<NewsItem[]>([]);
+  const [newsItem, setNewsItem] = useState<NewsItems | null>(null);
+  const [relatedNews, setRelatedNews] = useState<NewsItems[]>([]);
+  const [latestNews, setLatestNews] = useState<NewsItems[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const id = newsId?.toString() as string;
 
   useEffect(() => {
     const fetchNews = async () => {
+      if (!id) return;
+
       try {
-        const response = await fetch("/news.json");
-        if (!response.ok) {
-          throw new Error("Failed to fetch news data");
-        }
-        const data: NewsItem[] = await response.json();
+        setLoading(true);
+        setError(null);
 
-        // Find the specific news item by ID
-        const foundNewsItem = data.find((item) => item.id === newsId);
+        // Fetch main news item
+        const mainNewsItem = await getNewsItem(id);
 
-        if (foundNewsItem) {
-          setNewsItem(foundNewsItem);
-
-          // Get related news from the same category, excluding current news
-          const related = data
-            .filter(
-              (item) =>
-                item.category === foundNewsItem.category &&
-                item.id !== foundNewsItem.id
-            )
-            .slice(0, 5);
-
-          setRelatedNews(related);
-
-          // Get latest news (sorted by publishedAt, excluding current news)
-          const latest = data
-            .filter((item) => item.id !== foundNewsItem.id)
-            .sort(
-              (a, b) =>
-                new Date(b.publishedAt).getTime() -
-                new Date(a.publishedAt).getTime()
-            )
-            .slice(0, 6);
-
-          setLatestNews(latest);
-        } else {
+        if (!mainNewsItem) {
           setError("News item not found");
+          return;
         }
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred"
-        );
+
+        setNewsItem(mainNewsItem);
+
+        // Fetch related news and latest news in parallel
+        const [latestNewsData, relatedNewsData] = await Promise.all([
+          getRelatedNews(id, mainNewsItem.category, 5).catch((err) => {
+            console.error("Error fetching related news:", err);
+            return [];
+          }),
+          getRecentNews(3).catch((err) => {
+            console.error("Error fetching latest news:", err);
+            return [];
+          }),
+        ]);
+
+        setRelatedNews(relatedNewsData);
+        setLatestNews(latestNewsData);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+        setError(error instanceof Error ? error.message : "An error occurred");
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (newsId) {
-      fetchNews();
-    }
-  }, [newsId]);
+    fetchNews();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto p-4 h-screen flex justify-center items-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p>Loading news...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto p-4 text-red-500">Error: {error}</div>
+      <div className="max-w-4xl mx-auto p-4 text-red-500 flex justify-center items-center h-screen">
+        <div className="text-center">
+          <p className="text-lg font-semibold">Error: {error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
     );
   }
 
   if (!newsItem) {
     return (
-      <div className="max-w-4xl mx-auto p-4 h-screen">News item not found.</div>
+      <div className="max-w-4xl mx-auto p-4 h-screen flex justify-center items-center">
+        <div className="text-center">
+          <p className="text-lg font-semibold text-gray-600">
+            News item not found.
+          </p>
+          <button
+            onClick={() => window.history.back()}
+            className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
     );
   }
 

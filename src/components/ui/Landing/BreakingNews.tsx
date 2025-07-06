@@ -1,4 +1,5 @@
-import { NewsCardsProps } from "@/app/type";
+
+import { NewsCardsProps } from "@/sanity/sanityTypes";
 import Link from "next/link";
 import React from "react";
 import Marquee from "react-fast-marquee";
@@ -28,8 +29,8 @@ const BreakingNews: React.FC<NewsCardsProps> = ({ news }) => {
             {news.map((item) => {
               return (
                 <Link
-                  key={item.id}
-                  href={`/news/${item.category}/${item.id}`}
+                  key={item._id}
+                  href={`/news/${item.category}/${item._id}`}
                   className="group flex items-center cursor-pointer"
                 >
                   <div className="flex focus:outline-none border-0 outline-0">

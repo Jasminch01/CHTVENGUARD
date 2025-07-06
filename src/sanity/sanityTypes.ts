@@ -52,3 +52,7 @@ export interface NewsItems {
     | "opinion";
   tags?: string[];
 }
+
+export interface NewsCardsProps {
+  news: NewsItems[];
+}
