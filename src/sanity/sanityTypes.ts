@@ -1,8 +1,11 @@
+
+// Updated interfaces with url included in asset
 export interface SanityImage {
   _type: "image";
   asset: {
     _ref: string;
     _type: "reference";
+    url: string; // Now includes url
   };
   alt?: string;
   hotspot?: {

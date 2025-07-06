@@ -1,6 +1,5 @@
 "use client";
-import { NewsItem } from "@/app/type";
-import { getNewsByCategory} from "@/sanity/sanityQueries";
+import { getNewsByCategory } from "@/sanity/sanityQueries";
 import { NewsItems } from "@/sanity/sanityTypes";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,28 +7,18 @@ import React, { useEffect, useState } from "react";
 import { IoMdTime } from "react-icons/io";
 
 const BandarbanNews = () => {
-  const [rangamatiNews, setRangamatiNews] = useState<NewsItem[]>([]);
-  const [news, setNews] = useState<NewsItems[]>([]);
+  const [bandarbanNews, setBandarbanNews] = useState<NewsItems[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch("/news.json");
-        if (!response.ok) {
-          throw new Error("Failed to fetch news data");
-        }
-        const data: NewsItem[] = await response.json();
-        // Filter news for Rangamati category
-        const filteredNews = data.filter(
-          (item) => item.category.toLowerCase() === "bandarban"
-        );
-        setRangamatiNews(filteredNews);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred"
-        );
+        const res = await getNewsByCategory("bandarban");
+        setBandarbanNews(res);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+        setError(error instanceof Error ? error.message : "An error occurred");
       } finally {
         setLoading(false);
       }
@@ -38,21 +27,14 @@ const BandarbanNews = () => {
     fetchNews();
   }, []);
 
-  useEffect(() => {
-    const fetchVideos = async () => {
-      try {
-        const res = await getNewsByCategory("bandarban");
-        setNews(res);
-      } catch (error) {
-        console.error("Error fetching videos:", error);
-      }finally {
-        setLoading(false)
-      }
-    };
+  // Helper function to extract text content from ContentBlock array
+  const getTextContent = (content: NewsItems["content"]) => {
+    if (!content || content.length === 0) return "";
 
-    fetchVideos();
-  }, []);
-  console.log("news is", news);
+    // Find the first text block and return its text
+    const textBlock = content.find((block) => block._type === "textBlock");
+    return textBlock?.text || "";
+  };
 
   if (error) {
     return (
@@ -87,51 +69,51 @@ const BandarbanNews = () => {
             {/* Horizontal divider for mobile */}
             <div className="lg:hidden w-full border-b my-6"></div>
 
-            {rangamatiNews.length === 0 ? (
+            {bandarbanNews.length === 0 ? (
               <div className="text-center py-8">Not found</div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-3 gap-4 border-t border-b pt-10 pb-5">
                 {/* Main featured article - spans 3 rows on desktop */}
-                {rangamatiNews[0] && (
+                {bandarbanNews[0] && (
                   <Link
-                    href={`/news/khagrachari/${rangamatiNews[0].id}`}
-                    key={rangamatiNews[0].id}
+                    href={`/news/bandarban/${bandarbanNews[0]._id}`}
+                    key={bandarbanNews[0]._id}
                     className="md:row-span-3"
                   >
-                    <div className="flex flex-col gap-4 h-full group border-r  pr-4">
-                      {rangamatiNews[0].image && (
+                    <div className="flex flex-col gap-4 h-full group border-r pr-4">
+                      {bandarbanNews[0]?.featuredImage && (
                         <div className="flex-1 relative overflow-hidden">
                           <Image
-                            src={
-                              rangamatiNews[0].image
-                                ? `/${rangamatiNews[0].image}`
-                                : "/news1.jpeg"
-                            }
+                            src={bandarbanNews[0]?.featuredImage.asset.url}
                             width={500}
                             height={500}
-                            alt={rangamatiNews[0].title}
+                            alt={
+                              bandarbanNews[0].featuredImage?.alt ||
+                              bandarbanNews[0].title
+                            }
                             className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                           />
                         </div>
                       )}
                       <div className="flex-shrink-0">
                         <h2 className="text-xl lg:text-2xl font-bold leading-tight group-hover:text-blue-500 mb-2">
-                          {rangamatiNews[0].title}
+                          {bandarbanNews[0]?.title}
                         </h2>
                         <p className="text-gray-600 line-clamp-3">
-                          {rangamatiNews[0].content}
+                          {getTextContent(bandarbanNews[0]?.content)}
                         </p>
                         <div className="flex items-center gap-1 mt-2">
                           <IoMdTime />
-                          <p className="text-sm text-gray-500 ">
-                            {new Date(
-                              rangamatiNews[0].publishedAt
-                            ).toLocaleDateString("bn-BD", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                              weekday: "long",
-                            })}
+                          <p className="text-sm text-gray-500">
+                            {bandarbanNews[0]?.publishedAt &&
+                              new Date(
+                                bandarbanNews[0].publishedAt
+                              ).toLocaleDateString("bn-BD", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                                weekday: "long",
+                              })}
                           </p>
                         </div>
                       </div>
@@ -140,15 +122,15 @@ const BandarbanNews = () => {
                 )}
 
                 {/* Secondary articles - 6 smaller cards */}
-                {rangamatiNews.slice(1, 7).map((newsItem, index) => {
-                  const rowNumber = Math.floor(index / 3) + 1; // Calculate row number (1, 2, 3, etc.)
+                {bandarbanNews.slice(1, 7).map((newsItem, index) => {
+                  const rowNumber = Math.floor(index / 3) + 1;
                   const isFirstRow = rowNumber === 1;
                   const isSecondRow = rowNumber === 2;
                   const isLastInRow = (index + 1) % 3 === 0;
                   return (
                     <Link
-                      href={`/news/khagrachari/${newsItem.id}`}
-                      key={newsItem.id}
+                      href={`/news/bandarban/${newsItem._id}`}
+                      key={newsItem._id}
                       className={`
                         ${index === 0 ? "md:col-start-2 md:row-start-1" : ""}
                         ${index === 1 ? "md:col-start-2 md:row-start-2" : ""}
@@ -160,47 +142,44 @@ const BandarbanNews = () => {
                     >
                       <div
                         className={`flex h-full flex-row-reverse gap-3 border-b md:border-b-0 pb-4 md:pb-0 mb-4 md:mb-0 relative group ${
-                          // Bottom border only for first and second row (not third row)
                           (isFirstRow || isSecondRow) && !isLastInRow
                             ? "after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-full after:h-px md:after:bg-gray-400 md:dark:after:bg-gray-700"
                             : ""
                         } ${
-                          // Right border for middle column cards (not last column)
                           index === 0 || index === 1 || index === 2
                             ? "md:before:content-[''] md:before:absolute md:before:-right-2 md:before:top-0 md:before:h-full md:before:w-px md:before:bg-gray-400 md:dark:before:bg-gray-700"
                             : ""
                         }`}
                       >
-                        {newsItem.image && (
+                        {newsItem?.featuredImage && (
                           <div className="flex-1 overflow-hidden">
                             <Image
-                              src={
-                                newsItem.image
-                                  ? `/${newsItem.image}`
-                                  : "/news1.jpeg"
-                              }
+                              src={newsItem.featuredImage.asset.url}
                               width={300}
                               height={300}
-                              alt={newsItem.title}
+                              alt={
+                                newsItem.featuredImage?.alt || newsItem.title
+                              }
                               className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                             />
                           </div>
                         )}
                         <div className="flex-1">
                           <h3 className="text-xl font-semibold leading-tight group-hover:text-blue-500 line-clamp-3">
-                            {newsItem.title}
+                            {newsItem?.title}
                           </h3>
                           <div className="flex items-center gap-1 mt-2">
                             <IoMdTime />
                             <p className="text-sm text-gray-500">
-                              {new Date(
-                                newsItem.publishedAt
-                              ).toLocaleDateString("bn-BD", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                                weekday: "long",
-                              })}
+                              {newsItem?.publishedAt &&
+                                new Date(
+                                  newsItem.publishedAt
+                                ).toLocaleDateString("bn-BD", {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                  weekday: "long",
+                                })}
                             </p>
                           </div>
                         </div>

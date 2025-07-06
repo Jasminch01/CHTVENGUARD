@@ -1,15 +1,16 @@
 "use client";
-import { NewsItem } from "@/app/type";
 import { getCategoryNameInBangla } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { IoMdTime } from "react-icons/io";
+import { NewsItems } from "@/sanity/sanityTypes";
+import { getNewsByCategory, getRecentNews } from "@/sanity/sanityQueries";
 
-const ChtCategoryNewspage = () => {
-  const [categoryNews, setCategoryNews] = useState<NewsItem[]>([]);
-  const [allNews, setAllNews] = useState<NewsItem[]>([]);
+const CategoryNewspage = () => {
+  const [categoryNews, setCategoryNews] = useState<NewsItems[]>([]);
+  const [allNews, setAllNews] = useState<NewsItems[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [displayCount, setDisplayCount] = useState(9); // 1 featured + 8 grid items
@@ -20,17 +21,15 @@ const ChtCategoryNewspage = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch("/news.json");
-        if (!response.ok) {
-          throw new Error("Failed to fetch news data");
-        }
-        const data: NewsItem[] = await response.json();
-        // Filter news for category
-        const filteredNews = data.filter(
-          (item) => item.category.toLowerCase() === categoryName
-        );
-        setCategoryNews(filteredNews);
-        setAllNews(data); // Store all news for the sidebar
+        setLoading(true);
+
+        // Fetch category-specific news
+        const categoryData = await getNewsByCategory(categoryName as string);
+        setCategoryNews(categoryData);
+
+        // Fetch recent news for sidebar
+        const recentData = await getRecentNews(10);
+        setAllNews(recentData);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"
@@ -40,7 +39,9 @@ const ChtCategoryNewspage = () => {
       }
     };
 
-    fetchNews();
+    if (categoryName) {
+      fetchNews();
+    }
   }, [categoryName]);
 
   const handleLoadMore = () => {
@@ -48,6 +49,12 @@ const ChtCategoryNewspage = () => {
   };
 
   const hasMoreNews = displayCount < categoryNews.length;
+
+  // Helper function to get first text block content
+  const getFirstTextContent = (content: NewsItems["content"]): string => {
+    const firstTextBlock = content.find((block) => block._type === "textBlock");
+    return firstTextBlock?.text || "";
+  };
 
   // Function to render news sections in groups of 8
   const renderNewsSections = () => {
@@ -78,8 +85,8 @@ const ChtCategoryNewspage = () => {
 
               return (
                 <Link
-                  href={`/news/cht/${newsItem.category}/${newsItem.id}`}
-                  key={newsItem.id}
+                  href={`/news/${newsItem.category}/${newsItem._id}`}
+                  key={newsItem._id}
                 >
                   <div
                     className={`flex flex-row-reverse gap-5 w-full mb-1 ${
@@ -94,17 +101,15 @@ const ChtCategoryNewspage = () => {
                         : ""
                     }`}
                   >
-                    {newsItem.image && (
+                    {newsItem.featuredImage && (
                       <div className="flex-1 overflow-hidden">
                         <Image
                           src={
-                            newsItem.image
-                              ? `/${newsItem.image}`
-                              : "/news1.jpeg"
+                            newsItem.featuredImage.asset.url || "/news1.jpeg"
                           }
                           width={500}
                           height={500}
-                          alt={newsItem.title}
+                          alt={newsItem.featuredImage.alt || newsItem.title}
                           className="w-[124px] h-auto lg:w-[110px] lg:h-[75px] xl:w-[180px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                         />
                       </div>
@@ -140,21 +145,21 @@ const ChtCategoryNewspage = () => {
     return sections;
   };
 
-  if (error) {
+  if (loading) {
     return (
       <div className="border-t mb-5">
         <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
-          <div className="text-center py-8 text-red-500">Error: {error}</div>
+          <div className="text-center py-8">Loading...</div>
         </div>
       </div>
     );
   }
 
-  if (loading) {
+  if (error) {
     return (
-      <div className="border-t  mb-5">
+      <div className="border-t mb-5">
         <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
-          <div className="text-center py-8">Loading news...</div>
+          <div className="text-center py-8 text-red-500">Error: {error}</div>
         </div>
       </div>
     );
@@ -176,28 +181,29 @@ const ChtCategoryNewspage = () => {
             <div className="lg:hidden w-full lg:border-b lg:my-6"></div>
 
             {categoryNews.length === 0 ? (
-              <div className="text-center py-8">Not found</div>
+              <div className="text-center flex items-center justify-center h-screen">
+                Not found
+              </div>
             ) : (
               <>
                 {/* Featured News (First Item) */}
                 <div className="border-b">
                   {categoryNews.slice(0, 1).map((newsItem) => (
                     <Link
-                      key={newsItem.id}
-                      href={`/news/cht/${newsItem.category}/${newsItem.id}`}
+                      key={newsItem._id}
+                      href={`/news/${newsItem.category}/${newsItem._id}`}
                     >
                       <div className="flex flex-col lg:flex-row-reverse gap-5 mb-8 group">
-                        {newsItem.image && (
+                        {newsItem.featuredImage && (
                           <div className="flex-1 relative overflow-hidden">
                             <Image
                               src={
-                                newsItem.image
-                                  ? `/${newsItem.image}`
-                                  : "/news1.jpeg"
+                                newsItem.featuredImage.asset.url ||
+                                "/news1.jpeg"
                               }
                               width={500}
                               height={500}
-                              alt={newsItem.title}
+                              alt={newsItem.featuredImage.alt || newsItem.title}
                               className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                             />
                           </div>
@@ -207,7 +213,9 @@ const ChtCategoryNewspage = () => {
                             {newsItem.title}
                           </h2>
                           <div className="flex justify-between items-center text-gray-500">
-                            <p className="line-clamp-4">{newsItem.content}</p>
+                            <p className="line-clamp-4">
+                              {getFirstTextContent(newsItem.content)}
+                            </p>
                           </div>
                           <div className="flex items-center gap-1 mt-2">
                             <IoMdTime />
@@ -240,7 +248,7 @@ const ChtCategoryNewspage = () => {
                           <div className="flex justify-center">
                             <button
                               onClick={handleLoadMore}
-                              className="px-5 py-3 bg-green-700 text-white  hover:bg-green-800 transition-colors duration-200 font-medium"
+                              className="px-5 py-3 bg-green-700 text-white hover:bg-green-800 transition-colors duration-200 font-medium"
                             >
                               আরও দেখুন
                             </button>
@@ -262,17 +270,12 @@ const ChtCategoryNewspage = () => {
             <div className="rounded-lg sticky top-20">
               <h2 className="text-xl font-bold mb-4 pb-2 border-b">সর্বশেষ</h2>
               <div className="space-y-3">
-                {allNews
-                  .sort(
-                    (a, b) =>
-                      new Date(b.date).getTime() - new Date(a.date).getTime()
-                  )
-                  .slice(0, 5)
-                  .map((news) => (
-                    <div
-                      key={news.id}
-                      className="pb-4 border-b group last:border-b-0 w-full"
-                    >
+                {allNews.slice(0, 5).map((news) => (
+                  <Link
+                    key={news._id}
+                    href={`/news/${news.category}/${news._id}`}
+                  >
+                    <div className="pb-4 border-b group last:border-b-0 w-full">
                       <div className="flex gap-4 w-full">
                         <div className="flex-1 min-w-0">
                           <h3 className="font-medium text-lg group-hover:text-blue-500">
@@ -295,16 +298,19 @@ const ChtCategoryNewspage = () => {
                         </div>
                         <div className="flex-shrink-0 overflow-hidden">
                           <Image
-                            src={news.image ? `/${news.image}` : "/news1.jpeg"}
+                            src={
+                              news.featuredImage?.asset?.url || "/news1.jpeg"
+                            }
                             width={124}
                             height={83}
-                            alt={news.title}
+                            alt={news.featuredImage?.alt || news.title}
                             className="w-[124px] h-[83px] object-cover transition-transform duration-400 ease-out group-hover:scale-105"
                           />
                         </div>
                       </div>
                     </div>
-                  ))}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
@@ -314,4 +320,4 @@ const ChtCategoryNewspage = () => {
   );
 };
 
-export default ChtCategoryNewspage;
+export default CategoryNewspage;

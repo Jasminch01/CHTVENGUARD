@@ -3,12 +3,13 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { IoMdTime } from "react-icons/io";
-import { NewsItem } from "@/app/type";
+import { NewsItems } from "@/sanity/sanityTypes";
+import { getNewsByCategory } from "@/sanity/sanityQueries";
 
 interface CategorySection {
   title: string;
   category: string;
-  news: NewsItem[];
+  news: NewsItems[];
 }
 
 const ChtNewspage = () => {
@@ -18,19 +19,11 @@ const ChtNewspage = () => {
     []
   );
 
-  // Fetch news data from news.json and filter by categories
+  // Fetch news data from Sanity and filter by categories
   useEffect(() => {
     const fetchAndFilterNews = async () => {
       try {
         setLoading(true);
-
-        // Fetch all news from news.json
-        const response = await fetch("/news.json");
-        if (!response.ok) {
-          throw new Error("Failed to fetch news data");
-        }
-
-        const allNews: NewsItem[] = await response.json();
 
         // Define categories to filter
         const categories = [
@@ -39,21 +32,26 @@ const ChtNewspage = () => {
           { title: "বান্দরবান", category: "bandarban" },
         ];
 
-        // Filter news by category and limit to 12 items per category
-        const categorySections = categories.map((cat) => {
-          const filteredNews = allNews
-            .filter(
-              (news) =>
-                news.category.toLowerCase() === cat.category.toLowerCase()
-            )
-            .slice(0, 12); // Limit to 12 items per category
-
-          return {
-            title: cat.title,
-            category: cat.category,
-            news: filteredNews,
-          };
-        });
+        // Fetch news for each category
+        const categorySections = await Promise.all(
+          categories.map(async (cat) => {
+            try {
+              const categoryNews = await getNewsByCategory(cat.category);
+              return {
+                title: cat.title,
+                category: cat.category,
+                news: categoryNews.slice(0, 12), // Limit to 12 items per category
+              };
+            } catch (err) {
+              console.error(`Error fetching news for ${cat.category}:`, err);
+              return {
+                title: cat.title,
+                category: cat.category,
+                news: [],
+              };
+            }
+          })
+        );
 
         setCategorySections(categorySections);
         setError(null);
@@ -67,6 +65,12 @@ const ChtNewspage = () => {
 
     fetchAndFilterNews();
   }, []);
+
+  // Helper function to get first text block content
+  const getFirstTextContent = (content: NewsItems["content"]): string => {
+    const firstTextBlock = content.find((block) => block._type === "textBlock");
+    return firstTextBlock?.text || "";
+  };
 
   const truncateContent = (content: string, maxLength: number) => {
     if (content.length <= maxLength) return content;
@@ -129,19 +133,20 @@ const ChtNewspage = () => {
           {/* Main Featured News */}
           <div className="mb-6">
             <Link
-              href={`/news/${section.news[0].category}/${section.news[0].id}`}
+              href={`/news/${section.news[0].category}/${section.news[0]._id}`}
             >
               <div className="flex lg:flex-row-reverse flex-col xl:h-[300px] gap-5 group border-b pb-3">
                 <div className="flex-1 relative overflow-hidden">
                   <Image
                     src={
-                      section.news[0].image
-                        ? `/${section.news[0].image}`
-                        : "/news1.jpeg"
+                      section.news[0].featuredImage?.asset?.url || "/news1.jpeg"
                     }
                     width={500}
                     height={500}
-                    alt={section.news[0]?.title}
+                    alt={
+                      section.news[0].featuredImage?.alt ||
+                      section.news[0]?.title
+                    }
                     className="w-full lg:h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                   />
                 </div>
@@ -150,7 +155,10 @@ const ChtNewspage = () => {
                     {section.news[0]?.title}
                   </h3>
                   <p className="hidden lg:block text-base leading-relaxed mb-4 dark:text-gray-300">
-                    {truncateContent(section.news[0]?.content || "", 150)}
+                    {truncateContent(
+                      getFirstTextContent(section.news[0]?.content || []),
+                      150
+                    )}
                   </p>
                   <div className="flex items-center gap-1">
                     <IoMdTime />
@@ -176,8 +184,8 @@ const ChtNewspage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-3 mb-6">
               {section.news.slice(1, 3).map((item, index) => (
                 <Link
-                  key={item.id}
-                  href={`/news/cht/${item.category}/${item.id}`}
+                  key={item._id}
+                  href={`/news/cht/${item.category}/${item._id}`}
                 >
                   <div
                     className={`flex flex-row-reverse gap-5 group ${
@@ -188,10 +196,10 @@ const ChtNewspage = () => {
                   >
                     <div className="flex-1 relative overflow-hidden">
                       <Image
-                        src={item.image ? `/${item.image}` : "/news1.jpeg"}
+                        src={item.featuredImage?.asset?.url || "/news1.jpeg"}
                         width={400}
                         height={250}
-                        alt={item.title}
+                        alt={item.featuredImage?.alt || item.title}
                         className="w-full lg:h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                       />
                     </div>
@@ -201,7 +209,10 @@ const ChtNewspage = () => {
                           {item.title}
                         </h4>
                         <p className="text-gray-600 hidden lg:block dark:text-gray-400 line-clamp-2 leading-relaxed text-justify">
-                          {truncateContent(item.content, 50)}
+                          {truncateContent(
+                            getFirstTextContent(item.content),
+                            50
+                          )}
                         </p>
                         <div className="flex items-center gap-1">
                           <IoMdTime />
@@ -236,8 +247,8 @@ const ChtNewspage = () => {
 
                 return (
                   <Link
-                    key={item.id}
-                    href={`/news/cht/${item.category}/${item.id}`}
+                    key={item._id}
+                    href={`/news/cht/${item.category}/${item._id}`}
                   >
                     <div
                       className={`flex h-full flex-row-reverse gap-5 border-b lg:border-b-0 pb-2 lg:pb-0 mb-1 ${
@@ -254,10 +265,10 @@ const ChtNewspage = () => {
                     >
                       <div className="flex-1 relative overflow-hidden">
                         <Image
-                          src={item.image ? `/${item.image}` : "/news1.jpeg"}
+                          src={item.featuredImage?.asset?.url || "/news1.jpeg"}
                           width={500}
                           height={100}
-                          alt={item.title}
+                          alt={item.featuredImage?.alt || item.title}
                           className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                         />
                       </div>

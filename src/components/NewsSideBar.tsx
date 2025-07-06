@@ -1,11 +1,11 @@
 import React from "react";
 import Link from "next/link";
-import { NewsItem } from "@/app/type";
 import { getCategoryNameInBangla } from "@/lib/utils";
 import { IoMdTime } from "react-icons/io";
+import { NewsItems } from "@/sanity/sanityTypes";
 
 interface NewsSidebarProps {
-  relatedNews: NewsItem[];
+  relatedNews: NewsItems[];
   category: string;
 }
 
@@ -20,8 +20,8 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ relatedNews, category }) => {
             {relatedNews.length > 0 ? (
               relatedNews.map((news) => (
                 <Link
-                  key={news.id}
-                  href={`/news/${news.category}/${news.id}`}
+                  key={news._id}
+                  href={`/news/${news.category}/${news._id}`}
                   className="block group"
                 >
                   <div className="pb-4">

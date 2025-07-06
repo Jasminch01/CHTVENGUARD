@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { NewsItem } from "@/app/type";
 import { getCategoryNameInBangla } from "@/lib/utils";
 import { IoMdTime, IoMdShare, IoMdCopy } from "react-icons/io";
-import { FaFacebookF, FaWhatsapp} from "react-icons/fa";
+import { FaFacebookF, FaWhatsapp } from "react-icons/fa";
+import { NewsItems, ContentBlock } from "@/sanity/sanityTypes";
 
 interface NewsMainContentProps {
-  newsItem: NewsItem;
-  latestNews: NewsItem[];
+  newsItem: NewsItems;
+  latestNews: NewsItems[];
 }
 
 const NewsMainContent: React.FC<NewsMainContentProps> = ({
@@ -17,24 +17,43 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  // Function to split content into paragraphs of 4 lines each
-  const formatContentIntoParagraphs = (content: string) => {
-    const sentences = content
-      .split(/(?<=[।.!?])\s+/)
-      .filter((sentence) => sentence.trim().length > 0);
-
-    const paragraphs = [];
-    for (let i = 0; i < sentences.length; i += 4) {
-      const paragraph = sentences.slice(i, i + 4).join(" ");
-      if (paragraph.trim()) {
-        paragraphs.push(paragraph);
+  // Function to process content blocks
+  const renderContentBlocks = (blocks: ContentBlock[]) => {
+    return blocks.map((block) => {
+      switch (block._type) {
+        case "textBlock":
+          return (
+            <p
+              key={block._key}
+              className="text-xl leading-relaxed text-justify my-4"
+            >
+              {block.text}
+            </p>
+          );
+        case "imageBlock":
+          return (
+            <div key={block._key} className="my-6">
+              {block.image?.asset?.url && (
+                <Image
+                  src={block.image.asset.url}
+                  width={800}
+                  height={500}
+                  alt={block.alt || "News image"}
+                  className="w-full h-auto"
+                />
+              )}
+              {block.caption && (
+                <p className="text-center text-sm text-gray-500 mt-2">
+                  {block.caption}
+                </p>
+              )}
+            </div>
+          );
+        default:
+          return null;
       }
-    }
-
-    return paragraphs;
+    });
   };
-
-  const contentParagraphs = formatContentIntoParagraphs(newsItem.content);
 
   // Get current URL for sharing
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
@@ -145,7 +164,7 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
                 title="লিংক কপি করুন"
               >
                 {copied ? (
-                  <p className="text-sm">Copyed</p>
+                  <p className="text-sm">Copied</p>
                 ) : (
                   <IoMdCopy size={14} />
                 )}
@@ -155,27 +174,21 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
         </div>
       </div>
 
-      {/* News Image */}
-      {newsItem.image && (
+      {/* Featured Image */}
+      {newsItem.featuredImage?.asset?.url && (
         <div className="mb-6">
           <Image
-            src={newsItem.image ? `/${newsItem.image}` : "/news1.jpeg"}
+            src={newsItem.featuredImage.asset.url}
             width={800}
             height={500}
-            alt={newsItem.title}
+            alt={newsItem.featuredImage.alt || newsItem.title}
             className="w-full h-auto"
           />
         </div>
       )}
 
       {/* News Content */}
-      <div className="space-y-6 mb-12">
-        {contentParagraphs.map((paragraph, index) => (
-          <p key={index} className="text-xl leading-relaxed text-justify">
-            {paragraph}
-          </p>
-        ))}
-      </div>
+      <div className="mb-12">{renderContentBlocks(newsItem.content)}</div>
 
       {/* Latest News Section */}
       <div className="pb-10">
@@ -185,23 +198,19 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-b py-8 mt-3">
           {latestNews.length > 0 ? (
             latestNews.slice(0, 3).map((news, index) => (
-              <div key={news.id} className="relative">
+              <div key={news._id} className="relative">
                 <Link
-                  href={`/news/${news.category}/${news.id}`}
+                  href={`/news/${news.category}/${news._id}`}
                   className="block group transition-all duration-300 h-full"
                 >
                   <div className="">
-                    {news.image && (
+                    {news.featuredImage?.asset?.url && (
                       <div className="flex-shrink-0">
                         <Image
-                          src={
-                            newsItem.image
-                              ? `/${newsItem.image}`
-                              : "/news1.jpeg"
-                          }
+                          src={news.featuredImage.asset.url}
                           width={500}
                           height={500}
-                          alt={news.title}
+                          alt={news.featuredImage.alt || news.title}
                           className="w-full h-auto object-cover"
                         />
                       </div>

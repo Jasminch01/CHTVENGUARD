@@ -1,5 +1,5 @@
 import { client } from "../../sanity.config";
-import {  NewsItems } from "./sanityTypes";
+import { NewsItems } from "./sanityTypes";
 
 // Get all news items
 export async function getNewsItems(): Promise<NewsItems[]> {
@@ -10,7 +10,11 @@ export async function getNewsItems(): Promise<NewsItems[]> {
       author,
       publishedAt,
       featuredImage {
-        asset->,
+        asset-> {
+          _ref,
+          _type,
+          url
+        },
         alt,
         hotspot
       },
@@ -22,7 +26,12 @@ export async function getNewsItems(): Promise<NewsItems[]> {
         },
         _type == "imageBlock" => {
           image {
-            asset->,
+            asset-> {
+              _ref,
+              _type,
+              url
+            },
+            alt,
             hotspot
           },
           alt,
@@ -37,7 +46,9 @@ export async function getNewsItems(): Promise<NewsItems[]> {
 }
 
 // Get news items by category
-export async function getNewsByCategory(category: string): Promise<NewsItems[]> {
+export async function getNewsByCategory(
+  category: string
+): Promise<NewsItems[]> {
   const query = `
     *[_type == "newsItem" && category == $category] | order(publishedAt desc) {
       _id,
@@ -45,7 +56,11 @@ export async function getNewsByCategory(category: string): Promise<NewsItems[]> 
       author,
       publishedAt,
       featuredImage {
-        asset->,
+        asset-> {
+          _ref,
+          _type,
+          url
+        },
         alt,
         hotspot
       },
@@ -57,7 +72,12 @@ export async function getNewsByCategory(category: string): Promise<NewsItems[]> 
         },
         _type == "imageBlock" => {
           image {
-            asset->,
+            asset-> {
+              _ref,
+              _type,
+              url
+            },
+            alt,
             hotspot
           },
           alt,
@@ -72,7 +92,7 @@ export async function getNewsByCategory(category: string): Promise<NewsItems[]> 
 }
 
 // Get single news item by ID
-export async function getNewsItem(id: string): Promise<NewsItems | null> {
+export async function getNewsItem(id: string): Promise<NewsItems> {
   const query = `
     *[_type == "newsItem" && _id == $id][0] {
       _id,
@@ -80,7 +100,11 @@ export async function getNewsItem(id: string): Promise<NewsItems | null> {
       author,
       publishedAt,
       featuredImage {
-        asset->,
+        asset-> {
+          _ref,
+          _type,
+          url
+        },
         alt,
         hotspot
       },
@@ -92,7 +116,12 @@ export async function getNewsItem(id: string): Promise<NewsItems | null> {
         },
         _type == "imageBlock" => {
           image {
-            asset->,
+            asset-> {
+              _ref,
+              _type,
+              url
+            },
+            alt,
             hotspot
           },
           alt,
@@ -115,7 +144,11 @@ export async function getRecentNews(limit: number = 10): Promise<NewsItems[]> {
       author,
       publishedAt,
       featuredImage {
-        asset->,
+        asset-> {
+          _ref,
+          _type,
+          url
+        },
         alt,
         hotspot
       },
@@ -124,6 +157,38 @@ export async function getRecentNews(limit: number = 10): Promise<NewsItems[]> {
     }
   `;
   return await client.fetch(query, { limit: limit - 1 });
+}
+
+export async function getRelatedNews(
+  currentNewsId: string,
+  category: string,
+  limit: number = 5
+): Promise<NewsItems[]> {
+  const query = `
+    *[_type == "newsItem" && category == $category && _id != $currentNewsId] | order(publishedAt desc) [0...$limit] {
+      _id,
+      title,
+      author,
+      publishedAt,
+      featuredImage {
+        asset-> {
+          _ref,
+          _type,
+          url
+        },
+        alt,
+        hotspot
+      },
+      category,
+      tags
+    }
+  `;
+
+  return await client.fetch(query, {
+    category,
+    currentNewsId,
+    limit: limit - 1,
+  });
 }
 
 // Search news items
@@ -139,7 +204,11 @@ export async function searchNews(searchTerm: string): Promise<NewsItems[]> {
       author,
       publishedAt,
       featuredImage {
-        asset->,
+        asset-> {
+          _ref,
+          _type,
+          url
+        },
         alt,
         hotspot
       },
