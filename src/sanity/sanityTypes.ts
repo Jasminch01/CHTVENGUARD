@@ -1,11 +1,9 @@
-
-// Updated interfaces with url included in asset
 export interface SanityImage {
   _type: "image";
   asset: {
     _ref: string;
     _type: "reference";
-    url: string; // Now includes url
+    url: string;
   };
   alt?: string;
   hotspot?: {
@@ -30,7 +28,15 @@ export interface ImageBlock {
   caption?: string;
 }
 
-export type ContentBlock = TextBlock | ImageBlock;
+export interface YouTubeBlock {
+  _type: "youtubeBlock";
+  _key: string;
+  url: string;
+  title?: string;
+  caption?: string;
+}
+
+export type ContentBlock = TextBlock | ImageBlock | YouTubeBlock;
 
 export interface NewsItems {
   _id: string;
@@ -50,7 +56,6 @@ export interface NewsItems {
     | "international"
     | "press-release"
     | "opinion";
-  tags?: string[];
 }
 
 export interface NewsCardsProps {

@@ -17,6 +17,14 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
+  // Function to extract YouTube video ID from URL
+  const getYouTubeVideoId = (url: string): string | null => {
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
+  };
+console.log(newsItem)
   // Function to process content blocks
   const renderContentBlocks = (blocks: ContentBlock[]) => {
     return blocks.map((block) => {
@@ -42,6 +50,43 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
                   className="w-full h-auto"
                 />
               )}
+              {block.caption && (
+                <p className="text-center text-sm text-gray-500 mt-2">
+                  {block.caption}
+                </p>
+              )}
+            </div>
+          );
+        case "youtubeBlock":
+          const videoId = getYouTubeVideoId(block.url);
+          if (!videoId) {
+            return (
+              <div
+                key={block._key}
+                className="my-6 p-4 border border-red-200 rounded"
+              >
+                <p className="text-red-500">Invalid YouTube URL: {block.url}</p>
+              </div>
+            );
+          }
+          return (
+            <div key={block._key} className="my-6">
+              {block.title && (
+                <h4 className="text-lg font-semibold mb-3">{block.title}</h4>
+              )}
+              <div
+                className="relative w-full"
+                style={{ paddingBottom: "56.25%" }}
+              >
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full rounded-lg"
+                  src={`https://www.youtube.com/embed/${videoId}`}
+                  title={block.title || "YouTube video"}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
               {block.caption && (
                 <p className="text-center text-sm text-gray-500 mt-2">
                   {block.caption}

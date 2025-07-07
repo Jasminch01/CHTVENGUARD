@@ -26,7 +26,6 @@ const InternationalNews = () => {
 
     fetchNews();
   }, []);
-
   const getTextContent = (content: NewsItems["content"]) => {
     if (!content || content.length === 0) return "";
 

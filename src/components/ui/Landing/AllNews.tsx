@@ -28,7 +28,7 @@ const AllNews: React.FC = () => {
   if (loading) {
     return (
       <div className="mb-5">
-        <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
+        <div className="max-w-7xl h-screen flex justify-center items-center mx-auto px-4 lg:px-0 py-8">
           <div className="flex justify-center items-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
             <span className="ml-3 text-gray-600 dark:text-gray-400">
@@ -43,16 +43,16 @@ const AllNews: React.FC = () => {
   if (error) {
     return (
       <div className="mb-5">
-        <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
+        <div className="max-w-7xl h-screen flex justify-center items-center mx-auto px-4 lg:px-0">
           <div className="text-center py-8">
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6">
+            <div className="">
               <h2 className="text-lg font-semibold text-red-800 dark:text-red-400 mb-2">
-                Unable to Load News
+                Somthing is Wrong
               </h2>
               <p className="text-red-600 dark:text-red-300 mb-4">{error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors duration-200"
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors duration-200 cursor-pointer"
               >
                 Try Again
               </button>
@@ -67,7 +67,7 @@ const AllNews: React.FC = () => {
   if (news.length === 0) {
     return (
       <div className="mb-5">
-        <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
+        <div className="max-w-7xl h-screen flex justify-center items-center mx-auto px-4 lg:px-0 py-8">
           <div className="text-center py-8">
             <p className="text-gray-600 dark:text-gray-400">
               No news articles available at the moment.

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { Search, Sun, Moon, Menu, X, ChevronDown } from "lucide-react";
+import { Search, Sun, Moon, Menu, X, ChevronDown, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,11 +8,16 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { searchNews } from "@/sanity/sanityQueries";
+import { NewsItems } from "@/sanity/sanityTypes";
 
 const Appbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<NewsItems[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const router = useRouter();
@@ -29,6 +34,8 @@ const Appbar = () => {
     null
   );
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -43,13 +50,65 @@ const Appbar = () => {
         setOpenDesktopDropdown(null);
         setHoveredDesktopItem(null);
       }
+
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
+        setShowSearchResults(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dropdownRef]);
+  }, [dropdownRef, searchRef]);
+
+  // Fixed search function - now properly calls the searchNews function
+  const performSearch = async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      // Direct call to searchNews function
+      const results = await searchNews(query);
+      setSearchResults(results);
+      setShowSearchResults(true);
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+      setShowSearchResults(false);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  // Debounced search effect
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    if (searchQuery.trim()) {
+      searchTimeoutRef.current = setTimeout(() => {
+        performSearch(searchQuery);
+      }, 300); // 300ms debounce
+    } else {
+      setSearchResults([]);
+      setShowSearchResults(false);
+    }
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchQuery]);
 
   const toggleDarkMode = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -59,14 +118,28 @@ const Appbar = () => {
     setIsSearchOpen(!isSearchOpen);
     if (!isSearchOpen) {
       setSearchQuery("");
+      setSearchResults([]);
+      setShowSearchResults(false);
     }
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Search query:", searchQuery);
+    if (searchQuery.trim()) {
+      // Navigate to search results page  
+      setIsSearchOpen(false);
+      setSearchQuery("");
+      setSearchResults([]);
+      setShowSearchResults(false);
+    }
+  };
+
+  const handleSearchResultClick = (result: NewsItems) => {
+    router.push(`/news/${result.category}/${result._id}`);
     setIsSearchOpen(false);
     setSearchQuery("");
+    setSearchResults([]);
+    setShowSearchResults(false);
   };
 
   const toggleDesktopDropdown = (menu: string) => {
@@ -122,7 +195,7 @@ const Appbar = () => {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto px-4 lg:px-0">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
@@ -140,7 +213,7 @@ const Appbar = () => {
 
           {/* Search Bar (when open) */}
           {isSearchOpen && (
-            <div className="flex-1 mx-4">
+            <div className="flex-1 mx-4 relative" ref={searchRef}>
               <form onSubmit={handleSearchSubmit} className="relative">
                 <Input
                   type="text"
@@ -156,9 +229,80 @@ const Appbar = () => {
                   size="sm"
                   className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 cursor-pointer"
                 >
-                  <Search className="h-4 w-4" />
+                  {isSearching ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Search className="h-4 w-4" />
+                  )}
                 </Button>
               </form>
+
+              {/* Search Results Dropdown */}
+              {showSearchResults && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto z-50">
+                  {searchResults.length > 0 ? (
+                    <div className="py-2">
+                      <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+                        {searchResults.length} টি ফলাফল পাওয়া গেছে
+                      </div>
+                      {searchResults.map((result) => (
+                        <div
+                          key={result._id}
+                          onClick={() => handleSearchResultClick(result)}
+                          className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                        >
+                          <div className="flex items-start space-x-3">
+                            {result.featuredImage?.asset?.url && (
+                              <Image
+                                src={result.featuredImage.asset.url}
+                                width={60}
+                                height={40}
+                                alt={result.featuredImage.alt || result.title}
+                                className="w-15 h-10 object-cover rounded flex-shrink-0"
+                              />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">
+                                {result.title}
+                              </h4>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {result.category} • {result.author} •{" "}
+                                {new Date(
+                                  result.publishedAt
+                                ).toLocaleDateString("bn-BD")}
+                              </p>
+                              
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                      {searchResults.length > 0 && (
+                        <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
+                          <button
+                            onClick={() => {
+                              router.push(
+                                `/search?q=${encodeURIComponent(searchQuery)}`
+                              );
+                              setIsSearchOpen(false);
+                              setSearchQuery("");
+                              setSearchResults([]);
+                              setShowSearchResults(false);
+                            }}
+                            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
+                          >
+                            সব ফলাফল দেখুন ({searchResults.length}+)
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                      <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">কোন ফলাফল পাওয়া যায়নি</p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -334,7 +478,11 @@ const Appbar = () => {
                         size="sm"
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 cursor-pointer"
                       >
-                        <Search className="size-5" />
+                        {isSearching ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <Search className="size-5" />
+                        )}
                       </Button>
                     </form>
 
@@ -455,4 +603,5 @@ const Appbar = () => {
     </nav>
   );
 };
+
 export default Appbar;

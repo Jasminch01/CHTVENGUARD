@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
       {
         hostname: "cdn.sanity.io",
       },
+      {
+        hostname : "img.youtube.com"
+      }
     ],
   },
 };

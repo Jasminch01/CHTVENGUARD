@@ -36,6 +36,11 @@ export async function getNewsItems(): Promise<NewsItems[]> {
           },
           alt,
           caption
+        },
+        _type == "youtubeBlock" => {
+          url,
+          title,
+          caption
         }
       },
       category,
@@ -82,6 +87,11 @@ export async function getNewsByCategory(
           },
           alt,
           caption
+        },
+        _type == "youtubeBlock" => {
+          url,
+          title,
+          caption
         }
       },
       category,
@@ -126,6 +136,11 @@ export async function getNewsItem(id: string): Promise<NewsItems> {
           },
           alt,
           caption
+        },
+        _type == "youtubeBlock" => {
+          url,
+          title,
+          caption
         }
       },
       category,
@@ -152,8 +167,7 @@ export async function getRecentNews(limit: number = 10): Promise<NewsItems[]> {
         alt,
         hotspot
       },
-      category,
-      tags
+      category
     }
   `;
   return await client.fetch(query, { limit: limit - 1 });
@@ -179,8 +193,7 @@ export async function getRelatedNews(
         alt,
         hotspot
       },
-      category,
-      tags
+      category
     }
   `;
 
@@ -226,7 +239,7 @@ export async function getNewsItemsAllCategories(): Promise<NewsItems[]> {
       title,
       author,
       publishedAt,
-      featuredImage {
+       featuredImage {
         asset-> {
           _ref,
           _type,
@@ -253,25 +266,30 @@ export async function getNewsItemsAllCategories(): Promise<NewsItems[]> {
           },
           alt,
           caption
+        },
+        _type == "youtubeBlock" => {
+          url,
+          title,
+          caption
         }
       },
       category,
       tags
     } | order(publishedAt desc)
   `;
-  
+
   const allNews = await client.fetch(query);
-  
+
   // Get one latest news item per category
   const seenCategories = new Set<string>();
   const result: NewsItems[] = [];
-  
+
   for (const newsItem of allNews) {
     if (!seenCategories.has(newsItem.category)) {
       seenCategories.add(newsItem.category);
       result.push(newsItem);
     }
   }
-  
+
   return result;
 }
