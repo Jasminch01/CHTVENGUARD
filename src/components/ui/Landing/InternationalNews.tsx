@@ -1,4 +1,6 @@
 "use client";
+import ErrorComponent from "@/components/shared/Error";
+import Loading from "@/components/shared/Loading";
 import { getNewsByCategory } from "@/sanity/sanityQueries";
 import { NewsItems } from "@/sanity/sanityTypes";
 import Image from "next/image";
@@ -35,23 +37,11 @@ const InternationalNews = () => {
   };
 
   if (error) {
-    return (
-      <div className="mt-[7rem] border-t border-gray-100 mb-5">
-        <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
-          <div className="text-center py-8 text-red-500">Error: {error}</div>
-        </div>
-      </div>
-    );
+    return <ErrorComponent error={error} />;
   }
 
   if (loading) {
-    return (
-      <div className="mt-[7rem] border-t mb-5">
-        <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
-          <div className="text-center py-8">Loading news...</div>
-        </div>
-      </div>
-    );
+    return <Loading loading={loading} />;
   }
 
   return (

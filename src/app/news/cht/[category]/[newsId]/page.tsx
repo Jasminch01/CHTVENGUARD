@@ -9,6 +9,8 @@ import {
   getRecentNews,
   getRelatedNews,
 } from "@/sanity/sanityQueries";
+import Loading from "@/components/shared/Loading";
+import ErrorComponent from "@/components/shared/Error";
 
 const NewsDetailsContentpage = () => {
   const { newsId } = useParams();
@@ -62,29 +64,10 @@ const NewsDetailsContentpage = () => {
     fetchNews();
   }, [id]);
   if (loading) {
-    return (
-      <div className="max-w-4xl mx-auto p-4 h-screen flex justify-center items-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p>Loading news...</p>
-        </div>
-      </div>
-    );
+    return <Loading loading={loading} />;
   }
   if (error) {
-    return (
-      <div className="max-w-4xl mx-auto p-4 text-red-500 flex justify-center items-center h-screen">
-        <div className="text-center">
-          <p className="text-lg font-semibold">Error: {error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
+    return <ErrorComponent error={error} />;
   }
 
   if (!newsItem) {

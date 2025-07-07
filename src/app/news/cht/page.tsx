@@ -5,6 +5,8 @@ import Link from "next/link";
 import { IoMdTime } from "react-icons/io";
 import { NewsItems } from "@/sanity/sanityTypes";
 import { getNewsByCategory } from "@/sanity/sanityQueries";
+import Loading from "@/components/shared/Loading";
+import ErrorComponent from "@/components/shared/Error";
 
 interface CategorySection {
   title: string;
@@ -15,7 +17,9 @@ interface CategorySection {
 const ChtNewspage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [categorySections, setCategorySections] = useState<CategorySection[]>([]);
+  const [categorySections, setCategorySections] = useState<CategorySection[]>(
+    []
+  );
   const [mounted, setMounted] = useState(false);
 
   // Ensure component is mounted before running effects
@@ -26,7 +30,7 @@ const ChtNewspage = () => {
   // Fetch news data from Sanity and filter by categories
   useEffect(() => {
     // Don't run during SSR/prerendering
-    if (!mounted || typeof window === 'undefined') return;
+    if (!mounted || typeof window === "undefined") return;
 
     const fetchAndFilterNews = async () => {
       try {
@@ -48,7 +52,9 @@ const ChtNewspage = () => {
               return {
                 title: cat.title,
                 category: cat.category,
-                news: Array.isArray(categoryNews) ? categoryNews.slice(0, 12) : [],
+                news: Array.isArray(categoryNews)
+                  ? categoryNews.slice(0, 12)
+                  : [],
               };
             } catch (err) {
               console.error(`Error fetching news for ${cat.category}:`, err);
@@ -63,10 +69,13 @@ const ChtNewspage = () => {
 
         // Handle settled promises
         const resolvedSections = categorySections.map((result, index) => {
-          if (result.status === 'fulfilled') {
+          if (result.status === "fulfilled") {
             return result.value;
           } else {
-            console.error(`Failed to fetch category ${categories[index].category}:`, result.reason);
+            console.error(
+              `Failed to fetch category ${categories[index].category}:`,
+              result.reason
+            );
             return {
               title: categories[index].title,
               category: categories[index].category,
@@ -121,32 +130,12 @@ const ChtNewspage = () => {
 
   // Loading state
   if (loading) {
-    return (
-      <div className="w-full">
-        <div className="flex justify-center items-center py-16 h-screen">
-          <p className="">loading news...</p>
-        </div>
-      </div>
-    );
+    return <Loading loading={loading} />;
   }
 
   // Error state
   if (error) {
-    return (
-      <div className="w-full">
-        <div className="text-center flex h-screen justify-center items-center py-8 text-red-500">
-          <div>
-            <p className="text-lg mb-4">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorComponent error={error} />;
   }
 
   // Render each category section
@@ -154,9 +143,11 @@ const ChtNewspage = () => {
     if (!section.news || section.news.length === 0) {
       return (
         <div className="mb-12" key={section.category}>
-          <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 border-b pb-2">
-            {section.title}
-          </h2>
+          <div className="md:mb-2 border-l-4 border-red-500 pl-3">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 border-b pb-2">
+              {section.title}
+            </h2>
+          </div>
           <div className="text-center flex justify-center items-center py-8 text-gray-500 dark:text-gray-400">
             No news articles available for {section.title}
           </div>
@@ -170,23 +161,27 @@ const ChtNewspage = () => {
     return (
       <div className="mb-12" key={section.category}>
         {/* Section Title */}
-        <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 border-b pb-2">
-          {section.title}
-        </h2>
+        <div className="md:mb-2 border-l-4 border-red-500 pl-3">
+          <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-100 border-b pb-2">
+            {section.title}
+          </h2>
+        </div>
 
         <div className="">
           {/* Main Featured News */}
           <div className="mb-6">
-            <Link
-              href={`/news/${firstNews.category}/${firstNews._id}`}
-            >
+            <Link href={`/news/${firstNews.category}/${firstNews._id}`}>
               <div className="flex lg:flex-row-reverse flex-col xl:h-[300px] gap-5 group border-b pb-3">
                 <div className="flex-1 relative overflow-hidden">
                   <Image
                     src={firstNews.featuredImage?.asset?.url || "/news1.jpeg"}
                     width={500}
                     height={500}
-                    alt={firstNews.featuredImage?.alt || firstNews?.title || "News image"}
+                    alt={
+                      firstNews.featuredImage?.alt ||
+                      firstNews?.title ||
+                      "News image"
+                    }
                     className="w-full lg:h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                   />
                 </div>
@@ -233,7 +228,11 @@ const ChtNewspage = () => {
                           src={item.featuredImage?.asset?.url || "/news1.jpeg"}
                           width={400}
                           height={250}
-                          alt={item.featuredImage?.alt || item.title || "News image"}
+                          alt={
+                            item.featuredImage?.alt ||
+                            item.title ||
+                            "News image"
+                          }
                           className="w-full lg:h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                         />
                       </div>
@@ -268,7 +267,7 @@ const ChtNewspage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 py-3 lg:border-b border-t border-gray-300 dark:border-gray-700">
               {section.news.slice(0, 6).map((item, index) => {
                 if (!item) return null;
-                
+
                 const rowNumber = Math.floor(index / 3) + 1;
                 const isFirstRow = rowNumber === 1;
                 const isSecondRow = rowNumber === 2;
@@ -297,7 +296,11 @@ const ChtNewspage = () => {
                           src={item.featuredImage?.asset?.url || "/news1.jpeg"}
                           width={500}
                           height={100}
-                          alt={item.featuredImage?.alt || item.title || "News image"}
+                          alt={
+                            item.featuredImage?.alt ||
+                            item.title ||
+                            "News image"
+                          }
                           className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                         />
                       </div>

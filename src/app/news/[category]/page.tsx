@@ -7,6 +7,8 @@ import React, { useEffect, useState } from "react";
 import { IoMdTime } from "react-icons/io";
 import { NewsItems } from "@/sanity/sanityTypes";
 import { getNewsByCategory, getRecentNews } from "@/sanity/sanityQueries";
+import ErrorComponent from "@/components/shared/Error";
+import Loading from "@/components/shared/Loading";
 
 const CategoryNewspage = () => {
   const [categoryNews, setCategoryNews] = useState<NewsItems[]>([]);
@@ -146,23 +148,11 @@ const CategoryNewspage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="border-t mb-5">
-        <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
-          <div className="text-center py-8">Loading...</div>
-        </div>
-      </div>
-    );
+    return <Loading loading={loading} />;
   }
 
   if (error) {
-    return (
-      <div className="border-t mb-5">
-        <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
-          <div className="text-center py-8 text-red-500">Error: {error}</div>
-        </div>
-      </div>
-    );
+    return <ErrorComponent error={error} />;
   }
 
   return (
