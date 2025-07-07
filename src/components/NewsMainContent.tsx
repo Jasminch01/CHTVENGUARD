@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getCategoryNameInBangla } from "@/lib/utils";
 import { IoMdTime, IoMdShare, IoMdCopy } from "react-icons/io";
 import { FaFacebookF, FaWhatsapp } from "react-icons/fa";
+import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { NewsItems, ContentBlock } from "@/sanity/sanityTypes";
 
 interface NewsMainContentProps {
@@ -16,6 +17,7 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
   latestNews,
 }) => {
   const [copied, setCopied] = useState(false);
+  const [fontSize, setFontSize] = useState(1); // 1 = normal, 1.25 = large, 1.5 = extra large, etc.
 
   // Function to extract YouTube video ID from URL
   const getYouTubeVideoId = (url: string): string | null => {
@@ -24,7 +26,16 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
     const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
   };
-console.log(newsItem)
+
+  // Font size control functions
+  const increaseFontSize = () => {
+    setFontSize((prev) => Math.min(prev + 0.25, 2)); // Max 2x size
+  };
+
+  const decreaseFontSize = () => {
+    setFontSize((prev) => Math.max(prev - 0.25, 0.75)); // Min 0.75x size
+  };
+
   // Function to process content blocks
   const renderContentBlocks = (blocks: ContentBlock[]) => {
     return blocks.map((block) => {
@@ -33,7 +44,8 @@ console.log(newsItem)
           return (
             <p
               key={block._key}
-              className="text-xl leading-relaxed text-justify my-4"
+              className="leading-relaxed text-justify my-4"
+              style={{ fontSize: `${fontSize * 1.25}rem` }} // 1.25rem = text-xl base
             >
               {block.text}
             </p>
@@ -176,12 +188,13 @@ console.log(newsItem)
             </div>
           </div>
 
-          {/* Share Icons */}
+          {/* Share Icons and Font Size Controls */}
           <div className="flex items-center gap-3">
+            {/* Share Icons */}
             <div className="flex items-center gap-2">
               <button
                 onClick={shareOnFacebook}
-                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer"
+                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer size-8 flex items-center justify-center"
                 title="Facebook এ শেয়ার করুন"
               >
                 <FaFacebookF size={14} />
@@ -189,7 +202,7 @@ console.log(newsItem)
 
               <button
                 onClick={shareOnWhatsApp}
-                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer"
+                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer size-8 flex items-center justify-center"
                 title="WhatsApp এ শেয়ার করুন"
               >
                 <FaWhatsapp size={14} />
@@ -197,7 +210,7 @@ console.log(newsItem)
 
               <button
                 onClick={handleNativeShare}
-                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer"
+                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer size-8 flex items-center justify-center"
                 title="শেয়ার করুন"
               >
                 <IoMdShare size={14} />
@@ -205,14 +218,38 @@ console.log(newsItem)
 
               <button
                 onClick={copyToClipboard}
-                className={`p-2 rounded bg-gray-300 text-gray-900 cursor-pointer`}
+                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer size-8 flex items-center justify-center"
                 title="লিংক কপি করুন"
               >
                 {copied ? (
-                  <p className="text-sm">Copied</p>
+                  <span className="text-xs">✓</span>
                 ) : (
                   <IoMdCopy size={14} />
                 )}
+              </button>
+
+              <button
+                onClick={decreaseFontSize}
+                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer size-8 flex items-center justify-center disabled:opacity-50"
+                title="ফন্ট সাইজ ছোট করুন"
+                disabled={fontSize <= 0.75}
+              >
+                <div className="flex items-center gap-0.5">
+                  <span className="text-sm">অ</span>
+                  <AiOutlineMinus size={10} />
+                </div>
+              </button>
+
+              <button
+                onClick={increaseFontSize}
+                className="p-2 rounded bg-gray-300 text-gray-900 cursor-pointer size-8 flex items-center justify-center disabled:opacity-50"
+                title="ফন্ট সাইজ বড় করুন"
+                disabled={fontSize >= 2}
+              >
+                <div className="flex items-center gap-0.5">
+                  <span className="text-sm">অ</span>
+                  <AiOutlinePlus size={10} />
+                </div>
               </button>
             </div>
           </div>

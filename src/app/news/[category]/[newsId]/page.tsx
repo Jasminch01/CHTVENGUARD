@@ -100,7 +100,7 @@ const NewsDetailsContentpage = () => {
           </p>
           <button
             onClick={() => window.history.back()}
-            className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+            className="mt-4 px-4 py-2  text-white rounded transition-colors"
           >
             Go Back
           </button>
@@ -110,7 +110,7 @@ const NewsDetailsContentpage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto mt-3 px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <NewsMainContent newsItem={newsItem} latestNews={latestNews} />

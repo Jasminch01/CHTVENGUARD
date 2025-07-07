@@ -3,7 +3,7 @@ import { getCategoryNameInBangla } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { IoMdTime } from "react-icons/io";
 import { NewsItems } from "@/sanity/sanityTypes";
 import {
@@ -12,7 +12,8 @@ import {
   searchNews,
 } from "@/sanity/sanityQueries";
 
-const Searchpage = () => {
+// Separate component for the search functionality
+const SearchContent = () => {
   const [searchResults, setSearchResults] = useState<NewsItems[]>([]);
   const [allNews, setAllNews] = useState<NewsItems[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -359,6 +360,24 @@ const Searchpage = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+// Loading component for Suspense fallback
+const SearchPageLoading = () => (
+  <div className="border-t mb-5">
+    <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
+      <div className="text-center py-8">Loading...</div>
+    </div>
+  </div>
+);
+
+// Main component with Suspense wrapper
+const Searchpage = () => {
+  return (
+    <Suspense fallback={<SearchPageLoading />}>
+      <SearchContent />
+    </Suspense>
   );
 };
 
