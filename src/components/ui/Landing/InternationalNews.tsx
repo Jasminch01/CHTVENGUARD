@@ -46,7 +46,7 @@ const InternationalNews = () => {
 
   return (
     <div className="mt-[4rem]">
-      <div className="max-w-7xl mx-auto lg:px-0 pb-5">
+      <div className="max-w-7xl mx-auto pb-5">
         <div className="md:mb-2 border-l-4 border-red-500 pl-3">
           <h1 className="text-2xl font-bold">আন্তর্জাতিক</h1>
         </div>
@@ -62,7 +62,7 @@ const InternationalNews = () => {
               {internationalNews.length === 0 ? (
                 <div className="text-center py-8">Not found</div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-3 gap-4 border-t border-b pt-10 pb-5">
+                <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-3 gap-4 lg:border-t lg:border-b pt-10 pb-5">
                   {/* Main featured article - spans 3 rows on desktop */}
                   {internationalNews[0] && (
                     <Link
@@ -70,7 +70,7 @@ const InternationalNews = () => {
                       key={internationalNews[0]._id}
                       className="md:row-span-3"
                     >
-                      <div className="flex flex-col gap-4 h-full group border-r pr-4">
+                      <div className="flex flex-col gap-4 h-full group lg:border-r lg:pr-4">
                         {internationalNews[0]?.featuredImage && (
                           <div className="flex-1 relative overflow-hidden">
                             <Image
