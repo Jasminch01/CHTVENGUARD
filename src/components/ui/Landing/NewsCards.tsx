@@ -171,7 +171,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                           width={500}
                           height={100}
                           alt={item.featuredImage?.alt || item.title}
-                          className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                          className="w-[124px] h-auto lg:w-[110px] lg:h-[75px] xl:w-[180px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                         />
                       </div>
                       <div className="flex-1 min-w-0">

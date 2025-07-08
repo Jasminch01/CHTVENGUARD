@@ -87,7 +87,7 @@ const RangamatiNews = () => {
                               rangamatiNews[0].featuredImage?.alt ||
                               rangamatiNews[0].title
                             }
-                            className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                            className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                           />
                         </div>
                       )}
@@ -156,7 +156,7 @@ const RangamatiNews = () => {
                               alt={
                                 newsItem.featuredImage?.alt || newsItem.title
                               }
-                              className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                              className="w-[124px] h-auto lg:w-[110px] lg:h-[75px] xl:w-[180px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                             />
                           </div>
                         )}

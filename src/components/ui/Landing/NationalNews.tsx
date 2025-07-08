@@ -38,15 +38,13 @@ const NationalNews = () => {
   };
 
   if (error) {
-    return (
-      <ErrorComponent error={error}/>
-    );
+    return <ErrorComponent error={error} />;
   }
 
   if (loading) {
     return (
       <div className="mt-[7rem] border-t mb-5">
-        <Loading loading={loading}/>
+        <Loading loading={loading} />
       </div>
     );
   }
@@ -88,7 +86,7 @@ const NationalNews = () => {
                                 nationalNews[0].featuredImage?.alt ||
                                 nationalNews[0].title
                               }
-                              className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                              className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                             />
                           </div>
                         )}
@@ -157,7 +155,7 @@ const NationalNews = () => {
                                 alt={
                                   newsItem.featuredImage?.alt || newsItem.title
                                 }
-                                className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                                className="w-[124px] h-auto lg:w-[110px] lg:h-[75px] xl:w-[180px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                               />
                             </div>
                           )}
