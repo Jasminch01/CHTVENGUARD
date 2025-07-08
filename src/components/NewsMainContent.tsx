@@ -91,7 +91,7 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
                 style={{ paddingBottom: "56.25%" }}
               >
                 <iframe
-                  className="absolute top-0 left-0 w-full h-full rounded-lg"
+                  className="absolute top-0 left-0 w-full h-full"
                   src={`https://www.youtube.com/embed/${videoId}`}
                   title={block.title || "YouTube video"}
                   frameBorder="0"
