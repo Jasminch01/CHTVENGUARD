@@ -9,6 +9,7 @@ import InternationalNews from "./InternationalNews";
 import { IoMdTime } from "react-icons/io";
 import { NewsCardsProps, ContentBlock } from "@/sanity/sanityTypes";
 import NationalNews from "./NationalNews";
+import FeaturedNews from "./FeaturedNews";
 
 const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
   if (!news || news.length === 0) {
@@ -35,6 +36,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
   return (
     <div className="w-full">
       <BreakingNews news={news} />
+      <FeaturedNews />
       <div className="flex">
         {/* Left Main Content */}
         <div className="flex-1">

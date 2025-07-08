@@ -293,3 +293,54 @@ export async function getNewsItemsAllCategories(): Promise<NewsItems[]> {
 
   return result;
 }
+
+export async function getFeaturedNewsItems(): Promise<NewsItems[]> {
+  const query = `
+    *[_type == "newsItem" && featured == true] {
+      _id,
+      title,
+      author,
+      publishedAt,
+      featured,
+      featuredImage {
+        asset-> {
+          _ref,
+          _type,
+          url
+        },
+        alt,
+        hotspot
+      },
+      content[] {
+        _type,
+        _key,
+        _type == "textBlock" => {
+          text
+        },
+        _type == "imageBlock" => {
+          image {
+            asset-> {
+              _ref,
+              _type,
+              url
+            },
+            alt,
+            hotspot
+          },
+          alt,
+          caption
+        },
+        _type == "youtubeBlock" => {
+          url,
+          title,
+          caption
+        }
+      },
+      category,
+      tags
+    } | order(publishedAt desc)[0...4]
+  `;
+
+  const featuredNews = await client.fetch(query);
+  return featuredNews;
+}

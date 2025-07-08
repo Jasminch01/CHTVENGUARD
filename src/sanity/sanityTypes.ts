@@ -44,6 +44,7 @@ export interface NewsItems {
   title: string;
   author: string;
   publishedAt: string;
+  featured : boolean;
   featuredImage: SanityImage & {
     alt: string;
   };
