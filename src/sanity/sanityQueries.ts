@@ -52,10 +52,12 @@ export async function getNewsItems(): Promise<NewsItems[]> {
 
 // Get news items by category
 export async function getNewsByCategory(
-  category: string
+  category: string,
+  limit: number = 10
 ): Promise<NewsItems[]> {
   const query = `
-    *[_type == "newsItem" && category == $category] | order(publishedAt desc) {
+    *[_type == "newsItem" && category == $category] 
+    | order(publishedAt desc)[0...$limit] {
       _id,
       title,
       author,
@@ -98,7 +100,8 @@ export async function getNewsByCategory(
       tags
     }
   `;
-  return await client.fetch(query, { category });
+
+  return await client.fetch(query, { category, limit });
 }
 
 // Get single news item by ID
