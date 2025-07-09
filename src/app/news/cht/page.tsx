@@ -279,8 +279,8 @@ const ChtNewspage = () => {
                     href={`/news/cht/${item.category}/${item._id}`}
                   >
                     <div
-                      className={`flex h-full flex-row-reverse gap-5 border-b lg:border-b-0 pb-2 lg:pb-0 mb-1 ${
-                        index % 2 === 0 ? "lg:pr-1" : "lg:pl-1"
+                      className={`flex h-full flex-row-reverse gap-5 border-b lg:border-b-0 pb-2 pr-0 lg:pb-0 mb-1 ${
+                        index % 2 === 0 ? "" : ""
                       } relative group ${
                         isFirstRow
                           ? "after:content-[''] after:absolute after:-bottom-3 after:left-0 after:w-full after:h-px lg:after:bg-gray-400 lg:dark:after:bg-gray-700"
@@ -301,7 +301,7 @@ const ChtNewspage = () => {
                             item.title ||
                             "News image"
                           }
-                          className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                          className="w-[124px] h-auto lg:w-full lg:h-[75px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                         />
                       </div>
                       <div className="flex-1 min-w-0">
