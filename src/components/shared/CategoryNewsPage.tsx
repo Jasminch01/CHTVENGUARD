@@ -61,7 +61,7 @@ const CategoryNewspage: React.FC<CategoryNewspageProps> = ({
 
               // Show bottom border unless it's the 5th or 6th item in the section
               const shouldShowBottomBorder = !isLastTwoInSection;
-//updated route
+              //updated route
               return (
                 <Link
                   href={`/news/cht/${newsItem.category}/${newsItem._id}`}
@@ -158,7 +158,7 @@ const CategoryNewspage: React.FC<CategoryNewspageProps> = ({
                   {categoryNews.slice(0, 1).map((newsItem) => (
                     <Link
                       key={newsItem._id}
-                      href={`/news/${newsItem.category}/${newsItem._id}`}
+                      href={`/news/cht/${newsItem.category}/${newsItem._id}`}
                     >
                       <div className="flex flex-col lg:flex-row-reverse gap-5 mb-8 group">
                         {newsItem.featuredImage && (
