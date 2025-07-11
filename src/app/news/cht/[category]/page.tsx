@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { NewsItems } from "@/sanity/sanityTypes";
 import { getNewsByCategory, getRecentNews } from "@/sanity/sanityQueries";
-import CategoryNewspage from "@/components/shared/CategoryNewsPage";
+import ChtCategoryNewspage from "@/components/shared/ChtCategoryNewsPage";
 
 const Page = () => {
   const [categoryNews, setCategoryNews] = useState<NewsItems[]>([]);
@@ -96,7 +96,7 @@ const Page = () => {
 
   return (
     <div>
-      <CategoryNewspage
+      <ChtCategoryNewspage
         categoryName={categoryName}
         categoryNews={categoryNews}
         allNews={allNews}
