@@ -121,13 +121,13 @@ function extractTextFromContent(content: ContentBlock[]): string {
     return "";
   }
 
-  console.log("Content blocks:", content); // Debug log
+  // console.log("Content blocks:", content); // Debug log
 
   const textBlocks = content.filter(
     (block): block is TextBlock => block._type === "textBlock"
   );
 
-  console.log("Text blocks found:", textBlocks.length); // Debug log
+  // console.log("Text blocks found:", textBlocks.length); // Debug log
 
   if (textBlocks.length === 0) {
     console.log("No text blocks found");
@@ -136,7 +136,7 @@ function extractTextFromContent(content: ContentBlock[]): string {
 
   const extractedText = textBlocks
     .map((block) => {
-      console.log("Processing block:", block); // Debug log
+      // console.log("Processing block:", block); // Debug log
       return block.text || "";
     })
     .filter(Boolean) // Remove empty strings
