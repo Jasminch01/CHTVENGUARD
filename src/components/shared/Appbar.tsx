@@ -126,7 +126,7 @@ const Appbar = () => {
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to search results page  
+      // Navigate to search results page
       setIsSearchOpen(false);
       setSearchQuery("");
       setSearchResults([]);
@@ -271,7 +271,6 @@ const Appbar = () => {
                                   result.publishedAt
                                 ).toLocaleDateString("bn-BD")}
                               </p>
-                              
                             </div>
                           </div>
                         </div>
@@ -569,7 +568,7 @@ const Appbar = () => {
                                                     )
                                                   }
                                                 >
-                                                  • {subItem.menu}
+                                                  {subItem.menu}
                                                 </Button>
                                               )
                                             )}
