@@ -144,8 +144,6 @@ function extractTextFromContent(content: ContentBlock[]): string {
     .replace(/\s+/g, " ") // Replace multiple spaces with single space
     .trim();
 
-  console.log("Extracted text:", extractedText); // Debug log
-
   // Return first 160 characters for meta description, ensuring it doesn't cut off mid-word
   if (extractedText.length <= 160) return extractedText;
 
@@ -169,7 +167,7 @@ function getCategoryDisplayName(category: string): string {
   };
   return categoryMap[category as keyof typeof categoryMap] || category;
 }
-
+let discription: string;
 // Generate dynamic metadata (runs on server)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
@@ -184,11 +182,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
 
-    console.log("News item content:", newsItem.content); // Debug log
+    // console.log("News item content:", newsItem.content); // Debug log
 
     // Extract description from content blocks
     const contentDescription = extractTextFromContent(newsItem.content);
-    console.log("Content description:", contentDescription); // Debug log
+    // console.log("Content description:", contentDescription);
 
     const description =
       contentDescription ||
@@ -203,8 +201,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             newsItem.category
           ).toLowerCase()} news story.`
         : description;
-
-    console.log("Final description:", finalDescription); // Debug log
+    discription = finalDescription;
+    // console.log("Final description:", finalDescription); // Debug log
 
     // Get featured image URL - make sure it's absolute
     const featuredImageUrl = newsItem.featuredImage?.asset?.url;
@@ -218,7 +216,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : null;
 
     // Get absolute URL for canonical and og:url
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://chtvanguard.com";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_SITE_URL || "https://chtvanguard.com";
     const absoluteUrl = `${baseUrl}/news/${newsId}`;
 
     return {
@@ -320,7 +319,7 @@ export default async function NewsDetailsPage({ params }: Props) {
               "@context": "https://schema.org",
               "@type": "NewsArticle",
               headline: newsItem.title,
-              description: extractTextFromContent(newsItem.content),
+              description: discription,
               image: newsItem.featuredImage?.asset?.url
                 ? [newsItem.featuredImage.asset.url]
                 : [],

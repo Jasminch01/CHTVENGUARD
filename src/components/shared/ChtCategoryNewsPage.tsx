@@ -272,7 +272,7 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
                             width={124}
                             height={83}
                             alt={news.featuredImage?.alt || news.title}
-                            className="w-[124px] h-[83px] object-cover transition-transform duration-400 ease-out group-hover:scale-105"
+                            className="object-cover transition-transform duration-400 ease-out group-hover:scale-105"
                           />
                         </div>
                       </div>
