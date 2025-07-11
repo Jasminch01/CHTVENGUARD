@@ -1,9 +1,114 @@
+// "use client";
+// import { useParams } from "next/navigation";
+// import React, { useEffect, useState } from "react";
+// import NewsMainContent from "@/components/NewsMainContent";
+// import NewsSidebar from "@/components/NewsSideBar";
+// import { NewsItems } from "@/sanity/sanityTypes";
+// import {
+//   getNewsItem,
+//   getRecentNews,
+//   getRelatedNews,
+// } from "@/sanity/sanityQueries";
+// import Loading from "@/components/shared/Loading";
+// import ErrorComponent from "@/components/shared/Error";
+
+// const NewsDetailsContentpage = () => {
+//   const { newsId } = useParams();
+//   const [newsItem, setNewsItem] = useState<NewsItems | null>(null);
+//   const [relatedNews, setRelatedNews] = useState<NewsItems[]>([]);
+//   const [latestNews, setLatestNews] = useState<NewsItems[]>([]);
+//   const [error, setError] = useState<string | null>(null);
+//   const [loading, setLoading] = useState(true);
+
+//   const id = newsId?.toString() as string;
+//   useEffect(() => {
+//     const fetchNews = async () => {
+//       if (!id) return;
+
+//       try {
+//         setLoading(true);
+//         setError(null);
+
+//         // Fetch main news item
+//         const mainNewsItem = await getNewsItem(id);
+
+//         if (!mainNewsItem) {
+//           setError("News item not found");
+//           return;
+//         }
+
+//         setNewsItem(mainNewsItem);
+
+//         // Fetch related news and latest news in parallel
+//         const [latestNewsData, relatedNewsData] = await Promise.all([
+//           getRelatedNews(id, mainNewsItem.category, 5).catch((err) => {
+//             console.error("Error fetching related news:", err);
+//             return [];
+//           }),
+//           getRecentNews(3).catch((err) => {
+//             console.error("Error fetching latest news:", err);
+//             return [];
+//           }),
+//         ]);
+
+//         setRelatedNews(relatedNewsData);
+//         setLatestNews(latestNewsData);
+//       } catch (error) {
+//         console.error("Error fetching news:", error);
+//         setError(error instanceof Error ? error.message : "An error occurred");
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchNews();
+//   }, [id]);
+//   if (loading) {
+//     return <Loading loading={loading} />;
+//   }
+//   if (error) {
+//     return <ErrorComponent error={error} />;
+//   }
+
+//   if (!newsItem) {
+//     return (
+//       <div className="max-w-4xl mx-auto p-4 h-screen flex justify-center items-center">
+//         <div className="text-center">
+//           <p className="text-lg font-semibold text-gray-600">
+//             News item not found.
+//           </p>
+//           <button
+//             onClick={() => window.history.back()}
+//             className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+//           >
+//             Go Back
+//           </button>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="">
+//       <div className="max-w-7xl mx-auto mt-3 px-4">
+//         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+//           <NewsMainContent newsItem={newsItem} latestNews={latestNews} />
+
+//           <NewsSidebar relatedNews={relatedNews} category={newsItem.category} />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default NewsDetailsContentpage;
+
 // app/news/[newsId]/page.tsx
 
 import { Metadata } from "next";
 import { getNewsItem } from "@/sanity/sanityQueries";
 import NewsDetailsContentpage from "@/components/shared/NewsDetailsContentpage";
-import { ContentBlock, TextBlock, SanityImage } from "@/sanity/sanityTypes";
+import { ContentBlock, TextBlock } from "@/sanity/sanityTypes";
 
 interface Props {
   params: Promise<{ newsId: string }>;
@@ -11,15 +116,35 @@ interface Props {
 
 // Helper function to extract text from content blocks
 function extractTextFromContent(content: ContentBlock[]): string {
-  if (!content || !Array.isArray(content)) return "";
+  if (!content || !Array.isArray(content)) {
+    console.log("No content or content is not an array");
+    return "";
+  }
 
-  const extractedText = content
-    .filter((block): block is TextBlock => block._type === "textBlock")
-    .map((block) => block.text)
+  console.log("Content blocks:", content); // Debug log
+
+  const textBlocks = content.filter(
+    (block): block is TextBlock => block._type === "textBlock"
+  );
+
+  console.log("Text blocks found:", textBlocks.length); // Debug log
+
+  if (textBlocks.length === 0) {
+    console.log("No text blocks found");
+    return "";
+  }
+
+  const extractedText = textBlocks
+    .map((block) => {
+      console.log("Processing block:", block); // Debug log
+      return block.text || "";
+    })
     .filter(Boolean) // Remove empty strings
     .join(" ")
     .replace(/\s+/g, " ") // Replace multiple spaces with single space
     .trim();
+
+  console.log("Extracted text:", extractedText); // Debug log
 
   // Return first 160 characters for meta description, ensuring it doesn't cut off mid-word
   if (extractedText.length <= 160) return extractedText;
@@ -29,31 +154,6 @@ function extractTextFromContent(content: ContentBlock[]): string {
   return lastSpace > 140
     ? truncated.substring(0, lastSpace) + "..."
     : truncated + "...";
-}
-
-// Helper function to get Sanity image URL
-function getSanityImageUrl(image: SanityImage | undefined): string | null {
-  if (!image?.asset?._ref) return null;
-
-  // If the URL is already resolved by Sanity
-  if ("url" in image.asset && image.asset.url) {
-    return image.asset.url;
-  }
-
-  // If you need to construct the URL from the _ref (adjust based on your Sanity setup)
-  // This is a fallback - you might need to use your Sanity image URL builder here
-  const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
-  const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
-
-  if (projectId && image.asset._ref) {
-    // Extract image ID and format from the reference
-    const [imageId, dimensions, format] = image.asset._ref
-      .replace("image-", "")
-      .split("-");
-    return `https://cdn.sanity.io/images/${projectId}/${dataset}/${imageId}-${dimensions}.${format}`;
-  }
-
-  return null;
 }
 
 // Helper function to get category display name
@@ -84,8 +184,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
 
+    console.log("News item content:", newsItem.content); // Debug log
+
     // Extract description from content blocks
     const contentDescription = extractTextFromContent(newsItem.content);
+    console.log("Content description:", contentDescription); // Debug log
+
     const description =
       contentDescription ||
       `Read about ${newsItem.title} in ${getCategoryDisplayName(
@@ -100,8 +204,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           ).toLowerCase()} news story.`
         : description;
 
-    // Get featured image URL using the helper function
-    const featuredImageUrl = getSanityImageUrl(newsItem.featuredImage);
+    console.log("Final description:", finalDescription); // Debug log
+
+    // Get featured image URL - make sure it's absolute
+    const featuredImageUrl = newsItem.featuredImage?.asset?.url;
     const featuredImageAlt = newsItem.featuredImage?.alt || newsItem.title;
 
     // Ensure absolute URL for images
@@ -215,8 +321,8 @@ export default async function NewsDetailsPage({ params }: Props) {
               "@type": "NewsArticle",
               headline: newsItem.title,
               description: extractTextFromContent(newsItem.content),
-              image: getSanityImageUrl(newsItem.featuredImage)
-                ? [getSanityImageUrl(newsItem.featuredImage)!]
+              image: newsItem.featuredImage?.asset?.url
+                ? [newsItem.featuredImage.asset.url]
                 : [],
               datePublished: newsItem.publishedAt,
               author: {
