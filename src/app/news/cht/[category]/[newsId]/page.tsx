@@ -104,13 +104,14 @@
 // export default NewsDetailsContentpage;
 
 // app/news/[newsId]/page.tsx
+
 import { Metadata } from "next";
 import { getNewsItem } from "@/sanity/sanityQueries";
 import NewsDetailsContentpage from "@/components/shared/NewsDetailsContentpage";
 import { ContentBlock } from "@/sanity/sanityTypes";
 
 interface Props {
-  params: { newsId: string };
+  params: Promise<{ newsId: string }>;
 }
 
 // Helper function to extract text from content blocks
@@ -141,7 +142,8 @@ function getCategoryDisplayName(category: string): string {
 // Generate dynamic metadata (runs on server)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const newsItem = await getNewsItem(params.newsId);
+    const { newsId } = await params;
+    const newsItem = await getNewsItem(newsId);
 
     if (!newsItem) {
       return {
@@ -171,7 +173,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     // Get absolute URL for canonical and og:url
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yoursite.com";
-    const absoluteUrl = `${baseUrl}/news/${params.newsId}`;
+    const absoluteUrl = `${baseUrl}/news/${newsId}`;
 
     return {
       title: `${newsItem.title} | Your Site Name`,
@@ -248,7 +250,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // Server component wrapper - now properly handles the data fetching
 export default async function NewsDetailsPage({ params }: Props) {
   // Pre-fetch the news item on the server for better performance
-  const newsItem = await getNewsItem(params.newsId).catch(() => null);
+  const { newsId } = await params;
+  const newsItem = await getNewsItem(newsId).catch(() => null);
 
   return (
     <>
@@ -280,13 +283,13 @@ export default async function NewsDetailsPage({ params }: Props) {
               },
               mainEntityOfPage: {
                 "@type": "WebPage",
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/news/${params.newsId}`,
+                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/news/${newsId}`,
               },
             }),
           }}
         />
       )}
-      <NewsDetailsContentpage newsId={params.newsId} />
+      <NewsDetailsContentpage newsId={newsId} />
     </>
   );
 }
