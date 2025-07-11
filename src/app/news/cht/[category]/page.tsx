@@ -11,7 +11,6 @@ const Page = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
   const [hasMoreNews, setHasMoreNews] = useState(true);
   const itemsPerPage = 6;
 
@@ -22,19 +21,22 @@ const Page = () => {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        setCurrentPage(0);
         setCategoryNews([]);
 
-        // Fetch first page of category-specific news
+        // Fetch initial batch of category-specific news
+        // We fetch itemsPerPage + 1 extra to check if there are more items
         const categoryData = await getNewsByCategory(
           categoryName as string,
           0,
-          itemsPerPage + 1
-        ); // +1 for featured
-        setCategoryNews(categoryData);
+          itemsPerPage + 1 + 1 // +1 for featured, +1 to check if more exist
+        );
 
-        // Check if there are more items
-        setHasMoreNews(categoryData.length === itemsPerPage + 1);
+        // Take only the items we need for display
+        const itemsToDisplay = categoryData.slice(0, itemsPerPage + 1);
+        setCategoryNews(itemsToDisplay);
+
+        // Check if there are more items beyond what we're displaying
+        setHasMoreNews(categoryData.length > itemsPerPage + 1);
 
         // Fetch recent news for sidebar
         const recentData = await getRecentNews(10);
@@ -54,25 +56,30 @@ const Page = () => {
   }, [categoryName]);
 
   const handleLoadMore = async () => {
-    if (loadingMore) return;
+    if (loadingMore || !hasMoreNews) return;
 
     try {
       setLoadingMore(true);
-      const nextPage = currentPage + 1;
 
-      // Fetch next page of news
+      // Calculate the offset based on current items loaded
+      const currentOffset = categoryNews.length;
+
+      // Fetch next batch of news
       const newNews = await getNewsByCategory(
         categoryName as string,
-        nextPage,
-        itemsPerPage
+        0, // Start from beginning
+        currentOffset + itemsPerPage + 1 // Get all items up to next batch + 1 to check for more
       );
 
-      if (newNews.length > 0) {
-        setCategoryNews((prev) => [...prev, ...newNews]);
-        setCurrentPage(nextPage);
+      if (newNews.length > currentOffset) {
+        // Get only the new items (skip the ones we already have)
+        const newItems = newNews.slice(currentOffset);
+        const itemsToAdd = newItems.slice(0, itemsPerPage);
 
-        // Check if there are more items
-        setHasMoreNews(newNews.length === itemsPerPage);
+        setCategoryNews((prev) => [...prev, ...itemsToAdd]);
+
+        // Check if there are more items beyond what we just loaded
+        setHasMoreNews(newItems.length > itemsPerPage);
       } else {
         setHasMoreNews(false);
       }

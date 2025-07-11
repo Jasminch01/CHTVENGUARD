@@ -25,7 +25,7 @@ const BreakingNews: React.FC<NewsCardsProps> = ({ news }) => {
           pauseOnClick={true}
           className="h-full"
         >
-          <div className="flex items-center space-x-5">
+          <div className="flex items-center">
             {news.map((item) => {
               return (
                 <Link
@@ -34,7 +34,7 @@ const BreakingNews: React.FC<NewsCardsProps> = ({ news }) => {
                   className="group flex items-center cursor-pointer"
                 >
                   <div className="flex focus:outline-none border-0 outline-0">
-                    <p className="lg:text-xl text-sm font-bold text-white hover:text-yellow-200 transition-colors duration-200">
+                    <p className="lg:text-xl text-sm font-bold text-white hover:text-yellow-200 transition-colors duration-200 mr-5">
                       {item.title}
                     </p>
                   </div>

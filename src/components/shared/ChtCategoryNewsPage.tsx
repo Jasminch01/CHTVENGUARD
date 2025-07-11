@@ -89,7 +89,7 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
                           width={500}
                           height={500}
                           alt={newsItem.featuredImage.alt || newsItem.title}
-                          className="w-[124px] h-auto lg:w-[110px] lg:h-[75px] xl:w-[180px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                          className="w-full h-[120px] lg:h-[75px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                         />
                       </div>
                     )}
@@ -209,8 +209,8 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
                     <>
                       {renderNewsSections()}
 
-                      {/* Divider before Load More button */}
-                      {hasMoreNews && onLoadMore && (
+                      {/* Load More button or End message */}
+                      {hasMoreNews && onLoadMore ? (
                         <div className="mt-8 pt-4">
                           <div className="flex justify-center">
                             <button
@@ -222,6 +222,15 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
                             </button>
                           </div>
                         </div>
+                      ) : (
+                        // End border when no more news
+                        categoryNews.length > 1 && (
+                          <div className="mt-8 pt-4 border-t border-gray-300 dark:border-gray-600">
+                            <div className="text-center py-4 text-gray-500">
+                              সব খবর দেখানো হয়েছে
+                            </div>
+                          </div>
+                        )
                       )}
                     </>
                   ) : (
@@ -272,7 +281,7 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
                             width={124}
                             height={83}
                             alt={news.featuredImage?.alt || news.title}
-                            className="object-cover transition-transform duration-400 ease-out group-hover:scale-105"
+                            className="w-full h-[83px] object-cover transition-transform duration-400 ease-out group-hover:scale-105"
                           />
                         </div>
                       </div>

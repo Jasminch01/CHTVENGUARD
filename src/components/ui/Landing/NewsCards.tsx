@@ -51,7 +51,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                       width={500}
                       height={500}
                       alt={news[0].featuredImage?.alt || news[0]?.title}
-                      className="w-full lg:h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                      className="w-full h-[19rem] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                     />
                   </div>
                   <div className="flex-1">
@@ -171,7 +171,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                           width={500}
                           height={100}
                           alt={item.featuredImage?.alt || item.title}
-                          className="w-[124px] h-auto lg:w-[110px] lg:h-[75px] xl:w-[180px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                          className="w-full h-[90px] lg:w-[110px] lg:h-[75px] xl:w-[180px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                         />
                       </div>
                       <div className="flex-1 min-w-0">

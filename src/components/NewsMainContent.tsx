@@ -293,7 +293,7 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
                           width={500}
                           height={500}
                           alt={news.featuredImage.alt || news.title}
-                          className="w-full h-auto object-cover"
+                          className="w-full h-[12rem] object-cover"
                         />
                       </div>
                     )}
