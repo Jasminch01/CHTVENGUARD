@@ -61,10 +61,10 @@ const CategoryNewspage: React.FC<CategoryNewspageProps> = ({
 
               // Show bottom border unless it's the 5th or 6th item in the section
               const shouldShowBottomBorder = !isLastTwoInSection;
-
+//updated route
               return (
                 <Link
-                  href={`/news/${newsItem.category}/${newsItem._id}`}
+                  href={`/news/cht/${newsItem.category}/${newsItem._id}`}
                   key={newsItem._id}
                 >
                   <div
