@@ -111,11 +111,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : null;
 
     // Get absolute URL for canonical and og:url
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://yoursite.com";
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://chtvanguard.com";
     const absoluteUrl = `${baseUrl}/news/${newsId}`;
 
     return {
-      title: `${newsItem.title} | Your Site Name`,
+      title: `${newsItem.title}`,
       description: finalDescription,
       keywords: [
         newsItem.category,
@@ -144,7 +144,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             ]
           : [],
         url: absoluteUrl,
-        siteName: "Your Site Name",
+        siteName: "chtvanguard",
         locale: "en_US",
       },
 
@@ -155,7 +155,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: finalDescription,
         images: absoluteImageUrl ? [absoluteImageUrl] : [],
         creator: `@${newsItem.author}`,
-        site: "@yoursite", // Add your Twitter handle
+        site: "@chtvanguard", // Add your Twitter handle
       },
 
       // Additional SEO
@@ -190,7 +190,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   } catch (error) {
     console.error("Error generating metadata:", error);
     return {
-      title: "News Article | Your Site Name",
+      title: "News Article | chtvanguard",
       description: "Read the latest news article on our website.",
     };
   }
