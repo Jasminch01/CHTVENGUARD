@@ -85,7 +85,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
 
             {/* Two Cards Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-3">
-              {news.slice(1, 3).map((item, index) => (
+              {news.slice(1,3).map((item, index) => (
                 <Link
                   key={item._id}
                   href={`/news/${item.category}/${item._id}`}
@@ -139,7 +139,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
             </div>
             {/* Three Cards Section */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 py-3 lg:border-b border-t border-gray-300 dark:border-gray-700">
-              {news.slice(0, 6).map((item, index) => {
+              {news.slice(3).map((item, index) => {
                 const rowNumber = Math.floor(index / 3) + 1; // Calculate row number (1, 2, 3, etc.)
                 const isFirstRow = rowNumber === 1;
                 const isSecondRow = rowNumber === 2;

@@ -243,7 +243,7 @@ export async function getNewsItemsAllCategories(): Promise<NewsItems[]> {
       _id,
       title,
       author,
-      publishedAt, 
+      publishedAt,
       featuredImage {
         asset-> {
           _ref,
@@ -285,14 +285,19 @@ export async function getNewsItemsAllCategories(): Promise<NewsItems[]> {
 
   const allNews = await client.fetch(query);
 
-  // Remove duplicates based on _id (Sanity's unique identifier)
+  // Remove duplicates based on _id and limit to 9 items
   const seenIds = new Set<string>();
   const uniqueNews: NewsItems[] = [];
 
   for (const newsItem of allNews) {
-    if (!seenIds.has(newsItem._id)) {
+    if (!seenIds.has(newsItem._id) && uniqueNews.length < 9) {
       seenIds.add(newsItem._id);
       uniqueNews.push(newsItem);
+    }
+
+    // Break early if we have 9 items
+    if (uniqueNews.length === 9) {
+      break;
     }
   }
 

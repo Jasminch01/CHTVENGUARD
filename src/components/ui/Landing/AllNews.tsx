@@ -26,7 +26,6 @@ const AllNews: React.FC = () => {
 
     fetchNews();
   }, []);
-
   if (loading) {
     return <Loading loading={loading} />;
   }
