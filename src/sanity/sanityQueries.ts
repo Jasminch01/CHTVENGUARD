@@ -280,10 +280,89 @@ export async function getNewsItemsAllCategories(): Promise<NewsItems[]> {
       },
       category,
       tags
-    } | order(publishedAt desc) | uniq(_id)
+    } | order(publishedAt desc)
   `;
 
-  return await client.fetch(query);
+  const allNews = await client.fetch(query);
+
+  // Remove duplicates based on _id (Sanity's unique identifier)
+  const seenIds = new Set<string>();
+  const uniqueNews: NewsItems[] = [];
+
+  for (const newsItem of allNews) {
+    if (!seenIds.has(newsItem._id)) {
+      seenIds.add(newsItem._id);
+      uniqueNews.push(newsItem);
+    }
+  }
+
+  return uniqueNews;
+}
+
+// Alternative version: Remove duplicates based on title (if you want to catch duplicates with same title but different IDs)
+export async function getNewsItemsAllCategoriesUniqueByTitle(): Promise<
+  NewsItems[]
+> {
+  const query = `
+    *[_type == "newsItem" && defined(category)] {
+      _id,
+      title,
+      author,
+      publishedAt, 
+      featuredImage {
+        asset-> {
+          _ref,
+          _type,
+          url
+        },
+        alt,
+        hotspot
+      },
+      content[] {
+        _type,
+        _key,
+        _type == "textBlock" => {
+          text
+        },
+        _type == "imageBlock" => {
+          image {
+            asset-> {
+              _ref,
+              _type,
+              url
+            },
+            alt,
+            hotspot
+          },
+          alt,
+          caption
+        },
+        _type == "youtubeBlock" => {
+          url,
+          title,
+          caption
+        }
+      },
+      category,
+      tags
+    } | order(publishedAt desc)
+  `;
+
+  const allNews = await client.fetch(query);
+
+  // Remove duplicates based on title (case-insensitive)
+  const seenTitles = new Set<string>();
+  const uniqueNews: NewsItems[] = [];
+
+  for (const newsItem of allNews) {
+    const normalizedTitle = newsItem.title?.toLowerCase().trim();
+    if (normalizedTitle && !seenTitles.has(normalizedTitle)) {
+      seenTitles.add(normalizedTitle);
+      uniqueNews.push(newsItem);
+    }
+  }
+
+  return uniqueNews;
 }
 
 export async function getFeaturedNewsItems(): Promise<NewsItems[]> {
