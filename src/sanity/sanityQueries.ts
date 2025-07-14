@@ -285,19 +285,32 @@ export async function getNewsItemsAllCategories(): Promise<NewsItems[]> {
 
   const allNews = await client.fetch(query);
 
-  // Remove duplicates based on _id and limit to 9 items
+  // First pass: Get one latest news item from each category
+  const seenCategories = new Set<string>();
   const seenIds = new Set<string>();
   const uniqueNews: NewsItems[] = [];
 
+  // Get the latest news from each category first
   for (const newsItem of allNews) {
-    if (!seenIds.has(newsItem._id) && uniqueNews.length < 9) {
+    if (!seenCategories.has(newsItem.category) && uniqueNews.length < 9) {
+      seenCategories.add(newsItem.category);
       seenIds.add(newsItem._id);
       uniqueNews.push(newsItem);
     }
+  }
 
-    // Break early if we have 9 items
-    if (uniqueNews.length === 9) {
-      break;
+  // Second pass: If we have less than 9 items, fill remaining slots with more news
+  if (uniqueNews.length < 9) {
+    for (const newsItem of allNews) {
+      if (!seenIds.has(newsItem._id) && uniqueNews.length < 9) {
+        seenIds.add(newsItem._id);
+        uniqueNews.push(newsItem);
+      }
+
+      // Break early if we have 9 items
+      if (uniqueNews.length === 9) {
+        break;
+      }
     }
   }
 
