@@ -99,10 +99,10 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                   >
                     <div className="flex-1 relative overflow-hidden">
                       <Image
-                        src={item.featuredImage?.asset?.url || "/news1.jpeg"}
+                        src={item?.featuredImage?.asset?.url || "/news1.jpeg"}
                         width={400}
                         height={250}
-                        alt={item.featuredImage?.alt || item.title}
+                        alt={item.featuredImage?.alt || item?.title}
                         className="w-full h-[130px]  object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
                       />
                     </div>

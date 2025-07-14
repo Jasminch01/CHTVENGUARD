@@ -57,7 +57,7 @@ export async function getNewsByCategory(
   limit: number = 10
 ): Promise<NewsItems[]> {
   const start = page * limit;
-  
+
   const query = `
     *[_type == "newsItem" && category == $category] 
     | order(publishedAt desc)[${start}..${start + limit - 1}] {
@@ -103,7 +103,7 @@ export async function getNewsByCategory(
       tags
     }
   `;
-  
+
   return await client.fetch(query, { category });
 }
 // Get single news item by ID
@@ -243,8 +243,8 @@ export async function getNewsItemsAllCategories(): Promise<NewsItems[]> {
       _id,
       title,
       author,
-      publishedAt,
-       featuredImage {
+      publishedAt, 
+      featuredImage {
         asset-> {
           _ref,
           _type,
@@ -280,23 +280,10 @@ export async function getNewsItemsAllCategories(): Promise<NewsItems[]> {
       },
       category,
       tags
-    } | order(publishedAt desc)
+    } | order(publishedAt desc) | uniq(_id)
   `;
 
-  const allNews = await client.fetch(query);
-
-  // Get one latest news item per category
-  const seenCategories = new Set<string>();
-  const result: NewsItems[] = [];
-
-  for (const newsItem of allNews) {
-    if (!seenCategories.has(newsItem.category)) {
-      seenCategories.add(newsItem.category);
-      result.push(newsItem);
-    }
-  }
-
-  return result;
+  return await client.fetch(query);
 }
 
 export async function getFeaturedNewsItems(): Promise<NewsItems[]> {
