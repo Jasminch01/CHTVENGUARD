@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Metadata } from "next";
 import { getNewsItem } from "@/sanity/sanityQueries";
 import NewsDetailsContentpage from "@/components/shared/NewsDetailsContentpage";
@@ -7,20 +8,16 @@ interface Props {
   params: Promise<{ newsId: string }>;
 }
 
-// Helper function to extract text from content blocks
+// Helper function to extract text from Sanity rich text blocks
 function extractTextFromContent(content: ContentBlock[]): string {
   if (!content || !Array.isArray(content)) {
     console.log("No content or content is not an array");
     return "";
   }
 
-  // console.log("Content blocks:", content); // Debug log
-
   const textBlocks = content.filter(
     (block): block is TextBlock => block._type === "textBlock"
   );
-
-  // console.log("Text blocks found:", textBlocks.length); // Debug log
 
   if (textBlocks.length === 0) {
     console.log("No text blocks found");
@@ -29,8 +26,21 @@ function extractTextFromContent(content: ContentBlock[]): string {
 
   const extractedText = textBlocks
     .map((block) => {
-      // console.log("Processing block:", block); // Debug log
-      return block.text || "";
+      // Handle Sanity's rich text structure
+      if (block.text && Array.isArray(block.text)) {
+        return block.text
+          .map((textBlock: any) => {
+            if (textBlock._type === 'block' && textBlock.children) {
+              return textBlock.children
+                .filter((child: any) => child._type === 'span')
+                .map((span: any) => span.text || '')
+                .join('');
+            }
+            return '';
+          })
+          .join(' ');
+      }
+      return '';
     })
     .filter(Boolean) // Remove empty strings
     .join(" ")
@@ -60,7 +70,9 @@ function getCategoryDisplayName(category: string): string {
   };
   return categoryMap[category as keyof typeof categoryMap] || category;
 }
-let discription: string;
+
+let description: string;
+
 // Generate dynamic metadata (runs on server)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
@@ -75,27 +87,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
 
-    // console.log("News item content:", newsItem.content); // Debug log
-
     // Extract description from content blocks
-    const contentDescription = extractTextFromContent(newsItem.content);
-    // console.log("Content description:", contentDescription);
+    const contentDescription = extractTextFromContent(newsItem.content || []);
 
-    const description =
+    const finalDescription =
       contentDescription ||
       `Read about ${newsItem.title} in ${getCategoryDisplayName(
         newsItem.category
       )}`;
 
     // Ensure description is at least 50 characters for better social sharing
-    const finalDescription =
-      description.length < 50
-        ? `${description} - Read more about this ${getCategoryDisplayName(
+    const metaDescription =
+      finalDescription.length < 50
+        ? `${finalDescription} - Read more about this ${getCategoryDisplayName(
             newsItem.category
           ).toLowerCase()} news story.`
-        : description;
-    discription = finalDescription;
-    // console.log("Final description:", finalDescription); // Debug log
+        : finalDescription;
+    
+    description = metaDescription;
 
     // Get featured image URL - make sure it's absolute
     const featuredImageUrl = newsItem.featuredImage?.asset?.url;
@@ -114,22 +123,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const absoluteUrl = `${baseUrl}/news/${newsId}`;
 
     return {
-      title: `${newsItem.title}`,
-      description: finalDescription,
+      title: `${newsItem.title} | chtvanguard`,
+      description: metaDescription,
       keywords: [
         newsItem.category,
         getCategoryDisplayName(newsItem.category),
         "news",
         "article",
+        "chtvanguard",
       ],
 
       // Open Graph tags for social media
       openGraph: {
         title: newsItem.title,
-        description: finalDescription,
+        description: metaDescription,
         type: "article",
         publishedTime: newsItem.publishedAt,
-        authors: [newsItem.author],
+        authors: [newsItem.author || "chtvanguard"],
         section: getCategoryDisplayName(newsItem.category),
         tags: [newsItem.category, getCategoryDisplayName(newsItem.category)],
         images: absoluteImageUrl
@@ -151,10 +161,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       twitter: {
         card: "summary_large_image",
         title: newsItem.title,
-        description: finalDescription,
+        description: metaDescription,
         images: absoluteImageUrl ? [absoluteImageUrl] : [],
-        creator: `@${newsItem.author}`,
-        site: "@chtvanguard", // Add your Twitter handle
+        creator: newsItem.author ? `@${newsItem.author}` : "@chtvanguard",
+        site: "@chtvanguard",
       },
 
       // Additional SEO
@@ -163,18 +173,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       // Structured Data (JSON-LD) - moved to other section
       other: {
         "article:published_time": newsItem.publishedAt,
-        "article:author": newsItem.author,
+        "article:author": newsItem.author || "chtvanguard",
         "article:section": getCategoryDisplayName(newsItem.category),
         "article:tag": newsItem.category,
         // Add explicit meta tags for better social media support
         "og:title": newsItem.title,
-        "og:description": finalDescription,
+        "og:description": metaDescription,
         "og:image": absoluteImageUrl || "",
         "og:url": absoluteUrl,
         "og:type": "article",
         "twitter:card": "summary_large_image",
         "twitter:title": newsItem.title,
-        "twitter:description": finalDescription,
+        "twitter:description": metaDescription,
         "twitter:image": absoluteImageUrl || "",
       },
 
@@ -190,7 +200,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     console.error("Error generating metadata:", error);
     return {
       title: "News Article | chtvanguard",
-      description: "Read the latest news article on our website.",
+      description: "Read the latest news article on chtvanguard.",
     };
   }
 }
@@ -212,27 +222,29 @@ export default async function NewsDetailsPage({ params }: Props) {
               "@context": "https://schema.org",
               "@type": "NewsArticle",
               headline: newsItem.title,
-              description: discription,
+              description: description,
               image: newsItem.featuredImage?.asset?.url
                 ? [newsItem.featuredImage.asset.url]
                 : [],
               datePublished: newsItem.publishedAt,
               author: {
                 "@type": "Person",
-                name: newsItem.author,
+                name: newsItem.author || "chtvanguard",
               },
               publisher: {
                 "@type": "Organization",
-                name: "Your Site Name",
+                name: "chtvanguard",
                 logo: {
                   "@type": "ImageObject",
-                  url: `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png`,
+                  url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://chtvanguard.com'}/logo.png`,
                 },
               },
               mainEntityOfPage: {
                 "@type": "WebPage",
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/news/${newsId}`,
+                "@id": `${process.env.NEXT_PUBLIC_SITE_URL || 'https://chtvanguard.com'}/news/${newsId}`,
               },
+              articleSection: getCategoryDisplayName(newsItem.category),
+              wordCount: extractTextFromContent(newsItem.content || []).split(' ').length,
             }),
           }}
         />

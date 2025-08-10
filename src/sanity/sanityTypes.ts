@@ -47,6 +47,7 @@ export interface NewsItems {
   featured : boolean;
   featuredImage: SanityImage & {
     alt: string;
+    title : string;
   };
   content: ContentBlock[];
   category:

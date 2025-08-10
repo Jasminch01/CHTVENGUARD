@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import ErrorComponent from "@/components/shared/Error";
 import Loading from "@/components/shared/Loading";
 import { getNewsByCategory } from "@/sanity/sanityQueries";
-import { NewsItems } from "@/sanity/sanityTypes";
+import { NewsItems, ContentBlock } from "@/sanity/sanityTypes";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -29,56 +30,79 @@ const RangamatiNews = () => {
     fetchNews();
   }, []);
 
-  // Helper function to extract text content from ContentBlock array
+  // Updated function to extract text content from rich text blocks
+  const extractTextFromContent = (content: ContentBlock[]): string => {
+    return content
+      .filter((block) => block._type === "textBlock")
+      .map((block) => {
+        // Handle the new rich text editor structure
+        if (Array.isArray(block.text)) {
+          return block.text
+            .filter((item: any) => item._type === 'block')
+            .map((item: any) => {
+              return item.children
+                ?.filter((child: any) => child._type === 'span')
+                ?.map((span: any) => span.text)
+                ?.join('') || '';
+            })
+            .join(' ');
+        }
+        // Fallback for old simple text structure (if any still exists)
+        return typeof block.text === 'string' ? block.text : '';
+      })
+      .join(" ");
+  };
+
+  // Helper function to get text content and truncate it
   const getTextContent = (content: NewsItems["content"]) => {
     if (!content || content.length === 0) return "";
-
-    // Find the first text block and return its text
-    const textBlock = content.find((block) => block._type === "textBlock");
-    return textBlock?.text || "";
+    
+    const fullText = extractTextFromContent(content);
+    // Truncate to reasonable length for preview
+    return fullText.length > 150 ? fullText.substring(0, 150) + "..." : fullText;
   };
 
   if (error) {
-    return (
-      <ErrorComponent error={error}/>
-    );
+    return <ErrorComponent error={error} />;
   }
 
   if (loading) {
     return (
-      <div className="mt-[7rem] border-t mb-5">
-         <Loading loading={loading} />
+      <div className="mt-[7rem] border-t border-gray-100 mb-5">
+        <Loading loading={loading} />
       </div>
     );
   }
 
   return (
-    <div className="mt-[4rem] lg:border-r">
+    <div className="mt-[4rem] lg:border-r dark:lg:border-gray-700">
       <div className="max-w-7xl mx-auto pb-5">
         <div className="md:mb-2 border-l-4 border-red-500 pl-3">
-          <h1 className="text-2xl font-bold">রাঙ্গামাটি</h1>
+          <h1 className="text-2xl font-bold dark:text-gray-100">রাঙ্গামাটি</h1>
         </div>
 
         <div className="flex flex-col lg:flex-row">
           {/* Main Content */}
           <div className="lg:pr-3 relative">
             {/* Horizontal divider for mobile */}
-            <div className="lg:hidden w-full border-b my-6"></div>
+            <div className="lg:hidden w-full border-b border-gray-200 dark:border-gray-700 my-6"></div>
 
             {rangamatiNews.length === 0 ? (
-              <div className="text-center py-8">Not found</div>
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <p>কোন সংবাদ পাওয়া যায়নি</p>
+              </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-3 gap-4 lg:border-t lg:border-b pt-10 pb-5">
+              <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-3 gap-4 lg:border-t lg:border-b border-gray-200 dark:border-gray-700 pt-10 pb-5">
                 {/* Main featured article - spans 3 rows on desktop */}
                 {rangamatiNews[0] && (
                   <Link
-                    href={`/news/bandarban/${rangamatiNews[0]._id}`}
+                    href={`/news/rangamati/${rangamatiNews[0]._id}`}
                     key={rangamatiNews[0]._id}
                     className="md:row-span-3"
                   >
-                    <div className="flex flex-col gap-4 h-full group lg:border-r lg:pr-4">
+                    <div className="flex flex-col gap-4 h-full group lg:border-r border-gray-200 dark:border-gray-700 lg:pr-4">
                       {rangamatiNews[0]?.featuredImage && (
-                        <div className="flex-1 relative overflow-hidden">
+                        <div className="flex-1 relative overflow-hidden ">
                           <Image
                             src={rangamatiNews[0]?.featuredImage.asset.url}
                             width={500}
@@ -92,15 +116,15 @@ const RangamatiNews = () => {
                         </div>
                       )}
                       <div className="flex-shrink-0">
-                        <h2 className="text-xl lg:text-2xl font-bold leading-tight group-hover:text-blue-500 mb-2">
+                        <h2 className="text-xl lg:text-2xl font-bold leading-tight group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100 mb-2">
                           {rangamatiNews[0]?.title}
                         </h2>
-                        <p className="text-gray-600 line-clamp-3">
+                        <p className="text-gray-600 dark:text-gray-400 line-clamp-3 leading-relaxed">
                           {getTextContent(rangamatiNews[0]?.content)}
                         </p>
                         <div className="flex items-center gap-1 mt-2">
-                          <IoMdTime />
-                          <p className="text-sm text-gray-500">
+                          <IoMdTime className="text-gray-500" />
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
                             {rangamatiNews[0]?.publishedAt &&
                               new Date(
                                 rangamatiNews[0].publishedAt
@@ -119,36 +143,38 @@ const RangamatiNews = () => {
 
                 {/* Secondary articles - 6 smaller cards */}
                 {rangamatiNews.slice(1, 7).map((newsItem, index) => {
-                  const rowNumber = Math.floor(index / 3) + 1;
+                  const rowNumber = Math.floor(index / 2) + 1; // Fixed calculation for 2 columns
                   const isFirstRow = rowNumber === 1;
                   const isSecondRow = rowNumber === 2;
-                  const isLastInRow = (index + 1) % 3 === 0;
+                  const isThirdRow = rowNumber === 3;
                   return (
                     <Link
-                      href={`/news/bandarban/${newsItem._id}`}
+                      href={`/news/rangamati/${newsItem._id}`}
                       key={newsItem._id}
                       className={`
                         ${index === 0 ? "md:col-start-2 md:row-start-1" : ""}
-                        ${index === 1 ? "md:col-start-2 md:row-start-2" : ""}
-                        ${index === 2 ? "md:col-start-2 md:row-start-3" : ""}
-                        ${index === 3 ? "md:col-start-3 md:row-start-1" : ""}
-                        ${index === 4 ? "md:col-start-3 md:row-start-2" : ""}
+                        ${index === 1 ? "md:col-start-3 md:row-start-1" : ""}
+                        ${index === 2 ? "md:col-start-2 md:row-start-2" : ""}
+                        ${index === 3 ? "md:col-start-3 md:row-start-2" : ""}
+                        ${index === 4 ? "md:col-start-2 md:row-start-3" : ""}
                         ${index === 5 ? "md:col-start-3 md:row-start-3" : ""}
                       `}
                     >
                       <div
-                        className={`flex h-full flex-row-reverse gap-3 border-b md:border-b-0 pb-4 md:pb-0 mb-4 md:mb-0 relative group ${
-                          (isFirstRow || isSecondRow) && !isLastInRow
-                            ? "after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-full after:h-px md:after:bg-gray-400 md:dark:after:bg-gray-700"
+                        className={`flex h-full flex-row-reverse gap-3 border-b border-gray-200 dark:border-gray-700 md:border-b-0 pb-4 md:pb-0 mb-4 md:mb-0 relative group ${
+                          // Bottom border styling for rows
+                          (isFirstRow || isSecondRow) && !isThirdRow
+                            ? "after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-full after:h-px md:after:bg-gray-400 md:dark:after:bg-gray-600"
                             : ""
                         } ${
-                          index === 0 || index === 1 || index === 2
-                            ? "md:before:content-[''] md:before:absolute md:before:-right-2 md:before:top-0 md:before:h-full md:before:w-px md:before:bg-gray-400 md:dark:before:bg-gray-700"
+                          // Right border for first column in each row
+                          index % 2 === 0
+                            ? "md:before:content-[''] md:before:absolute md:before:-right-2 md:before:top-0 md:before:h-full md:before:w-px md:before:bg-gray-400 md:dark:before:bg-gray-600"
                             : ""
                         }`}
                       >
                         {newsItem?.featuredImage && (
-                          <div className="flex-1 overflow-hidden">
+                          <div className="flex-1 overflow-hidden ">
                             <Image
                               src={newsItem.featuredImage.asset.url}
                               width={300}
@@ -160,13 +186,13 @@ const RangamatiNews = () => {
                             />
                           </div>
                         )}
-                        <div className="flex-1">
-                          <h3 className="text-xl font-semibold leading-tight group-hover:text-blue-500 line-clamp-3">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-semibold leading-tight group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100 line-clamp-3 mb-2">
                             {newsItem?.title}
                           </h3>
-                          <div className="flex items-center gap-1 mt-2">
-                            <IoMdTime />
-                            <p className="text-sm text-gray-500">
+                          <div className="flex items-center gap-1">
+                            <IoMdTime className="text-gray-500 flex-shrink-0" size={14} />
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
                               {newsItem?.publishedAt &&
                                 new Date(
                                   newsItem.publishedAt

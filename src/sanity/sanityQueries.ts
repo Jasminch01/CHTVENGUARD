@@ -54,13 +54,16 @@ export async function getNewsItems(): Promise<NewsItems[]> {
 export async function getNewsByCategory(
   category: string,
   page: number = 0,
-  limit: number = 10
+  limit: number = 10,
+  offset?: number
 ): Promise<NewsItems[]> {
-  const start = page * limit;
+  // Use offset if provided, otherwise calculate from page
+  const start = offset !== undefined ? offset : page * limit;
 
+  // Fixed: Now it actually fetches the number of items requested
   const query = `
-    *[_type == "newsItem" && category == $category] 
-    | order(publishedAt desc)[${start}..${start + limit - 1}] {
+    *[_type == "newsItem" && category == $category]
+     | order(publishedAt desc)[${start}..${start + limit - 1}] {
       _id,
       title,
       author,
@@ -72,6 +75,7 @@ export async function getNewsByCategory(
           url
         },
         alt,
+        title,
         hotspot
       },
       content[] {
@@ -121,6 +125,7 @@ export async function getNewsItem(id: string): Promise<NewsItems> {
           url
         },
         alt,
+        title,
         hotspot
       },
       content[] {

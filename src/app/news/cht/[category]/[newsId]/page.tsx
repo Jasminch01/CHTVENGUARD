@@ -1,110 +1,4 @@
-// "use client";
-// import { useParams } from "next/navigation";
-// import React, { useEffect, useState } from "react";
-// import NewsMainContent from "@/components/NewsMainContent";
-// import NewsSidebar from "@/components/NewsSideBar";
-// import { NewsItems } from "@/sanity/sanityTypes";
-// import {
-//   getNewsItem,
-//   getRecentNews,
-//   getRelatedNews,
-// } from "@/sanity/sanityQueries";
-// import Loading from "@/components/shared/Loading";
-// import ErrorComponent from "@/components/shared/Error";
-
-// const NewsDetailsContentpage = () => {
-//   const { newsId } = useParams();
-//   const [newsItem, setNewsItem] = useState<NewsItems | null>(null);
-//   const [relatedNews, setRelatedNews] = useState<NewsItems[]>([]);
-//   const [latestNews, setLatestNews] = useState<NewsItems[]>([]);
-//   const [error, setError] = useState<string | null>(null);
-//   const [loading, setLoading] = useState(true);
-
-//   const id = newsId?.toString() as string;
-//   useEffect(() => {
-//     const fetchNews = async () => {
-//       if (!id) return;
-
-//       try {
-//         setLoading(true);
-//         setError(null);
-
-//         // Fetch main news item
-//         const mainNewsItem = await getNewsItem(id);
-
-//         if (!mainNewsItem) {
-//           setError("News item not found");
-//           return;
-//         }
-
-//         setNewsItem(mainNewsItem);
-
-//         // Fetch related news and latest news in parallel
-//         const [latestNewsData, relatedNewsData] = await Promise.all([
-//           getRelatedNews(id, mainNewsItem.category, 5).catch((err) => {
-//             console.error("Error fetching related news:", err);
-//             return [];
-//           }),
-//           getRecentNews(3).catch((err) => {
-//             console.error("Error fetching latest news:", err);
-//             return [];
-//           }),
-//         ]);
-
-//         setRelatedNews(relatedNewsData);
-//         setLatestNews(latestNewsData);
-//       } catch (error) {
-//         console.error("Error fetching news:", error);
-//         setError(error instanceof Error ? error.message : "An error occurred");
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchNews();
-//   }, [id]);
-//   if (loading) {
-//     return <Loading loading={loading} />;
-//   }
-//   if (error) {
-//     return <ErrorComponent error={error} />;
-//   }
-
-//   if (!newsItem) {
-//     return (
-//       <div className="max-w-4xl mx-auto p-4 h-screen flex justify-center items-center">
-//         <div className="text-center">
-//           <p className="text-lg font-semibold text-gray-600">
-//             News item not found.
-//           </p>
-//           <button
-//             onClick={() => window.history.back()}
-//             className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-//           >
-//             Go Back
-//           </button>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="">
-//       <div className="max-w-7xl mx-auto mt-3 px-4">
-//         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-//           <NewsMainContent newsItem={newsItem} latestNews={latestNews} />
-
-//           <NewsSidebar relatedNews={relatedNews} category={newsItem.category} />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default NewsDetailsContentpage;
-
-// app/news/[newsId]/page.tsx
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Metadata } from "next";
 import { getNewsItem } from "@/sanity/sanityQueries";
 import NewsDetailsContentpage from "@/components/shared/NewsDetailsContentpage";
@@ -114,30 +8,38 @@ interface Props {
   params: Promise<{ newsId: string }>;
 }
 
-// Helper function to extract text from content blocks
+// Helper function to extract text from Sanity rich text blocks
 function extractTextFromContent(content: ContentBlock[]): string {
   if (!content || !Array.isArray(content)) {
-    console.log("No content or content is not an array");
     return "";
   }
-
-  // console.log("Content blocks:", content); // Debug log
 
   const textBlocks = content.filter(
     (block): block is TextBlock => block._type === "textBlock"
   );
 
-  // console.log("Text blocks found:", textBlocks.length); // Debug log
-
   if (textBlocks.length === 0) {
-    console.log("No text blocks found");
     return "";
   }
 
   const extractedText = textBlocks
     .map((block) => {
-      // console.log("Processing block:", block); // Debug log
-      return block.text || "";
+      // Handle Sanity's rich text structure
+      if (block.text && Array.isArray(block.text)) {
+        return block.text
+          .map((textBlock: any) => {
+            if (textBlock._type === "block" && textBlock.children) {
+              return textBlock.children
+                .filter((child: any) => child._type === "span")
+                .map((span: any) => span.text || "")
+                .join("");
+            }
+            return "";
+          })
+          .join(" ");
+      }
+      // Fallback for simple string content
+      return typeof block.text === "string" ? block.text : "";
     })
     .filter(Boolean) // Remove empty strings
     .join(" ")
@@ -167,7 +69,9 @@ function getCategoryDisplayName(category: string): string {
   };
   return categoryMap[category as keyof typeof categoryMap] || category;
 }
-let discription: string;
+
+let description: string;
+
 // Generate dynamic metadata (runs on server)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
@@ -176,19 +80,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!newsItem) {
       return {
-        title: "News Not Found",
+        title: "News Not Found | chtvanguard",
         description: "The requested news article could not be found.",
         robots: { index: false, follow: false },
       };
     }
 
-    // console.log("News item content:", newsItem.content); // Debug log
-
     // Extract description from content blocks
-    const contentDescription = extractTextFromContent(newsItem.content);
-    // console.log("Content description:", contentDescription);
+    const contentDescription = extractTextFromContent(newsItem.content || []);
 
-    const description =
+    const baseDescription =
       contentDescription ||
       `Read about ${newsItem.title} in ${getCategoryDisplayName(
         newsItem.category
@@ -196,13 +97,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     // Ensure description is at least 50 characters for better social sharing
     const finalDescription =
-      description.length < 50
-        ? `${description} - Read more about this ${getCategoryDisplayName(
+      baseDescription.length < 50
+        ? `${baseDescription} - Read more about this ${getCategoryDisplayName(
             newsItem.category
           ).toLowerCase()} news story.`
-        : description;
-    discription = finalDescription;
-    // console.log("Final description:", finalDescription); // Debug log
+        : baseDescription;
+
+    description = finalDescription;
 
     // Get featured image URL - make sure it's absolute
     const featuredImageUrl = newsItem.featuredImage?.asset?.url;
@@ -221,13 +122,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const absoluteUrl = `${baseUrl}/news/${newsId}`;
 
     return {
-      title: `${newsItem.title}`,
+      title: `${newsItem.title} | chtvanguard`,
       description: finalDescription,
       keywords: [
         newsItem.category,
         getCategoryDisplayName(newsItem.category),
         "news",
         "article",
+        "chtvanguard",
       ],
 
       // Open Graph tags for social media
@@ -236,7 +138,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: finalDescription,
         type: "article",
         publishedTime: newsItem.publishedAt,
-        authors: [newsItem.author],
+        authors: [newsItem.author || "chtvanguard"],
         section: getCategoryDisplayName(newsItem.category),
         tags: [newsItem.category, getCategoryDisplayName(newsItem.category)],
         images: absoluteImageUrl
@@ -260,8 +162,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: newsItem.title,
         description: finalDescription,
         images: absoluteImageUrl ? [absoluteImageUrl] : [],
-        creator: `@${newsItem.author}`,
-        site: "@chtvanguard", // Add your Twitter handle
+        creator: newsItem.author ? `@${newsItem.author}` : "@chtvanguard",
+        site: "@chtvanguard",
       },
 
       // Additional SEO
@@ -270,7 +172,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       // Structured Data (JSON-LD) - moved to other section
       other: {
         "article:published_time": newsItem.publishedAt,
-        "article:author": newsItem.author,
+        "article:author": newsItem.author || "chtvanguard",
         "article:section": getCategoryDisplayName(newsItem.category),
         "article:tag": newsItem.category,
         // Add explicit meta tags for better social media support
@@ -297,7 +199,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     console.error("Error generating metadata:", error);
     return {
       title: "News Article | chtvanguard",
-      description: "Read the latest news article on our website.",
+      description: "Read the latest news article on chtvanguard.",
     };
   }
 }
@@ -319,27 +221,36 @@ export default async function NewsDetailsPage({ params }: Props) {
               "@context": "https://schema.org",
               "@type": "NewsArticle",
               headline: newsItem.title,
-              description: discription,
+              description: description,
               image: newsItem.featuredImage?.asset?.url
                 ? [newsItem.featuredImage.asset.url]
                 : [],
               datePublished: newsItem.publishedAt,
               author: {
                 "@type": "Person",
-                name: newsItem.author,
+                name: newsItem.author || "chtvanguard",
               },
               publisher: {
                 "@type": "Organization",
-                name: "Your Site Name",
+                name: "chtvanguard",
                 logo: {
                   "@type": "ImageObject",
-                  url: `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png`,
+                  url: `${
+                    process.env.NEXT_PUBLIC_SITE_URL ||
+                    "https://chtvanguard.com"
+                  }/logo.png`,
                 },
               },
               mainEntityOfPage: {
                 "@type": "WebPage",
-                "@id": `${process.env.NEXT_PUBLIC_SITE_URL}/news/${newsId}`,
+                "@id": `${
+                  process.env.NEXT_PUBLIC_SITE_URL || "https://chtvanguard.com"
+                }/news/${newsId}`,
               },
+              articleSection: getCategoryDisplayName(newsItem.category),
+              wordCount: extractTextFromContent(newsItem.content || []).split(
+                " "
+              ).length,
             }),
           }}
         />

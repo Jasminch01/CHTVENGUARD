@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Image from "next/image";
 import RightSidebar from "./RightSiderbar";
 import RangamatiNews from "./RangamatiNews";
@@ -20,11 +21,26 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
     );
   }
 
-  // Function to extract text content from content blocks
+  // Updated function to extract text content from rich text blocks
   const extractTextFromContent = (content: ContentBlock[]): string => {
     return content
       .filter((block) => block._type === "textBlock")
-      .map((block) => block.text)
+      .map((block) => {
+        // Handle the new rich text editor structure
+        if (Array.isArray(block.text)) {
+          return block.text
+            .filter((item: any) => item._type === 'block')
+            .map((item: any) => {
+              return item.children
+                ?.filter((child: any) => child._type === 'span')
+                ?.map((span: any) => span.text)
+                ?.join('') || '';
+            })
+            .join(' ');
+        }
+        // Fallback for old simple text structure (if any still exists)
+        return typeof block.text === 'string' ? block.text : '';
+      })
       .join(" ");
   };
 

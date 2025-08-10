@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -36,18 +37,129 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
     setFontSize((prev) => Math.max(prev - 0.25, 0.75)); // Min 0.75x size
   };
 
+  // Function to render rich text content
+  const renderRichText = (richTextArray: any[], key: string) => {
+    return richTextArray.map((block, index) => {
+      if (block._type === "block") {
+        const textContent =
+          block.children
+            ?.filter((child: any) => child._type === "span")
+            ?.map((span: any) => {
+              let text = span.text || "";
+
+              // Apply formatting based on marks
+              if (span.marks && span.marks.length > 0) {
+                span.marks.forEach((mark: string) => {
+                  switch (mark) {
+                    case "strong":
+                      text = `<strong>${text}</strong>`;
+                      break;
+                    case "em":
+                      text = `<em>${text}</em>`;
+                      break;
+                    case "underline":
+                      text = `<u>${text}</u>`;
+                      break;
+                    case "strike-through":
+                      text = `<s>${text}</s>`;
+                      break;
+                    case "code":
+                      text = `<code class="bg-gray-100 px-1 rounded">${text}</code>`;
+                      break;
+                  }
+                });
+              }
+
+              return text;
+            })
+            ?.join("") || "";
+
+        // Handle different block styles
+        const baseStyle = { fontSize: `${fontSize * 1.25}rem` };
+        const commonClasses = "leading-relaxed text-justify my-4";
+
+        switch (block.style) {
+          case "h1":
+            return (
+              <h1
+                key={`${key}-${index}`}
+                className="text-3xl font-bold my-6"
+                style={baseStyle}
+                dangerouslySetInnerHTML={{ __html: textContent }}
+              />
+            );
+          case "h2":
+            return (
+              <h2
+                key={`${key}-${index}`}
+                className="text-2xl font-bold my-5"
+                style={baseStyle}
+                dangerouslySetInnerHTML={{ __html: textContent }}
+              />
+            );
+          case "h3":
+            return (
+              <h3
+                key={`${key}-${index}`}
+                className="text-xl font-bold my-4"
+                style={baseStyle}
+                dangerouslySetInnerHTML={{ __html: textContent }}
+              />
+            );
+          case "h4":
+            return (
+              <h4
+                key={`${key}-${index}`}
+                className="text-lg font-bold my-3"
+                style={baseStyle}
+                dangerouslySetInnerHTML={{ __html: textContent }}
+              />
+            );
+          case "blockquote":
+            return (
+              <blockquote
+                key={`${key}-${index}`}
+                className="border-l-4 border-gray-300 pl-4 my-4 italic text-gray-700"
+                style={baseStyle}
+                dangerouslySetInnerHTML={{ __html: textContent }}
+              />
+            );
+          default:
+            return (
+              <p
+                key={`${key}-${index}`}
+                className={commonClasses}
+                style={baseStyle}
+                dangerouslySetInnerHTML={{ __html: textContent }}
+              />
+            );
+        }
+      }
+      return null;
+    });
+  };
+
   // Function to process content blocks
   const renderContentBlocks = (blocks: ContentBlock[]) => {
     return blocks.map((block) => {
       switch (block._type) {
         case "textBlock":
+          // Handle rich text editor content
+          if (Array.isArray(block.text)) {
+            return (
+              <div key={block._key}>
+                {renderRichText(block.text, block._key)}
+              </div>
+            );
+          }
+          // Fallback for old simple text structure
           return (
             <p
               key={block._key}
               className="leading-relaxed text-justify my-4"
-              style={{ fontSize: `${fontSize * 1.25}rem` }} // 1.25rem = text-xl base
+              style={{ fontSize: `${fontSize * 1.25}rem` }}
             >
-              {block.text}
+              {typeof block.text === "string" ? block.text : ""}
             </p>
           );
         case "imageBlock":
@@ -257,6 +369,7 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
       </div>
 
       {/* Featured Image */}
+      {/* Featured Image */}
       {newsItem.featuredImage?.asset?.url && (
         <div className="mb-6">
           <Image
@@ -266,9 +379,14 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
             alt={newsItem.featuredImage.alt || newsItem.title}
             className="w-full h-auto"
           />
+          {/* Featured Image Title/Caption */}
+          {newsItem.featuredImage.title && (
+            <p className="text-center text-sm text-gray-600 mt-2 italic">
+              {newsItem.featuredImage.title}
+            </p>
+          )}
         </div>
       )}
-
       {/* News Content */}
       <div className="mb-12">{renderContentBlocks(newsItem.content)}</div>
 
