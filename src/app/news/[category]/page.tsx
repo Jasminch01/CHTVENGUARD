@@ -17,6 +17,7 @@ const Page = () => {
 
   const { category } = useParams();
   const categoryName = category?.toString();
+  console.log(categoryName)
 
   useEffect(() => {
     const fetchNews = async () => {

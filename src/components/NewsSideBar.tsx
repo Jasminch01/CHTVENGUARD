@@ -26,7 +26,7 @@ const NewsSidebar: React.FC<NewsSidebarProps> = ({ relatedNews, category }) => {
                 >
                   <div className="pb-4">
                     <div className="flex-1 pb-2 border-b">
-                      <h4 className="text-xl  font-medium line-clamp-3 group-hover:text-blue-600 transition-colors duration-300">
+                      <h4 className="text-xl  font-medium line-clamp-3 group-hover:text-blue-600 transition-colors duration-700">
                         {news.title}
                       </h4>
                       <div className="flex items-center gap-1">

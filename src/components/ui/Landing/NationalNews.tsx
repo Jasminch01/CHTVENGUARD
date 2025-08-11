@@ -141,7 +141,7 @@ const NationalNews = () => {
                               nationalNews[0].title ||
                               "News image"
                             }
-                            className="w-full h-[19rem] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                            className="w-full h-[19rem] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
                             priority
                           />
                         </div>
@@ -212,7 +212,7 @@ const NationalNews = () => {
                                 newsItem.title ||
                                 "News image"
                               }
-                              className="w-full h-[90px] lg:h-[75px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                              className="w-full h-[90px] lg:h-[75px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
                             />
                           </div>
                         )}

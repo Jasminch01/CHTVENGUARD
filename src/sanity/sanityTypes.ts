@@ -63,3 +63,23 @@ export interface NewsItems {
 export interface NewsCardsProps {
   news: NewsItems[];
 }
+
+export interface VideoContent {
+  _id: string;
+  title: string;
+  author: string;
+  publishedAt: string;
+  featured: boolean;
+  youtubeBlock: {
+    url: string;
+  };
+  description: Array<{
+    _type: string;
+    _key: string;
+    text?: string[];
+  }>;
+}
+
+export interface VideoContentProps {
+  videos : VideoContent[]
+}

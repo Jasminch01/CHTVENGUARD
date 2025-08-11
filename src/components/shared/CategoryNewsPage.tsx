@@ -117,11 +117,23 @@ const CategoryNewspage: React.FC<CategoryNewspageProps> = ({
               if (!newsItem || !newsItem._id) return null;
 
               const itemIndexInSection = index;
-              // Check if this is the 5th or 6th item in the current section (index 4 or 5)
-              const isLastTwoInSection = itemIndexInSection >= 4;
+              const totalItemsInSection = sectionItems.length;
 
-              // Show bottom border unless it's the 5th or 6th item in the section
-              const shouldShowBottomBorder = !isLastTwoInSection;
+              // Calculate row information for lg+ screens (2 columns)
+              const rowIndex = Math.floor(itemIndexInSection / 2);
+              const columnIndex = itemIndexInSection % 2;
+              const totalRows = Math.ceil(totalItemsInSection / 2);
+              const isLastRow = rowIndex === totalRows - 1;
+
+              // Items in the last row
+              const itemsInLastRow =
+                totalItemsInSection % 2 === 0 ? 2 : totalItemsInSection % 2;
+              const isOnlyOneItemInLastRow = isLastRow && itemsInLastRow === 1;
+
+              // Border logic
+              const shouldShowBottomBorder = !isLastRow;
+              const shouldShowSideBorder =
+                columnIndex === 0 && !isOnlyOneItemInLastRow;
 
               return (
                 <Link href={getNewsUrl(newsItem)} key={newsItem._id}>
@@ -133,7 +145,7 @@ const CategoryNewspage: React.FC<CategoryNewspageProps> = ({
                         ? "after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-gray-200 dark:after:bg-gray-700"
                         : ""
                     } ${
-                      itemIndexInSection % 2 === 0
+                      shouldShowSideBorder
                         ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-200 dark:lg:before:bg-gray-700"
                         : ""
                     }`}
@@ -150,7 +162,7 @@ const CategoryNewspage: React.FC<CategoryNewspageProps> = ({
                           newsItem.title ||
                           "News image"
                         }
-                        className="w-[100px] h-[75px] lg:w-full lg:h-[75px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                        className="w-[100px] h-[75px] lg:w-full lg:h-[75px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
                       />
                     </div>
                     <div className="flex-2 min-w-0">
@@ -186,7 +198,7 @@ const CategoryNewspage: React.FC<CategoryNewspageProps> = ({
 
   return (
     <div className="border-t mb-5">
-      <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
+      <div className="max-w-7xl mx-auto px-4 xl:px-0 py-8">
         <div className="border-b lg:mb-10">
           <h1 className="text-2xl lg:text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">
             {categoryDisplayName || getCategoryNameInBangla(categoryName)}
@@ -227,7 +239,7 @@ const CategoryNewspage: React.FC<CategoryNewspageProps> = ({
                                 newsItem.title ||
                                 "News image"
                               }
-                              className="w-full h-auto lg:h-[300px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                              className="w-full h-auto lg:h-[300px] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
                               priority
                             />
                           </div>
@@ -336,7 +348,7 @@ const CategoryNewspage: React.FC<CategoryNewspageProps> = ({
                                   news.title ||
                                   "News image"
                                 }
-                                className="w-[100px] h-[75px] object-cover transition-transform duration-400 ease-out group-hover:scale-105"
+                                className="w-[100px] h-[75px] object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                               />
                             </div>
                           </div>

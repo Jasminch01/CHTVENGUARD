@@ -188,6 +188,7 @@ const Appbar = () => {
     },
     { menu: "সংবাদ বিজ্ঞপ্তি", route: "/press-release" },
     { menu: "মতামত", route: "/opinion" },
+    { menu: "ভিডিও", route: "/video" },
   ];
 
   if (!mounted) {

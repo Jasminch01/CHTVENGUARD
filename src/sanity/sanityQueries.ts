@@ -1,5 +1,5 @@
 import { client } from "../../sanity.config";
-import { NewsItems } from "./sanityTypes";
+import { NewsItems, VideoContent } from "./sanityTypes";
 
 // Get all news items
 export async function getNewsItems(): Promise<NewsItems[]> {
@@ -322,53 +322,184 @@ export async function getNewsItemsAllCategories(): Promise<NewsItems[]> {
   return uniqueNews;
 }
 
-export async function getFeaturedNewsItems(): Promise<NewsItems[]> {
+export async function getFeaturedNewsItems(): Promise<
+  (NewsItems | VideoContent)[]
+> {
   const query = `
-    *[_type == "newsItem" && featured == true] {
+    *[(_type == "newsItem" || _type == "videocontent") && featured == true] | order(publishedAt desc)[0...4] {
+      _id,
+      _type,
+      title,
+      author,
+      publishedAt,
+      featured,
+      // News-specific fields (only for newsItem type)
+      _type == "newsItem" => {
+        category,
+        tags,
+        featuredImage {
+          asset-> {
+            _ref,
+            _type,
+            url
+          },
+          alt,
+          hotspot
+        },
+        content[] {
+          _type,
+          _key,
+          _type == "textBlock" => {
+            text
+          },
+          _type == "imageBlock" => {
+            image {
+              asset-> {
+                _ref,
+                _type,
+                url
+              },
+              alt,
+              hotspot
+            },
+            alt,
+            caption
+          },
+          _type == "youtubeBlock" => {
+            url,
+            title,
+            caption
+          }
+        }
+      },
+      // Video-specific fields (only for videocontent type)
+      _type == "videocontent" => {
+        youtubeBlock {
+          url
+        },
+        description[] {
+          _type,
+          _key,
+          _type == "textBlock" => {
+            text
+          }
+        }
+      }
+    }
+  `;
+
+  const featuredItems = await client.fetch(query);
+  return featuredItems;
+}
+
+//vido query
+export async function getVideoItems(
+  page: number = 0,
+  limit: number = 10,
+  offset?: number
+): Promise<VideoContent[]> {
+  // Use offset if provided, otherwise calculate from page
+  const start = offset !== undefined ? offset : page * limit;
+
+  const query = `
+    *[_type == "videocontent"]
+     | order(publishedAt desc)[${start}..${start + limit - 1}] {
       _id,
       title,
       author,
       publishedAt,
       featured,
-      featuredImage {
-        asset-> {
-          _ref,
-          _type,
-          url
-        },
-        alt,
-        hotspot
+      youtubeBlock {
+        url
       },
-      content[] {
+      description[] {
         _type,
         _key,
         _type == "textBlock" => {
           text
-        },
-        _type == "imageBlock" => {
-          image {
-            asset-> {
-              _ref,
-              _type,
-              url
-            },
-            alt,
-            hotspot
-          },
-          alt,
-          caption
-        },
-        _type == "youtubeBlock" => {
-          url,
-          title,
-          caption
         }
-      },
-      category,
-      tags
-    } | order(publishedAt desc)[0...4]
+      }
+    }
   `;
 
-  const featuredNews = await client.fetch(query);
-  return featuredNews;
+  return await client.fetch(query);
+}
+
+export async function getRelatedVideoItems(
+  excludeId: string
+): Promise<VideoContent[]> {
+  const query = `
+    *[_type == "videocontent" && _id != $excludeId] | order(publishedAt desc)[0...5] {
+      _id,
+      title,
+      author,
+      publishedAt,
+      featured,
+      youtubeBlock {
+        url
+      },
+      description[] {
+        _type,
+        _key,
+        _type == "textBlock" => {
+          text
+        }
+      }
+    }
+  `;
+  return await client.fetch(query, { excludeId });
+}
+
+export async function getVideoById(id: string): Promise<VideoContent | null> {
+  const query = `
+    *[_type == "videocontent" && _id == $id][0] {
+      _id,
+      title,
+      author,
+      publishedAt,
+      featured,
+      youtubeBlock {
+        url
+      },
+      description[] {
+        _type,
+        _key,
+        _type == "textBlock" => {
+          text
+        }
+      }
+    }
+  `;
+  return await client.fetch(query, { id });
+}
+
+// Query to fetch recent videos (limit)
+export async function getRecentVideoItemsExcluding(
+  excludeId: string,
+  limit: number = 4
+): Promise<VideoContent[]> {
+  const query = `
+    *[_type == "videocontent" && _id != $excludeId] | order(publishedAt desc)[0...$limit] {
+      _id,
+      title,
+      author,
+      publishedAt,
+      featured,
+      youtubeBlock {
+        url
+      },
+      description[] {
+        _type,
+        _key,
+        _type == "textBlock" => {
+          text
+        }
+      }
+    }
+  `;
+
+  return await client.fetch(query, {
+    excludeId,
+    limit: limit - 1,
+  });
 }

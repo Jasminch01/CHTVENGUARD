@@ -111,7 +111,7 @@ const BandarbanNews = () => {
                               bandarbanNews[0].featuredImage?.alt ||
                               bandarbanNews[0].title
                             }
-                            className="w-full h-[19rem] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                            className="w-full h-[19rem] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
                           />
                         </div>
                       )}
@@ -182,7 +182,7 @@ const BandarbanNews = () => {
                               alt={
                                 newsItem.featuredImage?.alt || newsItem.title
                               }
-                              className="w-full h-[90px] lg:h-[75px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-400 ease-out"
+                              className="w-full h-[90px] lg:h-[75px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
                             />
                           </div>
                         )}

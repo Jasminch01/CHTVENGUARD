@@ -1,42 +1,58 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { getCategoryNameInBangla } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { IoMdTime } from "react-icons/io";
-import { NewsItems } from "@/sanity/sanityTypes";
+import { IoMdTime, IoMdPlay } from "react-icons/io";
+import { NewsItems, VideoContent } from "@/sanity/sanityTypes";
 import ErrorComponent from "@/components/shared/Error";
 import Loading from "@/components/shared/Loading";
 
-export interface CategoryNewspageProps {
-  categoryName: string;
-  categoryDisplayName?: string; // Optional prop for display name
-  categoryNews: NewsItems[];
+export interface VideoContentPageProps {
+  videos: VideoContent[];
   allNews: NewsItems[];
   loading: boolean;
   error: string | null;
   onLoadMore?: () => Promise<void>;
-  hasMoreNews?: boolean;
+  hasMoreVideos?: boolean;
   loadingMore?: boolean;
 }
 
-const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
-  categoryName,
-  categoryDisplayName,
-  categoryNews,
+const VideoContentPage: React.FC<VideoContentPageProps> = ({
+  videos,
   allNews,
   loading,
   error,
   onLoadMore,
-  hasMoreNews = false,
+  hasMoreVideos = false,
   loadingMore = false,
 }) => {
-  // Helper function to extract text from Sanity rich text blocks
-  const getFirstTextContent = (content: NewsItems["content"]): string => {
-    if (!content || !Array.isArray(content)) return "";
+  // Helper function to extract YouTube thumbnail
+  const getYouTubeThumbnail = (url: string): string => {
+    const videoId = url?.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/
+    );
+    return videoId
+      ? `https://img.youtube.com/vi/${videoId[1]}/maxresdefault.jpg`
+      : "/video-placeholder.jpg";
+  };
+  const getNewsUrl = (newsItem: NewsItems) => {
+    // For CHT categories, use the CHT prefix
+    if (["rangamati", "khagrachari", "bandarban"].includes(newsItem.category)) {
+      return `/news/cht/${newsItem.category}/${newsItem._id}`;
+    }
+    // For other categories, use standard structure
+    return `/news/${newsItem.category}/${newsItem._id}`;
+  };
+  // Helper function to extract text from video description
+  const getFirstTextContent = (
+    description: VideoContent["description"]
+  ): string => {
+    if (!description || !Array.isArray(description)) return "";
 
-    const firstTextBlock = content.find((block) => block._type === "textBlock");
+    const firstTextBlock = description.find(
+      (block) => block._type === "textBlock"
+    );
     if (!firstTextBlock || !firstTextBlock.text) return "";
 
     // Handle Sanity's rich text structure
@@ -55,7 +71,6 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
         .trim();
     }
 
-    // Fallback for simple string content
     return typeof firstTextBlock.text === "string" ? firstTextBlock.text : "";
   };
 
@@ -84,27 +99,22 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
     }
   };
 
-  // Helper function to generate news URL
-  const getNewsUrl = (newsItem: NewsItems) => {
-    // For CHT categories, use the CHT prefix
-    if (["rangamati", "khagrachari", "bandarban"].includes(newsItem.category)) {
-      return `/news/cht/${newsItem.category}/${newsItem._id}`;
-    }
-    // For other categories, use standard structure
-    return `/news/${newsItem.category}/${newsItem._id}`;
+  // Helper function to generate video URL
+  const getVideoUrl = (videoItem: VideoContent) => {
+    return `/video/${videoItem._id}`;
   };
 
-  // Function to render news sections
-  const renderNewsSections = () => {
+  // Function to render video sections
+  const renderVideoSections = () => {
     const sections = [];
-    const newsItems = categoryNews.slice(1); // Skip first item (featured)
+    const videoItems = videos.slice(1); // Skip first item (featured)
 
-    if (newsItems.length === 0) {
+    if (videoItems.length === 0) {
       return null;
     }
 
-    for (let i = 0; i < newsItems.length; i += 6) {
-      const sectionItems = newsItems.slice(i, i + 6);
+    for (let i = 0; i < videoItems.length; i += 6) {
+      const sectionItems = videoItems.slice(i, i + 6);
       const sectionIndex = Math.floor(i / 6);
 
       sections.push(
@@ -117,30 +127,21 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
           }`}
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {sectionItems.map((newsItem, index) => {
-              if (!newsItem || !newsItem._id) return null;
+            {sectionItems.map((videoItem, index) => {
+              if (!videoItem || !videoItem._id) return null;
 
               const itemIndexInSection = index;
-              const totalItemsInSection = sectionItems.length;
-
-              // Calculate row information for lg+ screens (2 columns)
-              const rowIndex = Math.floor(itemIndexInSection / 2);
-              const columnIndex = itemIndexInSection % 2;
-              const totalRows = Math.ceil(totalItemsInSection / 2);
-              const isLastRow = rowIndex === totalRows - 1;
-
-              // Items in the last row
-              const itemsInLastRow =
-                totalItemsInSection % 2 === 0 ? 2 : totalItemsInSection % 2;
-              const isOnlyOneItemInLastRow = isLastRow && itemsInLastRow === 1;
-
-              // Border logic
-              const shouldShowBottomBorder = !isLastRow;
-              const shouldShowSideBorder =
-                columnIndex === 0 && !isOnlyOneItemInLastRow;
+              const isLastTwoInSection = itemIndexInSection >= 4;
+              const isLastItemInArray = i + index === videoItems.length - 1;
+              const isSecondLastItemInArray =
+                i + index === videoItems.length - 2;
+              const shouldShowBottomBorder =
+                !isLastTwoInSection &&
+                !isLastItemInArray &&
+                !isSecondLastItemInArray;
 
               return (
-                <Link href={getNewsUrl(newsItem)} key={newsItem._id}>
+                <Link href={getVideoUrl(videoItem)} key={videoItem._id}>
                   <div
                     className={`flex flex-row-reverse gap-3 lg:gap-5 w-full mb-1 pb-3 ${
                       itemIndexInSection % 2 === 0 ? "lg:pr-1" : "lg:pl-1"
@@ -149,34 +150,31 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
                         ? "after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-px after:bg-gray-200 dark:after:bg-gray-700"
                         : ""
                     } ${
-                      shouldShowSideBorder
+                      itemIndexInSection % 2 === 0
                         ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-200 dark:lg:before:bg-gray-700"
                         : ""
                     }`}
                   >
-                    <div className="flex-1 overflow-hidden">
-                      <Image
-                        src={
-                          newsItem.featuredImage?.asset?.url || "/news1.jpeg"
-                        }
-                        width={200}
-                        height={120}
-                        alt={
-                          newsItem.featuredImage?.alt ||
-                          newsItem.title ||
-                          "News image"
-                        }
-                        className="w-[100px] h-[75px] lg:w-full lg:h-[75px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
-                      />
+                    <div className="flex-1 overflow-hidden relative">
+                      <div className="">
+                        <Image
+                          src={getYouTubeThumbnail(videoItem.youtubeBlock?.url)}
+                          width={200}
+                          height={120}
+                          alt={videoItem.title || "Video thumbnail"}
+                          className="w-[100px] h-auto lg:w-full lg:h-[75px] xl:h-[120px] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
+                        />
+                       
+                      </div>
                     </div>
                     <div className="flex-2 min-w-0">
-                      <h2 className="text-sm lg:text-base xl:text-lg font-semibold mb-2 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100 line-clamp-3 leading-tight">
-                        {newsItem.title}
+                      <h2 className="text-sm lg:text-base xl:text-lg font-semibold mb-1 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100 line-clamp-3 leading-tight">
+                        {videoItem.title}
                       </h2>
                       <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
                         <IoMdTime className="text-xs flex-shrink-0" />
                         <p className="text-xs">
-                          {formatDate(newsItem.publishedAt)}
+                          {formatDate(videoItem.publishedAt)}
                         </p>
                       </div>
                     </div>
@@ -205,7 +203,7 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
       <div className="max-w-7xl mx-auto px-4 lg:px-0 py-8">
         <div className="border-b lg:mb-10">
           <h1 className="text-2xl lg:text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100">
-            {categoryDisplayName || getCategoryNameInBangla(categoryName)}
+            ভিডিও
           </h1>
         </div>
 
@@ -215,54 +213,60 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
             {/* Horizontal divider for mobile */}
             <div className="lg:hidden w-full border-b border-gray-300 dark:border-gray-700 my-6"></div>
 
-            {!categoryNews || categoryNews.length === 0 ? (
+            {!videos || videos.length === 0 ? (
               <div className="text-center flex flex-col items-center justify-center h-64 text-gray-500 dark:text-gray-400">
-                <p className="text-xl mb-2">কোন সংবাদ পাওয়া যায়নি</p>
+                <p className="text-xl mb-2">কোন ভিডিও পাওয়া যায়নি</p>
                 <p className="text-sm">অনুগ্রহ করে পরে আবার চেষ্টা করুন</p>
               </div>
             ) : (
               <>
-                {/* Featured News (First Item) */}
+                {/* Featured Video (First Item) */}
                 <div className="border-b border-gray-300 dark:border-gray-700 pb-6 mb-6">
-                  {categoryNews.slice(0, 1).map((newsItem) => {
-                    if (!newsItem || !newsItem._id) return null;
+                  {videos.slice(0, 1).map((videoItem) => {
+                    if (!videoItem || !videoItem._id) return null;
 
                     return (
-                      <Link key={newsItem._id} href={getNewsUrl(newsItem)}>
+                      <Link key={videoItem._id} href={getVideoUrl(videoItem)}>
                         <div className="flex flex-col lg:flex-row-reverse gap-5 group">
                           <div className="flex-1 relative overflow-hidden">
-                            <Image
-                              src={
-                                newsItem.featuredImage?.asset?.url ||
-                                "/news1.jpeg"
-                              }
-                              width={500}
-                              height={300}
-                              alt={
-                                newsItem.featuredImage?.alt ||
-                                newsItem.title ||
-                                "News image"
-                              }
-                              className="w-full h-auto lg:h-[300px] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
-                              priority
-                            />
+                            <div className="relative">
+                              <Image
+                                src={getYouTubeThumbnail(
+                                  videoItem.youtubeBlock?.url
+                                )}
+                                width={500}
+                                height={300}
+                                alt={videoItem.title || "Video thumbnail"}
+                                className="w-full h-full object-center scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
+                                priority
+                              />
+                              {/* Play button overlay */}
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="bg-red-600 hover:bg-red-700 rounded-full p-4 transition-colors duration-300 opacity-90 group-hover:opacity-100">
+                                  <IoMdPlay className="text-white text-3xl ml-1" />
+                                </div>
+                              </div>
+                            </div>
                           </div>
                           <div className="flex-1">
                             <h2 className="mb-4 text-xl lg:text-3xl font-bold leading-tight group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100">
-                              {newsItem.title}
+                              {videoItem.title}
                             </h2>
                             <div className="mb-4">
                               <p className="text-gray-600 dark:text-gray-300 line-clamp-4 leading-relaxed">
                                 {truncateContent(
-                                  getFirstTextContent(newsItem.content || []),
-                                  200
+                                  getFirstTextContent(
+                                    videoItem.description || []
+                                  ),
+                                  100
                                 )}
                               </p>
                             </div>
+
                             <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
                               <IoMdTime className="text-sm" />
                               <p className="text-sm">
-                                {formatDate(newsItem.publishedAt)}
+                                {formatDate(videoItem.publishedAt)}
                               </p>
                             </div>
                           </div>
@@ -272,31 +276,31 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
                   })}
                 </div>
 
-                {/* News Sections */}
+                {/* Video Sections */}
                 <div className="mt-5">
-                  {categoryNews.length > 1 ? (
+                  {videos.length > 1 ? (
                     <>
-                      {renderNewsSections()}
+                      {renderVideoSections()}
 
                       {/* Load More button or End message */}
-                      {hasMoreNews && onLoadMore ? (
+                      {hasMoreVideos && onLoadMore ? (
                         <div className="mt-8 pt-4 border-t border-gray-300 dark:border-gray-600">
                           <div className="flex justify-center">
                             <button
                               onClick={onLoadMore}
                               disabled={loadingMore}
-                              className="px-6 py-3 bg-green-700 text-white hover:bg-green-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 font-medium"
+                              className="px-6 py-3 bg-green-700 text-white hover:bg-green-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 font-medium rounded"
                             >
-                              {loadingMore ? "লোড হচ্ছে..." : "আরও দেখুন"}
+                              {loadingMore ? "লোড হচ্ছে..." : "আরও ভিডিও দেখুন"}
                             </button>
                           </div>
                         </div>
                       ) : (
-                        // End border when no more news
-                        categoryNews.length > 1 && (
+                        // End border when no more videos
+                        videos.length > 1 && (
                           <div className="mt-8 pt-4 border-t border-gray-300 dark:border-gray-600">
                             <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-                              সব খবর দেখানো হয়েছে
+                              সব ভিডিও দেখানো হয়েছে
                             </div>
                           </div>
                         )
@@ -304,7 +308,7 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
                     </>
                   ) : (
                     <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                      আর কোন সংবাদ নেই
+                      আর কোন ভিডিও নেই
                     </div>
                   )}
                 </div>
@@ -312,7 +316,6 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
             )}
           </div>
 
-          {/* Right Sidebar */}
           <div className="lg:w-1/3 lg:pl-5 mt-10 lg:mt-0">
             {/* Latest News Section */}
             <div className="rounded-lg sticky top-20">
@@ -321,7 +324,7 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
               </h2>
               <div className="space-y-3">
                 {allNews && allNews.length > 0 ? (
-                  allNews.slice(0, 5).map((news) => {
+                  allNews.slice(0, 5).map((news: NewsItems) => {
                     if (!news || !news._id) return null;
 
                     return (
@@ -352,7 +355,7 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
                                   news.title ||
                                   "News image"
                                 }
-                                className="w-[100px] h-[75px] object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                className="w-[100px] h-[75px] object-cover transition-transform duration-400 ease-out group-hover:scale-105"
                               />
                             </div>
                           </div>
@@ -374,4 +377,4 @@ const ChtCategoryNewspage: React.FC<CategoryNewspageProps> = ({
   );
 };
 
-export default ChtCategoryNewspage;
+export default VideoContentPage;

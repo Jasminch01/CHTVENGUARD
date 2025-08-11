@@ -32,7 +32,6 @@ const Page = () => {
   const initialLoadItems = 7;
   const loadMoreItems = 6;
 
-  console.log(categoryNews);
 
   const { category } = useParams();
   const categoryName = category?.toString();
