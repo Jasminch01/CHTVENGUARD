@@ -11,6 +11,7 @@ import { IoMdTime } from "react-icons/io";
 import { NewsCardsProps, ContentBlock } from "@/sanity/sanityTypes";
 import NationalNews from "./NationalNews";
 import FeaturedNews from "./FeaturedNews";
+import VideoNews from "./VideoNews";
 
 const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
   if (!news || news.length === 0) {
@@ -227,6 +228,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
       <BandarbanNews />
       <InternationalNews />
       <NationalNews />
+      <VideoNews/>
     </div>
   );
 };

@@ -503,3 +503,32 @@ export async function getRecentVideoItemsExcluding(
     limit: limit - 1,
   });
 }
+
+export async function getRecentVideoItems(
+  limit: number = 6
+): Promise<VideoContent[]> {
+  // Ensure limit doesn't exceed 6
+  const maxLimit = Math.min(limit, 6);
+
+  const query = `
+    *[_type == "videocontent"] | order(publishedAt desc)[0...${maxLimit}] {
+      _id,
+      title,
+      author,
+      publishedAt,
+      featured,
+      youtubeBlock {
+        url
+      },
+      description[] {
+        _type,
+        _key,
+        _type == "textBlock" => {
+          text
+        }
+      }
+    }
+  `;
+
+  return await client.fetch(query);
+}
