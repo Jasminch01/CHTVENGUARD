@@ -192,7 +192,7 @@ const FeaturedNews: React.FC = () => {
                         />
                         {/* Play button overlay for videos */}
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="bg-black/60 rounded-full p-4 transition-all duration-700 transform group-hover:scale-110">
+                          <div className="bg-red-600 hover:bg-red-700 rounded-full p-4 transition-all duration-700 transform group-hover:scale-110">
                             <FaPlay className="text-white text-xl ml-1" />
                           </div>
                         </div>
