@@ -2,12 +2,12 @@
 "use client";
 import ErrorComponent from "@/components/shared/Error";
 import Loading from "@/components/shared/Loading";
-import { getVideoItems } from "@/sanity/sanityQueries";
+import { getRecentVideoItems } from "@/sanity/sanityQueries";
 import { VideoContent } from "@/sanity/sanityTypes";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { IoMdTime, IoMdPlay } from "react-icons/io";
+import { IoMdPlay } from "react-icons/io";
 
 const VideoNews = () => {
   const [videos, setVideos] = useState<VideoContent[]>([]);
@@ -17,7 +17,7 @@ const VideoNews = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const res = await getVideoItems(0, 9); // Fetch 9 videos to match layout (1 featured + 2 cards + 6 grid)
+        const res = await getRecentVideoItems();
         if (Array.isArray(res)) {
           setVideos(res);
         }
@@ -98,18 +98,24 @@ const VideoNews = () => {
   }
 
   return (
-    <div className="flex mt-20">
+    <div className="flex mt-10 xl:mt-20">
       {/* Left Main Content */}
       <div className="flex-1">
-        <div className="mb-10 border-l-4 border-red-500 pl-3">
-          <h1 className="text-2xl font-bold dark:text-gray-100">ভিডিও</h1>
+        <div className="mb-5 text-center py-4 bg-green-600">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold dark:text-gray-100 text-white">
+            ভিডিও
+          </h1>
         </div>
         <div className="">
           {/* Main Featured Video Section */}
-          <div className="mb-3">
-            <Link href={`/video/${videos[0]._id}`}>
-              <div className="flex lg:flex-row-reverse flex-col h-full gap-5 group border-b pb-3">
-                <div className="flex-1 relative overflow-hidden">
+          <div className="mb-3 flex flex-col lg:flex-row gap-3 sm:gap-5 h-auto">
+            {/* Featured Video - Left Side */}
+            <Link
+              href={`/video/${videos[0]._id}`}
+              className="flex-1 bg-gray-200 dark:bg-gray-300 p-2 sm:p-3"
+            >
+              <div className="flex flex-col gap-3 sm:gap-5 group h-full">
+                <div className=" relative overflow-hidden">
                   <div className="relative">
                     <Image
                       src={getYouTubeThumbnail(videos[0]?.youtubeBlock?.url)}
@@ -120,152 +126,60 @@ const VideoNews = () => {
                     />
                     {/* Play button overlay */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="bg-red-600 hover:bg-red-700 rounded-full p-4 transition-colors duration-300 opacity-90 group-hover:opacity-100">
-                        <IoMdPlay className="text-white text-3xl ml-1" />
+                      <div className="bg-red-600 hover:bg-red-700 rounded-full p-3 sm:p-4 transition-colors duration-300 opacity-90 group-hover:opacity-100">
+                        <IoMdPlay className="text-white text-2xl sm:text-3xl ml-1" />
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex-1">
-                  <h1 className="text-xl lg:text-3xl font-bold leading-tight mb-4 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100">
+                <div className="">
+                  <h1 className="text-lg sm:text-xl lg:text-3xl font-bold leading-tight group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-800">
                     {videos[0]?.title}
                   </h1>
-                  <p className="hidden lg:block text-base leading-relaxed mb-4 dark:text-gray-300">
+                  <p className="hidden sm:block lg:block text-sm sm:text-base leading-relaxed dark:text-gray-800 mt-2">
                     {truncateContent(videos[0]?.description, 150)}
                   </p>
-                  <div className="flex items-center gap-1">
-                    <IoMdTime />
-                    <p className="text-sm text-gray-500">
-                      {new Date(videos[0].publishedAt).toLocaleDateString(
-                        "bn-BD",
-                        {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                          weekday: "long",
-                        }
-                      )}
-                    </p>
-                  </div>
                 </div>
               </div>
             </Link>
-          </div>
 
-          {/* Two Video Cards Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-3">
-            {videos.slice(1, 3).map((item, index) => (
-              <Link key={item._id} href={`/video/${item._id}`}>
-                <div
-                  className={`flex flex-row-reverse gap-5 group ${
-                    index === 0
-                      ? "md:border-r md:border-b-0 md:border-gray-300 md:pr-6 border-b dark:md:border-gray-700"
-                      : ""
-                  }`}
+            {/* Three Video Cards Section - Right Side */}
+            <div className="flex-1 flex flex-col gap-3 sm:gap-5">
+              {videos.slice(1, 4).map((item) => (
+                <Link
+                  key={item._id}
+                  href={`/video/${item._id}`}
+                  className="dark:bg-gray-300 bg-gray-200 p-2 sm:p-3"
                 >
-                  <div className="flex-1 relative overflow-hidden">
-                    <div className="relative">
-                      <Image
-                        src={getYouTubeThumbnail(item?.youtubeBlock?.url)}
-                        width={400}
-                        height={250}
-                        alt={item?.title || "Video thumbnail"}
-                        className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
-                      />
-                      {/* Play button overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center opacity-80">
-                        <div className="bg-red-600 hover:bg-red-700 rounded-full p-2 transition-colors duration-300">
-                          <IoMdPlay className="text-white text-lg ml-0.5" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <h2 className="text-xl font-bold leading-tight mb-3 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100">
-                        {item.title}
-                      </h2>
-                      <p className="text-gray-600 hidden lg:block dark:text-gray-400 line-clamp-2 leading-relaxed text-justify">
-                        {truncateContent(item.description, 50)}
-                      </p>
-                      <div className="flex items-center gap-1">
-                        <IoMdTime />
-                        <p className="text-sm text-gray-500 mt-2">
-                          {new Date(item.publishedAt).toLocaleDateString(
-                            "bn-BD",
-                            {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                              weekday: "long",
-                            }
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          {/* Three Video Cards Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 py-3 border-t border-b border-gray-300 dark:border-gray-700">
-            {videos.slice(3).map((item, index) => {
-              const isLastInRow = (index + 1) % 3 === 0;
-
-              return (
-                <Link key={item._id} href={`/video/${item._id}`}>
-                  <div
-                    className={`flex h-full flex-row-reverse gap-5 group ${
-                      index % 2 === 0 ? "lg:pr-1" : "lg:pl-1"
-                    } relative ${
-                      // Right border (except last card in each row)
-                      !isLastInRow
-                        ? "lg:before:content-[''] lg:before:absolute lg:before:-right-2 lg:before:top-0 lg:before:h-full lg:before:w-px lg:before:bg-gray-400 dark:lg:before:bg-gray-700"
-                        : ""
-                    }`}
-                  >
-                    <div className="flex-1 relative overflow-hidden">
-                      <div className="relative">
+                  <div className="flex flex-row gap-3 sm:gap-5 group h-full">
+                    <div className="relative overflow-hidden">
+                      <div className="relative h-full">
                         <Image
                           src={getYouTubeThumbnail(item?.youtubeBlock?.url)}
-                          width={500}
-                          height={100}
+                          width={400}
+                          height={250}
                           alt={item?.title || "Video thumbnail"}
-                          className="w-full h-auto object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
+                          className="w-20 h-16 sm:w-auto sm:h-[8rem] object-cover lg:group-hover:scale-105 duration-700 ease-in-out"
                         />
                         {/* Play button overlay */}
                         <div className="absolute inset-0 flex items-center justify-center opacity-80">
-                          <div className="bg-red-600 hover:bg-red-700 rounded-full p-1 transition-colors duration-300">
-                            <IoMdPlay className="text-white text-xs ml-0.5" />
+                          <div className="bg-red-600 hover:bg-red-700 rounded-full p-1.5 sm:p-2 transition-colors duration-300">
+                            <IoMdPlay className="text-white text-sm sm:text-lg ml-0.5" />
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h2 className="text-xl font-semibold text-gray-800 group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-100">
-                        {item.title}
-                      </h2>
-                      <div className="flex items-center gap-1">
-                        <IoMdTime />
-                        <p className="text-xs text-gray-500">
-                          {new Date(item.publishedAt).toLocaleDateString(
-                            "bn-BD",
-                            {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                              weekday: "long",
-                            }
-                          )}
-                        </p>
+                    <div className="flex-1 flex flex-col">
+                      <div>
+                        <h2 className="text-sm sm:text-lg lg:text-xl font-bold leading-tight group-hover:text-blue-500 dark:group-hover:text-blue-400 dark:text-gray-800 line-clamp-3">
+                          {item.title}
+                        </h2>
                       </div>
                     </div>
                   </div>
                 </Link>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       </div>

@@ -151,6 +151,14 @@ export async function getNewsItem(id: string): Promise<NewsItems> {
           url,
           title,
           caption
+        },
+          _type == "highlightBlock" => {
+          text,
+          backgroundColor,
+          "customColorHex": customColor.hex,
+          borderColor,
+          "customBorderColorHex": customBorderColor.hex,
+          padding
         }
       },
       category,
@@ -505,10 +513,10 @@ export async function getRecentVideoItemsExcluding(
 }
 
 export async function getRecentVideoItems(
-  limit: number = 6
+  limit: number = 4
 ): Promise<VideoContent[]> {
   // Ensure limit doesn't exceed 6
-  const maxLimit = Math.min(limit, 6);
+  const maxLimit = Math.min(limit, 4);
 
   const query = `
     *[_type == "videocontent"] | order(publishedAt desc)[0...${maxLimit}] {

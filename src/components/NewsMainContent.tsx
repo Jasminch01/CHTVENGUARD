@@ -6,7 +6,7 @@ import { getCategoryNameInBangla } from "@/lib/utils";
 import { IoMdTime, IoMdShare, IoMdCopy } from "react-icons/io";
 import { FaFacebookF, FaWhatsapp } from "react-icons/fa";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
-import { NewsItems, ContentBlock } from "@/sanity/sanityTypes";
+import { ContentBlock, NewsItems } from "@/sanity/sanityTypes";
 
 interface NewsMainContentProps {
   newsItem: NewsItems;
@@ -139,6 +139,66 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
     });
   };
 
+  // Function to render highlight block content
+  const renderHighlightBlock = (block: any) => {
+    const {
+      backgroundColor,
+      customColorHex, // This comes from the query alias
+      borderColor,
+      customBorderColorHex, // This comes from the query alias
+      padding = "medium",
+    } = block;
+
+    // Determine background color
+    const bgColor =
+      backgroundColor === "custom" ? customColorHex : backgroundColor;
+
+    // Determine border color and style
+    const getBorderStyle = () => {
+      if (borderColor === "none") return "none";
+      if (borderColor === "custom") return `2px solid ${customBorderColorHex}`;
+      return `2px solid ${borderColor}`;
+    };
+
+    // Rest of your function remains the same...
+    const getPadding = () => {
+      switch (padding) {
+        case "small":
+          return "8px 12px";
+        case "large":
+          return "20px 24px";
+        default:
+          return "12px 16px";
+      }
+    };
+
+    const highlightStyle = {
+      backgroundColor: bgColor || "#fff3cd",
+      borderTop: getBorderStyle(), // Only top border
+      borderBottom: "none", // Explicitly remove bottom border
+      borderLeft: "none", // Explicitly remove left border
+      borderRight: "none", // Explicitly remove right border
+      padding: getPadding(),
+      borderRadius: "0", // Remove all rounded corners
+      margin: "16px 0",
+      position: "relative" as const,
+    };
+    return (
+      <div key={block._key} style={highlightStyle} className="highlight-block">
+        {Array.isArray(block.text) ? (
+          <div>{renderRichText(block.text, `highlight-${block._key}`)}</div>
+        ) : (
+          <p
+            className="leading-relaxed text-justify my-0"
+            style={{ fontSize: `${fontSize * 1.25}rem`, margin: 0 }}
+          >
+            {typeof block.text === "string" ? block.text : ""}
+          </p>
+        )}
+      </div>
+    );
+  };
+
   // Function to process content blocks
   const renderContentBlocks = (blocks: ContentBlock[]) => {
     return blocks.map((block) => {
@@ -162,6 +222,10 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
               {typeof block.text === "string" ? block.text : ""}
             </p>
           );
+
+        case "highlightBlock":
+          return renderHighlightBlock(block);
+
         case "imageBlock":
           return (
             <div key={block._key} className="my-6">
@@ -181,6 +245,7 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
               )}
             </div>
           );
+
         case "youtubeBlock":
           const videoId = getYouTubeVideoId(block.url);
           if (!videoId) {
@@ -218,6 +283,7 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
               )}
             </div>
           );
+
         default:
           return null;
       }
@@ -369,7 +435,6 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
       </div>
 
       {/* Featured Image */}
-      {/* Featured Image */}
       {newsItem.featuredImage?.asset?.url && (
         <div className="mb-6">
           <Image
@@ -387,6 +452,7 @@ const NewsMainContent: React.FC<NewsMainContentProps> = ({
           )}
         </div>
       )}
+
       {/* News Content */}
       <div className="mb-12">{renderContentBlocks(newsItem.content)}</div>
 

@@ -70,7 +70,7 @@ const NewsDetailsContentpage = ({ newsId }: Props) => {
   // Update document title dynamically for better client-side navigation
   useEffect(() => {
     if (newsItem) {
-      document.title = `${newsItem.title} | Your Site Name`;
+      document.title = `${newsItem.title} | ""`;
     }
   }, [newsItem]);
 

@@ -27,6 +27,15 @@ export interface ImageBlock {
   alt: string;
   caption?: string;
 }
+export interface HighlightBlock {
+  _type: "highlightBlock";
+  text: string;
+  backgroundColor: string;
+  customColorHex: string;
+  borderColor: string;
+  customBorderColorHex: string;
+  padding: string | number;
+}
 
 export interface YouTubeBlock {
   _type: "youtubeBlock";
@@ -36,7 +45,7 @@ export interface YouTubeBlock {
   caption?: string;
 }
 
-export type ContentBlock = TextBlock | ImageBlock | YouTubeBlock;
+export type ContentBlock = TextBlock | ImageBlock | YouTubeBlock | HighlightBlock;
 
 export interface NewsItems {
   _id: string;
