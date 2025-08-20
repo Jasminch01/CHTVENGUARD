@@ -13,3 +13,9 @@ export interface NewsItem {
 export interface NewsCardsProps {
   news: NewsItem[];
 }
+
+export interface socialLinksProps {
+  _id : string,
+  social: string;
+  url : string,
+}

@@ -1,3 +1,4 @@
+import { socialLinksProps } from "@/app/type";
 import { client } from "../../sanity.config";
 import { NewsItems, VideoContent } from "./sanityTypes";
 
@@ -539,4 +540,22 @@ export async function getRecentVideoItems(
   `;
 
   return await client.fetch(query);
+}
+
+// In your sanity-queries file
+export async function socialLinks(): Promise<socialLinksProps[]> {
+  const query = `
+    *[_type == "socials" && defined(url)] | order(_createdAt desc) {
+      _id,
+      social,
+      url
+    }
+  `;
+
+  try {
+    return await client.fetch<socialLinksProps[]>(query);
+  } catch (error) {
+    console.error("Error fetching social links:", error);
+    return [];
+  }
 }

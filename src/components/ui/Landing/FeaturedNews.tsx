@@ -100,7 +100,7 @@ const FeaturedNews: React.FC = () => {
       try {
         setLoading(true);
         const news = await getFeaturedNewsItems(); // This should now return both news and videos
-        console.log("Fetched featured items:", news); // Debug log
+        // console.log("Fetched featured items:", news); // Debug log
         setFeaturedNews(news);
       } catch (err) {
         setError("Failed to fetch featured news");
