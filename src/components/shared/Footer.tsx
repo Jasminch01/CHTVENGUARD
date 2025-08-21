@@ -116,10 +116,10 @@ const Footer: React.FC = () => {
   }, []);
 
   return (
-    <footer className="py-5 border-t-green-600 border-t-3 xl:mt-15 mt-10">
+    <footer className="lg:py-5 border-t-green-600 border-t-3 xl:mt-15 mt-10">
       <div className="max-w-7xl mx-auto px-4 lg:px-0">
         {/* Main Footer Content */}
-        <div className="py-7 flex flex-col md:flex-row justify-between items-end">
+        <div className="lg:py-7 py-5 flex flex-col md:flex-row justify-between xl:items-end">
           {/* Logo and Editor Info */}
           <div className="mb-6 md:mb-0">
             <Link href={"/"}>
@@ -135,7 +135,7 @@ const Footer: React.FC = () => {
             </Link>
           </div>
           {/* Dynamic Social Media Links */}
-          <div className="mt-2 flex space-x-2 items-end md:justify-end justify-center">
+          <div className="lg:mt-2 flex space-x-2 items-end md:justify-end justify-center">
             {loading ? (
               // Loading skeleton
               <div className="flex space-x-2">
@@ -196,7 +196,7 @@ const Footer: React.FC = () => {
             )}
           </div>
           {/* Navigation Links */}
-          <div className="w-full md:w-auto">
+          <div className="w-full md:w-auto mt-5 md:mt-0">
             <nav className="flex flex-wrap justify-center md:justify-end gap-4 md:gap-6">
               {navigationLinks.map((link, index) => (
                 <a
@@ -213,7 +213,7 @@ const Footer: React.FC = () => {
       </div>
 
       {/* Bottom Border */}
-      <div className="border-t xl:pt-5 flex items-center justify-center">
+      <div className="border-t xl:pt-4 pt-3 flex items-center justify-center">
         <div className="text-center text-sm text-gray-500">
           © {new Date().getFullYear()} chtvanguard. All rights reserved.
         </div>
