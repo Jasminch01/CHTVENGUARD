@@ -78,7 +78,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({ news }) => {
                     <p className="hidden lg:block text-base leading-relaxed mb-4 dark:text-gray-300">
                       {truncateContent(
                         extractTextFromContent(news[0]?.content || []),
-                        150
+                        300
                       )}
                     </p>
                     <div className="flex items-center gap-1">

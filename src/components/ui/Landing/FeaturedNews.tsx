@@ -184,9 +184,9 @@ const FeaturedNews: React.FC = () => {
                           className="w-full h-[10rem] object-cover scale-100 group-hover:scale-105 transition-transform duration-700 ease-out"
                           onError={(e) => {
                             // Fallback to placeholder if YouTube thumbnail fails
-                            console.log(
-                              "YouTube thumbnail failed, using placeholder"
-                            );
+                            // console.log(
+                            //   "YouTube thumbnail failed, using placeholder"
+                            // );
                             e.currentTarget.src = "/video-placeholder.jpg";
                           }}
                         />

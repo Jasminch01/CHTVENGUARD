@@ -119,7 +119,7 @@ const Footer: React.FC = () => {
     <footer className="py-5 border-t-green-600 border-t-3 xl:mt-15 mt-10">
       <div className="max-w-7xl mx-auto px-4 lg:px-0">
         {/* Main Footer Content */}
-        <div className="py-10 flex flex-col md:flex-row justify-between items-end">
+        <div className="py-7 flex flex-col md:flex-row justify-between items-end">
           {/* Logo and Editor Info */}
           <div className="mb-6 md:mb-0">
             <Link href={"/"}>
@@ -213,7 +213,7 @@ const Footer: React.FC = () => {
       </div>
 
       {/* Bottom Border */}
-      <div className="border-t xl:pt-10 flex items-center justify-center">
+      <div className="border-t xl:pt-5 flex items-center justify-center">
         <div className="text-center text-sm text-gray-500">
           © {new Date().getFullYear()} chtvanguard. All rights reserved.
         </div>
