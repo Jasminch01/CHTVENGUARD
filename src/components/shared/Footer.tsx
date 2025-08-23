@@ -98,6 +98,30 @@ const Footer: React.FC = () => {
     return <div className="w-4 h-4 bg-gray-400 rounded"></div>;
   };
 
+  // Function to handle WhatsApp URL formatting
+  const getWhatsAppUrl = (url: string) => {
+    // Check if it's a WhatsApp channel URL
+    if (url.includes("whatsapp.com/channel/")) {
+      // For WhatsApp channels, we should keep the web URL format
+      // as the app will handle the redirect automatically
+      return url;
+    }
+
+    // Check if it's a regular WhatsApp chat URL
+    if (url.includes("wa.me/") || url.includes("whatsapp.com/")) {
+      return url;
+    }
+
+    // If it's just a phone number, format it as a wa.me link
+    const phoneMatch = url.match(/(\+?[\d\s\-\(\)]+)/);
+    if (phoneMatch) {
+      const cleanPhone = phoneMatch[1].replace(/\s|-|\(|\)/g, "");
+      return `https://wa.me/${cleanPhone}`;
+    }
+
+    return url;
+  };
+
   useEffect(() => {
     const fetchSocialLinks = async () => {
       try {
@@ -158,20 +182,10 @@ const Footer: React.FC = () => {
                     social.social?.toLowerCase().includes("gmail") ||
                     social.url?.includes("mailto:");
 
-                  // Format WhatsApp URL for calling
-                  const getWhatsAppChannelUrl = (url: string) => {
-                    const channelMatch = url.match(/channel\/([0-9A-Za-z]+)/);
-                    if (channelMatch && channelMatch[1]) {
-                      return `whatsapp://channel?code=${channelMatch[1]}`;
-                    }
-
-                    return url;
-                  };
-
                   // Get the appropriate href
                   const getHref = () => {
                     if (isWhatsApp) {
-                      return getWhatsAppChannelUrl(social.url);
+                      return getWhatsAppUrl(social.url);
                     } else if (isGmail) {
                       return social.url.startsWith("mailto:")
                         ? social.url
@@ -184,8 +198,8 @@ const Footer: React.FC = () => {
                     <Link
                       key={social._id}
                       href={getHref()}
-                      target={isWhatsApp || isGmail ? "_self" : "_blank"}
-                      rel={isWhatsApp || isGmail ? "" : "noopener noreferrer"}
+                      target={isGmail ? "_self" : "_blank"}
+                      rel={isGmail ? "" : "noopener noreferrer"}
                       title={social.social}
                       className="hover:scale-110 transition-transform duration-220"
                     >
