@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
 
     if (platformName.includes("facebook")) {
       return (
-        <div className = "p-1 rounded border border-gray-400 dark:border-gray-500">
+        <div className="p-1 rounded border border-gray-400 dark:border-gray-500">
           <FaFacebookSquare
             size={22}
             className="text-gray-600 dark:text-gray-400"
@@ -39,13 +39,13 @@ const Footer: React.FC = () => {
       );
     } else if (platformName.includes("instagram")) {
       return (
-        <div className = "p-1 rounded border border-gray-400 dark:border-gray-500">
+        <div className="p-1 rounded border border-gray-400 dark:border-gray-500">
           <FaInstagram size={22} className="text-gray-600 dark:text-gray-400" />
         </div>
       );
     } else if (platformName.includes("twitter") || platformName.includes("x")) {
       return (
-        <div className = "p-1 rounded border border-gray-400 dark:border-gray-500">
+        <div className="p-1 rounded border border-gray-400 dark:border-gray-500">
           <RiTwitterXLine
             size={22}
             className="text-gray-600 dark:text-gray-400"
@@ -54,13 +54,13 @@ const Footer: React.FC = () => {
       );
     } else if (platformName.includes("youtube")) {
       return (
-        <div className = "p-1 rounded border border-gray-400 dark:border-gray-500">
+        <div className="p-1 rounded border border-gray-400 dark:border-gray-500">
           <FaYoutube size={22} className="text-gray-600 dark:text-gray-400" />
         </div>
       );
     } else if (platformName.includes("linkedin")) {
       return (
-        <div className = "p-1 rounded border border-gray-400 dark:border-gray-500">
+        <div className="p-1 rounded border border-gray-400 dark:border-gray-500">
           <FaLinkedin size={22} className="text-gray-600 dark:text-gray-400" />
         </div>
       );
@@ -70,13 +70,13 @@ const Footer: React.FC = () => {
       );
     } else if (platformName.includes("gmail")) {
       return (
-        <div className = "p-1 rounded border border-gray-400 dark:border-gray-500">
+        <div className="p-1 rounded border border-gray-400 dark:border-gray-500">
           <BiLogoGmail size={22} className="text-gray-600 dark:text-gray-400" />
         </div>
       );
     } else if (platformName.includes("telegram")) {
       return (
-        <div className = "p-1 rounded border border-gray-400 dark:border-gray-500">
+        <div className="p-1 rounded border border-gray-400 dark:border-gray-500">
           <FaTelegramPlane
             size={22}
             className="text-gray-600 dark:text-gray-400"
@@ -85,7 +85,7 @@ const Footer: React.FC = () => {
       );
     } else if (platformName.includes("whatsapp")) {
       return (
-        <div className = "p-1 rounded border border-gray-400 dark:border-gray-500">
+        <div className="p-1 rounded border border-gray-400 dark:border-gray-500">
           <RiWhatsappFill
             size={21}
             className="text-gray-600 dark:text-gray-400"
@@ -159,19 +159,19 @@ const Footer: React.FC = () => {
                     social.url?.includes("mailto:");
 
                   // Format WhatsApp URL for calling
-                  const getWhatsAppCallUrl = (url: string) => {
-                    // Extract phone number from WhatsApp URL
-                    const phoneMatch = url.match(/(\d+)/);
-                    if (phoneMatch) {
-                      return `tel:+${phoneMatch[1]}`;
+                  const getWhatsAppChannelUrl = (url: string) => {
+                    const channelMatch = url.match(/channel\/([0-9A-Za-z]+)/);
+                    if (channelMatch && channelMatch[1]) {
+                      return `whatsapp://channel?code=${channelMatch[1]}`;
                     }
+
                     return url;
                   };
 
                   // Get the appropriate href
                   const getHref = () => {
                     if (isWhatsApp) {
-                      return getWhatsAppCallUrl(social.url);
+                      return getWhatsAppChannelUrl(social.url);
                     } else if (isGmail) {
                       return social.url.startsWith("mailto:")
                         ? social.url
