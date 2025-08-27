@@ -39,7 +39,7 @@ const page = () => {
             about you to make future visits easy, analyze usage and trends to
             improve your experience, notify you many updates, request feedback
             from you. If anybody wants to remove his/her personal data from our
-            database the person has to email info@dhakapost.com requesting the
+            database the person has to email info@chtvanguard.com@gmail.com requesting the
             removal of personal data. The person has to mention his/her email
             address in the email. The email subject should be &quot;Requesting
             personal data removal&quot;.
