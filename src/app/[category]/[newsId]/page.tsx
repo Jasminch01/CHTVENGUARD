@@ -167,8 +167,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         card: "summary_large_image",
         title: newsItem.title,
         description: finalDescription,
-        images: absoluteImageUrl
-          ? [absoluteImageUrl]
+        images: absoluteImageUrl 
+          ? [absoluteImageUrl] 
           : [`${baseUrl}/default-news-image.jpg`],
         creator: newsItem.author ? `@${newsItem.author}` : "@chtvanguard",
         site: "@chtvanguard",
@@ -201,9 +201,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         googleBot: {
           index: true,
           follow: true,
-          "max-video-preview": -1,
-          "max-image-preview": "large",
-          "max-snippet": -1,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
         },
       },
     };
@@ -221,17 +221,14 @@ export default async function NewsDetailsPage({ params }: Props) {
   // Pre-fetch the news item on the server for better performance
   const { newsId } = await params;
   const newsItem = await getNewsItem(newsId).catch(() => null);
-
+  
   // Extract description for JSON-LD
-  const contentDescription = newsItem
+  const contentDescription = newsItem 
     ? extractTextFromContent(newsItem.content || [])
     : "";
 
-  const finalDescription =
-    contentDescription ||
-    `Read about ${newsItem?.title} in ${getCategoryDisplayName(
-      newsItem?.category || ""
-    )}`;
+  const finalDescription = contentDescription ||
+    `Read about ${newsItem?.title} in ${getCategoryDisplayName(newsItem?.category || "")}`;
 
   return (
     <>
@@ -246,11 +243,9 @@ export default async function NewsDetailsPage({ params }: Props) {
               headline: newsItem.title,
               description: finalDescription,
               image: newsItem.featuredImage?.asset?.url
-                ? [
-                    newsItem.featuredImage.asset.url.startsWith("http")
-                      ? newsItem.featuredImage.asset.url
-                      : `https:${newsItem.featuredImage.asset.url}`,
-                  ]
+                ? [newsItem.featuredImage.asset.url.startsWith("http")
+                    ? newsItem.featuredImage.asset.url
+                    : `https:${newsItem.featuredImage.asset.url}`]
                 : [`https://www.chtvanguard.com/default-news-image.jpg`],
               datePublished: newsItem.publishedAt,
               dateModified: newsItem.publishedAt, // Add modified date
@@ -273,9 +268,7 @@ export default async function NewsDetailsPage({ params }: Props) {
                 "@id": `https://www.chtvanguard.com/news/${newsId}`,
               },
               articleSection: getCategoryDisplayName(newsItem.category),
-              wordCount: extractTextFromContent(newsItem.content || []).split(
-                " "
-              ).length,
+              wordCount: extractTextFromContent(newsItem.content || []).split(" ").length,
               isAccessibleForFree: true, // Add accessibility info
               genre: getCategoryDisplayName(newsItem.category),
             }),
