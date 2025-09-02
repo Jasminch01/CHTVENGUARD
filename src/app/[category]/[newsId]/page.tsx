@@ -8,6 +8,26 @@ interface Props {
   params: Promise<{ newsId: string }>;
 }
 
+// Helper function to get the correct base URL
+function getBaseUrl(): string {
+  // Priority order:
+  // 1. NEXT_PUBLIC_SITE_URL (production)
+  // 2. VERCEL_URL (Vercel deployment)
+  // 3. Fallback to localhost
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL;
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  // Development fallback
+  return process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : "https://www.chtvanguard.com";
+}
+
 // Helper function to extract text from Sanity rich text blocks
 function extractTextFromContent(content: ContentBlock[]): string {
   if (!content || !Array.isArray(content)) {
@@ -84,6 +104,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
 
+    // Get the correct base URL
+    const baseUrl = getBaseUrl();
+
     // Extract description from content blocks
     const contentDescription = extractTextFromContent(newsItem.content || []);
 
@@ -105,7 +128,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const featuredImageUrl = newsItem.featuredImage?.asset?.url;
     const featuredImageAlt = newsItem.featuredImage?.alt || newsItem.title;
 
-    // Fix: Ensure absolute URL for images with proper protocol
+    // Ensure absolute URL for images with proper protocol
     const absoluteImageUrl = featuredImageUrl
       ? featuredImageUrl.startsWith("http")
         ? featuredImageUrl
@@ -114,9 +137,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         : `https://${featuredImageUrl}`
       : null;
 
-    // Fix: Use production domain consistently
-    const baseUrl = "https://www.chtvanguard.com";
-    const absoluteUrl = `${baseUrl}/news/${newsId}`;
+    // Use dynamic base URL
+    const absoluteUrl = `${baseUrl}/news/${newsItem.category}/${newsId}`;
+    const canonicalUrl = `${baseUrl}/news/${newsItem.category}/${newsId}`;
 
     return {
       title: `${newsItem.title} | chtvanguard`,
@@ -129,7 +152,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         "chtvanguard",
       ],
 
-      // Fix: Simplified and clean Open Graph tags
+      // Set metadataBase first
+      metadataBase: new URL(baseUrl),
+
+      // Open Graph tags
       openGraph: {
         title: newsItem.title,
         description: finalDescription,
@@ -145,12 +171,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                 width: 1200,
                 height: 630,
                 alt: featuredImageAlt,
-                type: "image/jpeg", // Add image type
+                type: "image/jpeg",
               },
             ]
           : [
               {
-                url: `${baseUrl}/default-news-image.jpg`, // Fallback image
+                url: `${baseUrl}/default-news-image.jpg`,
                 width: 1200,
                 height: 630,
                 alt: "chtvanguard news",
@@ -162,13 +188,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         locale: "en_US",
       },
 
-      // Fix: Simplified Twitter Card
+      // Twitter Card
       twitter: {
         card: "summary_large_image",
         title: newsItem.title,
         description: finalDescription,
-        images: absoluteImageUrl 
-          ? [absoluteImageUrl] 
+        images: absoluteImageUrl
+          ? [absoluteImageUrl]
           : [`${baseUrl}/default-news-image.jpg`],
         creator: newsItem.author ? `@${newsItem.author}` : "@chtvanguard",
         site: "@chtvanguard",
@@ -177,8 +203,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       // Additional SEO
       category: getCategoryDisplayName(newsItem.category),
 
-      // Fix: Remove redundant meta tags from 'other' section
-      // These are already handled by openGraph and twitter objects above
+      // Article-specific meta tags
       other: {
         "article:published_time": newsItem.publishedAt,
         "article:author": newsItem.author || "chtvanguard",
@@ -186,24 +211,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         "article:tag": newsItem.category,
       },
 
-      // Canonical URL - Fix: Use production domain
+      // Canonical URL
       alternates: {
-        canonical: absoluteUrl,
+        canonical: canonicalUrl,
       },
 
-      // Fix: Set metadataBase to production domain
-      metadataBase: new URL(baseUrl),
-
-      // Fix: Add robots meta for better crawling
+      // Robots meta for better crawling
       robots: {
         index: true,
         follow: true,
         googleBot: {
           index: true,
           follow: true,
-          'max-video-preview': -1,
-          'max-image-preview': 'large',
-          'max-snippet': -1,
+          "max-video-preview": -1,
+          "max-image-preview": "large",
+          "max-snippet": -1,
         },
       },
     };
@@ -221,14 +243,20 @@ export default async function NewsDetailsPage({ params }: Props) {
   // Pre-fetch the news item on the server for better performance
   const { newsId } = await params;
   const newsItem = await getNewsItem(newsId).catch(() => null);
-  
+
+  // Get the correct base URL
+  const baseUrl = getBaseUrl();
+
   // Extract description for JSON-LD
-  const contentDescription = newsItem 
+  const contentDescription = newsItem
     ? extractTextFromContent(newsItem.content || [])
     : "";
 
-  const finalDescription = contentDescription ||
-    `Read about ${newsItem?.title} in ${getCategoryDisplayName(newsItem?.category || "")}`;
+  const finalDescription =
+    contentDescription ||
+    `Read about ${newsItem?.title} in ${getCategoryDisplayName(
+      newsItem?.category || ""
+    )}`;
 
   return (
     <>
@@ -243,12 +271,14 @@ export default async function NewsDetailsPage({ params }: Props) {
               headline: newsItem.title,
               description: finalDescription,
               image: newsItem.featuredImage?.asset?.url
-                ? [newsItem.featuredImage.asset.url.startsWith("http")
-                    ? newsItem.featuredImage.asset.url
-                    : `https:${newsItem.featuredImage.asset.url}`]
-                : [`https://www.chtvanguard.com/default-news-image.jpg`],
+                ? [
+                    newsItem.featuredImage.asset.url.startsWith("http")
+                      ? newsItem.featuredImage.asset.url
+                      : `https:${newsItem.featuredImage.asset.url}`,
+                  ]
+                : [`${baseUrl}/default-news-image.jpg`],
               datePublished: newsItem.publishedAt,
-              dateModified: newsItem.publishedAt, // Add modified date
+              dateModified: newsItem.publishedAt,
               author: {
                 "@type": "Person",
                 name: newsItem.author || "chtvanguard",
@@ -258,18 +288,20 @@ export default async function NewsDetailsPage({ params }: Props) {
                 name: "chtvanguard",
                 logo: {
                   "@type": "ImageObject",
-                  url: "https://www.chtvanguard.com/logo.png",
+                  url: `${baseUrl}/logo.png`,
                   width: 200,
                   height: 60,
                 },
               },
               mainEntityOfPage: {
                 "@type": "WebPage",
-                "@id": `https://www.chtvanguard.com/news/${newsId}`,
+                "@id": `${baseUrl}/news/${newsItem.category}/${newsId}`,
               },
               articleSection: getCategoryDisplayName(newsItem.category),
-              wordCount: extractTextFromContent(newsItem.content || []).split(" ").length,
-              isAccessibleForFree: true, // Add accessibility info
+              wordCount: extractTextFromContent(newsItem.content || []).split(
+                " "
+              ).length,
+              isAccessibleForFree: true,
               genre: getCategoryDisplayName(newsItem.category),
             }),
           }}
